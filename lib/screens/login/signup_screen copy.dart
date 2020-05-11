@@ -6,19 +6,29 @@ import 'package:subbi/models/user.dart';
 import 'package:subbi/others/country_state_list.dart';
 import 'package:subbi/others/dropdown.dart';
 
-class SignupScreen extends StatelessWidget{
+class SignupScreen extends StatefulWidget{
 
-  final personalInfo = PersonalInformation();
+  @override
+  _SignupScreenState createState() => _SignupScreenState();
 
-  final formKey = GlobalKey<FormState>(debugLabel: 'form');
+}
 
-  final Map<String, GlobalKey<FormFieldState>> fieldKeys = {
-    'name': GlobalKey<FormFieldState>(), 'surname': GlobalKey<FormFieldState>(),
-    'docType': GlobalKey<FormFieldState>(), 'docId': GlobalKey<FormFieldState>(),
-    'phoneType': GlobalKey<FormFieldState>(), 'phone': GlobalKey<FormFieldState>(),
-    'country': GlobalKey<FormFieldState>(), 'state': GlobalKey<FormFieldState>(), 'city': GlobalKey<FormFieldState>(),
-    'address': GlobalKey<FormFieldState>(), 'addressNumber': GlobalKey<FormFieldState>(), 'zip': GlobalKey<FormFieldState>()
-  };
+
+class _SignupScreenState extends State<SignupScreen> {
+
+  PersonalInformation personalInfo;
+  var formKey; 
+  var nameKey;
+
+
+  @override
+  void initState() {
+    personalInfo = PersonalInformation();
+    formKey = GlobalKey<FormState>(debugLabel: 'form');
+    nameKey = GlobalKey<FormFieldState>();
+
+    super.initState();
+  }
 
 
   @override
@@ -31,62 +41,63 @@ class SignupScreen extends StatelessWidget{
       body: SingleChildScrollView(
         child: Center(
           child: Form(
-
             key: formKey,
+            child: Builder(
+              builder: (formContext){
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
 
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 50,
-                    width: 300,
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(
-                            'Bienvenido',
-                            style: Theme.of(context).textTheme.title,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 50,
+                        width: 300,
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                'Bienvenidoo',
+                                style: Theme.of(context).textTheme.title,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: buildFormBody(context),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 50,
-                    width: 300,
-                    child: RaisedButton(
-                      color: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      child: Text('Finalizar'),
-                      onPressed: (){
-                        if(formKey.currentState.validate())   // TODO: Remove develop condition
-                          signUp(formKey, context);
-                      }
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: buildFormBody(nameKey),
                     ),
-                  )
-                ),
 
-              ]
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 50,
+                        width: 300,
+                        child: RaisedButton(
+                          color: Theme.of(context).accentColor,
+                          textColor: Colors.white,
+                          child: Text('Finalizar'),
+                          onPressed: (){
+                            if(true)   // TODO: Remove develop condition
+                              signUp(formKey);
+                          }
+                        ),
+                      )
+                    ),
+
+                  ]
+                );
+              }
             )
-          )
-        )
-      )
+          ),
+        ),
+      ),
 
     );
-     
 
   }
 
@@ -95,15 +106,15 @@ class SignupScreen extends StatelessWidget{
     Asks for Name, Document and Phone
   ---------------------------------------------------------------------------- */
 
-  Widget buildFormBody(BuildContext context){
+  Widget buildFormBody(GlobalKey<FormFieldState> nameKey){
 
     return Container(
-      height: 1000,
+      height: 600,
       width: 300,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
+          child: ListView(
             children: [
 
               //  ------------------------------- Name -------------------------------
@@ -120,7 +131,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['name'],
+                  key: nameKey,
 
                   decoration: const InputDecoration(
                     hintText: 'Nombre',
@@ -143,7 +154,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['surname'],
+                  key: GlobalKey<FormFieldState>(),
 
                   initialValue: personalInfo.surname,
 
@@ -168,7 +179,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['docId'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Documento',
@@ -188,11 +199,45 @@ class SignupScreen extends StatelessWidget{
 
               //  ------------------------------- Document type -------------------------------
 
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: DropdownButtonFormField<DocType>(
+              //     icon: Icon(Icons.arrow_downward), iconSize: 24, elevation: 16,
+
+              //     key: GlobalKey<FormFieldState>(),
+
+              //     value: personalInfo.docType,
+
+              //     hint: Text('Tipo de documento'),
+
+              //     items: DocType.values.map((DocType docType){
+              //       String text;
+              //       switch(docType){
+              //         case DocType.DNI: text='DNI'; break;
+              //         case DocType.CI: text='CI'; break;
+              //         case DocType.PASSPORT: text='Passport'; break;
+              //       }
+
+              //       return DropdownMenuItem<DocType>(
+              //         value: docType,
+              //         child: Text(text),
+              //       );
+              //     }).toList(),
+
+              //     validator: (DocType type){
+              //       return type==null
+              //           ? 'Campo requerido'
+              //           : null;
+              //     },
+                  
+              //     onChanged: (DocType newValue) => setState((){ personalInfo.docType = newValue; })
+                  
+              //   ),
+              // ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropDown<DocType>(
-
-                  key: fieldKeys['docType'],
 
                   hint: 'Tipo de documento',
 
@@ -218,7 +263,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['phone'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Teléfono',
@@ -237,28 +282,38 @@ class SignupScreen extends StatelessWidget{
 
               //  ------------------------------- Phone type -------------------------------
 
-              
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropDown<PhoneType>(
+                child: DropdownButtonFormField<PhoneType>(
+                  icon: Icon(Icons.arrow_downward), iconSize: 24, elevation: 16,
 
-                  key: fieldKeys['phoneType'],
+                  key: GlobalKey<FormFieldState>(),
 
-                  hint: 'Tipo de teléfono',
+                  value: personalInfo.phoneType,
 
-                  items: {
-                    PhoneType.MOBILE: 'Celular',
-                    PhoneType.LANDLINE: 'Fijo'
-                  },
+                  hint: Text('Tipo de teléfono'),
+
+                  items: PhoneType.values.map((PhoneType phoneType){
+                    String text;
+                    switch(phoneType){
+                      case PhoneType.MOBILE: text='Celular'; break;
+                      case PhoneType.LANDLINE: text='Fijo'; break;
+                    }
+
+                    return DropdownMenuItem<PhoneType>(
+                      value: phoneType,
+                      child: Text(text),
+                    );
+                  }).toList(),
 
                   validator: (PhoneType type){
                     return type==null
                         ? 'Campo requerido'
                         : null;
                   },
-
-                  onSaved:(PhoneType type) => personalInfo.phoneType = type
-
+                  
+                  onChanged: (PhoneType newValue) => setState((){ personalInfo.phoneType = newValue; })
+                  
                 ),
               ),
 
@@ -272,46 +327,63 @@ class SignupScreen extends StatelessWidget{
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropDown<String>(
+                child: DropdownButtonFormField<String>(
+                  icon: Icon(Icons.arrow_downward), iconSize: 24, elevation: 16,
 
-                  key: fieldKeys['country'],
+                  key: GlobalKey<FormFieldState>(),
 
-                  hint: 'País',
+                  value: personalInfo.country,
 
-                  items: CountryStateList.countries.map((country, states) => MapEntry(country, country)),
+                  hint: Text('País'),
+
+                  items: CountryStateList.countries.keys.map((String country){
+                    return DropdownMenuItem<String>(
+                      value: country,
+                      child: Text(country),
+                    );
+                  }).toList(),
 
                   validator: (String country){
                     return country==null
                         ? 'Campo requerido'
                         : null;
                   },
-
-                  onSaved:(String country) => personalInfo.country = country
-
+                  
+                  onChanged: (String newValue) => setState((){ personalInfo.country = newValue; })
+                  
                 ),
               ),
 
-            
               //  ------------------------------- State -------------------------------
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropDown<String>(
+                child: DropdownButtonFormField<String>(
+                  icon: Icon(Icons.arrow_downward), iconSize: 24, elevation: 16,
 
-                  key: fieldKeys['state'],
+                  key: GlobalKey<FormFieldState>(),
 
-                  hint: 'Estado',
+                  value: personalInfo.state,
 
-                  items: Map.fromEntries(CountryStateList.countries['Argentina'].map((state) => MapEntry(state, state))),
+                  hint: Text('Estado'),
 
-                  validator: (String country){
-                    return country==null
+                  items: personalInfo.country != null
+                   ? CountryStateList.countries[personalInfo.country].map((String state){
+                      return DropdownMenuItem<String>(
+                        value: state,
+                        child: Text(state),
+                      );
+                    }).toList()
+                  : null,
+
+                  validator: (String state){
+                    return state==null
                         ? 'Campo requerido'
                         : null;
                   },
-
-                  onSaved:(String state) => personalInfo.state = state
-
+                  
+                  onChanged: (String newValue) => setState((){ personalInfo.state = newValue; })
+                  
                 ),
               ),
 
@@ -321,7 +393,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['city'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Ciudad',
@@ -344,7 +416,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['address'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Dirección',
@@ -367,7 +439,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['addressNumber'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Altura',
@@ -390,7 +462,7 @@ class SignupScreen extends StatelessWidget{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
 
-                  key: fieldKeys['zip'],
+                  key: GlobalKey<FormFieldState>(),
 
                   decoration: const InputDecoration(
                     hintText: 'Código postal',
@@ -418,9 +490,13 @@ class SignupScreen extends StatelessWidget{
 
 
 
-  Future<void> signUp(GlobalKey<FormState> formKey, BuildContext context) async{
+  Future<void> signUp(GlobalKey<FormState> formKey) async{
 
-    formKey.currentState.save();
+    formKey.currentState.validate();
+
+    print('Sign up'); return;
+
+    Form.of(context).save();
 
     User user = Provider.of<User>(context); 
 
