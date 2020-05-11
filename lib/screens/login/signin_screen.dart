@@ -57,11 +57,6 @@ class SigninScreen extends StatelessWidget{
   }
 
 
-  void signUp(){
-
-  }
-
-
 }
 
 
@@ -193,15 +188,12 @@ class GoogleSignInBoxState extends State<GoogleSignInBox> {
 
     // If user is new, go to sign up screen
 
-    if(true || !(await user.exists())){
+    bool exists = await user.signIn();
 
-      // This creates a document for the user. It is needed because the accounts authentication processes use it.
-      await user.signUp();
-
+    if(!exists){
       await Navigator.of(context).push(
         MaterialPageRoute<void>(builder: (BuildContext context) => SignupScreen())
       );
-      
     }
 
     Navigator.pop(context, fbUser);

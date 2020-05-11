@@ -1,8 +1,9 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:subbi/screens/loading_screen.dart';
 import 'package:subbi/screens/login/signin_screen.dart';
-import 'package:subbi/screens/login/signup_screen.dart';
-
+import 'apis/remote_config_api.dart';
 import 'models/user.dart';
 
 void main() => runApp(MyApp());
@@ -30,11 +31,36 @@ class MyApp extends StatelessWidget {
 
         ),
 
-        home: SigninScreen()
+        home: FutureBuilder(
+          future: loadApp(),
+          builder: (context, snapshot){
+
+            switch(snapshot.connectionState){
+              
+              case ConnectionState.done:
+                return SigninScreen();
+
+              default:
+                return LoadingScreen();
+
+            }
+
+          } 
+          
+        )
 
       )
     );
 
+  }
+
+
+  /* ----------------------------------------------------------------------------
+    Load data that is needed before app start
+  ---------------------------------------------------------------------------- */
+
+  Future<void> loadApp() async{
+    await RemoteConfigApi.instance().initialize();
   }
 
 }

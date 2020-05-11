@@ -1,20 +1,16 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:subbi/apis/server_api.dart';
 
 class User extends ChangeNotifier{
 
   /* ------------------------------ STATIC PROPERTIES ------------------------------ */
 
-  static CollectionReference _storePath = Firestore.instance.collection('profiles');
-
 
   /* ------------------------------ INSTANCE PROPERTIES ------------------------------ */
 
-  DocumentReference reference;
   FirebaseUser fbUser;
-
+  PersonalInformation personalInfo;
 
 
   /* ------------------------------ INITIALIZATION METHODS ------------------------------ */
@@ -26,7 +22,6 @@ class User extends ChangeNotifier{
 
   void initialize(FirebaseUser fbUser){
     this.fbUser = fbUser;
-    this.reference = _storePath.document(fbUser.email);
   }
 
 
@@ -37,22 +32,26 @@ class User extends ChangeNotifier{
   /* ------------------------------ FIRESTORE METHODS ------------------------------ */
 
 
-
   /* ----------------------------------------------------------------------------
-    Check if user exists on Firebase
+    Send auth token and check if user exists
   ---------------------------------------------------------------------------- */
 
-  Future<bool> exists() async{
-    return (await reference.get()).exists;
+  Future<bool> signIn() async{
+    return await ServerApi.instance().signIn(userToken: await getToken());
   }
 
 
   /* ----------------------------------------------------------------------------
-    Create a record for the user on Firebase
+    Send personal data to the server
   ---------------------------------------------------------------------------- */
 
   Future<void> signUp() async{
-    await reference.setData({'creationDate': DateTime.now()});
+    await ServerApi.instance().signUp(
+      name: personalInfo.name, surname: personalInfo.surname, docId: personalInfo.docId, phone: personalInfo.phone,
+      docType: personalInfo.docType, phoneType: personalInfo.phoneType,
+      country: personalInfo.country, state: personalInfo.state, city: personalInfo.city,
+      address: personalInfo.address, addressNumber: personalInfo.addressNumber, zip: personalInfo.zip
+    );
   }
 
 
@@ -63,5 +62,14 @@ class User extends ChangeNotifier{
   Future<String> getToken() async{
     return (await fbUser.getIdToken()).token;
   }
+
+}
+
+
+class PersonalInformation{
+
+  String name, surname, docId, phone;
+  DocType docType; PhoneType phoneType;
+  String country, state, city, address, addressNumber, zip;
 
 }
