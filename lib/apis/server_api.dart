@@ -1,24 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/others/error_logger.dart';
 
 class ServerApi{
-
-  static String _host = 'subbi.free.beeceptor.com';
-  static int _port = 80;
-  static int _signUpStatusCode = 303;
 
   static ServerApi _singleton = new ServerApi._internal();
 
   ServerApi._internal();
 
-  factory ServerApi.instance(){
+  factory ServerApi.instance({bool testMode=false, HttpClient httpClient}){
+    _singleton.host = testMode ? 'test' : RemoteConfigApi.instance().serverURL;
+    _singleton.client = httpClient ?? HttpClient();
+    _singleton.port = testMode ? 80 : RemoteConfigApi.instance().serverPort;
     return _singleton;
   }
 
+  String host;
+  int port;
+  int signUpStatusCode = 404;
+  HttpClient client;
+
   Cookie sessionCookie;
-  HttpClient http = HttpClient();
 
 
   /* ----------------------------------------------------------------------------
@@ -30,7 +34,7 @@ class ServerApi{
 
   Future<bool> signIn({@required String userToken}) async {
 
-    var req = await http.postUrl(Uri.http(_host, '/login'));
+    var req = await client.postUrl(Uri.http(host, '/login'));
 
     req.write(jsonEncode({'idToken': userToken}));
 
@@ -41,7 +45,7 @@ class ServerApi{
 
     sessionCookie = res.cookies.firstWhere((cookie) => cookie.name=='session');
 
-    return res.statusCode != _signUpStatusCode;
+    return res.statusCode != signUpStatusCode;
 
   }
 
@@ -62,7 +66,7 @@ class ServerApi{
     @required String phone, @required PhoneType phoneType, @required String country, @required String state, @required String city,
     @required String address, @required String addressNumber, @required String zip,}) async {
 
-    var req = await http.post(_host, _port, '/register');
+    var req = await client.post(host, port, '/register');
     req.cookies.add(sessionCookie);
 
     req.write(jsonEncode(
@@ -89,6 +93,7 @@ class ServerApi{
       ErrorLogger.log(context: "Signing up", error: res.reasonPhrase);
 
   }
+
 
 }
 
