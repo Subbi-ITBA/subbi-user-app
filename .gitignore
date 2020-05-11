@@ -9,6 +9,11 @@
 .history
 .svn/
 
+# Android Studio related
+._windows/
+.codestyles/
+*.xml
+
 # IntelliJ related
 *.iml
 *.ipr
