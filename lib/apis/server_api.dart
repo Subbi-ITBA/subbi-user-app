@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
-import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/others/error_logger.dart';
 
 class ServerApi{
@@ -11,9 +10,9 @@ class ServerApi{
   ServerApi._internal();
 
   factory ServerApi.instance({bool testMode=false, HttpClient httpClient}){
-    _singleton.host = testMode ? 'test' : RemoteConfigApi.instance().serverURL;
+    _singleton.host = '192.168.0.100';//testMode ? 'test' : RemoteConfigApi.instance().serverURL;
     _singleton.client = httpClient ?? HttpClient();
-    _singleton.port = testMode ? 80 : RemoteConfigApi.instance().serverPort;
+    _singleton.port = 3000;//testMode ? 80 : RemoteConfigApi.instance().serverPort;
     return _singleton;
   }
 
@@ -34,8 +33,9 @@ class ServerApi{
 
   Future<bool> signIn({@required String userToken}) async {
 
-    var req = await client.postUrl(Uri.http(host, '/login'));
+    var req = await client.post(host, port, '/login');
 
+    req.headers.add('Content-Type', 'application/json');
     req.write(jsonEncode({'idToken': userToken}));
 
     var res = await req.close();
@@ -69,13 +69,14 @@ class ServerApi{
     var req = await client.post(host, port, '/register');
     req.cookies.add(sessionCookie);
 
+    req.headers.add('Content-Type', 'application/json');
     req.write(jsonEncode(
       {
         "name": name,
         "last_name": surname,
-        "document_type": docType.toString().split('.')[1],
+        "document_type": docType.toString().split('.')[1].toLowerCase(),
         "document": docId,
-        "telephone_type": phoneType.toString().split('.')[1],
+        "telephone_type": phoneType.toString().split('.')[1].toLowerCase(),
         "telephone": phone,
         "country": country,
         "province": state,
@@ -89,8 +90,27 @@ class ServerApi{
 
     var res = await req.close();
 
-    if(res.statusCode!=200)
+    if(res.statusCode!=201)
       ErrorLogger.log(context: "Signing up", error: res.reasonPhrase);
+
+  }
+
+
+  /* ----------------------------------------------------------------------------
+    POST /user/$uid
+    Cookie: Session cookie
+    Delete user
+  ---------------------------------------------------------------------------- */
+
+  Future<void> deleteAccount({@required String uid}) async {
+
+    var req = await client.delete(host, port, '/user/'+uid);
+    req.cookies.add(sessionCookie);
+
+    var res = await req.close();
+
+    if(res.statusCode!=200)
+      ErrorLogger.log(context: "Deleting account", error: res.reasonPhrase);
 
   }
 

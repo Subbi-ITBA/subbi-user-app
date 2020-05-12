@@ -7,8 +7,9 @@ class DropDown<T> extends StatefulWidget{
   final Map<T, String> items;
   final String Function(T item) validator;
   final void Function(T item) onSaved;
+  final T initialValue;
 
-  const DropDown({Key key, @required this.hint, @required this.items, @required this.validator, @required this.onSaved}) : super(key: key);
+  const DropDown({Key key, @required this.hint, @required this.items, @required this.validator, @required this.onSaved, this.initialValue}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => DropDownState<T>();
@@ -31,7 +32,7 @@ class DropDownState<T> extends State<DropDown<T>>{
       iconSize: 24,
       elevation: 16,
 
-      value: value,
+      value: value ?? widget.initialValue,
 
       hint: Text(widget.hint),
 
