@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/screens/loading_screen.dart';
 import 'package:subbi/screens/login/signin_screen.dart';
 import 'apis/remote_config_api.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
 
         home: FutureBuilder(
-          future: loadApp(),
+          future: loadApp(context),
           builder: (context, snapshot){
 
             switch(snapshot.connectionState){
@@ -58,8 +59,49 @@ class MyApp extends StatelessWidget {
     Load data that is needed before app start
   ---------------------------------------------------------------------------- */
 
-  Future<void> loadApp() async{
-    await RemoteConfigApi.instance().initialize();
+  Future<void> loadApp(BuildContext context) async{
+
+    // GlobalKey<FormFieldState> urlKey = GlobalKey<FormFieldState>();
+    // GlobalKey<FormFieldState> portKey = GlobalKey<FormFieldState>();
+
+    // Map<String, String> conf = await showDialog(
+    //   context: context,
+    //   child: AlertDialog(
+    //     content: Form(
+    //       child: Column(
+    //         children: [
+    //           TextField(
+    //             key: urlKey,
+    //             decoration: const InputDecoration(
+    //               hintText: 'URL',
+    //             ),
+    //           ),
+    //           TextField(
+    //             key: portKey,
+    //             decoration: const InputDecoration(
+    //               hintText: 'Port',
+    //             ),
+    //           ),
+    //           OutlineButton(
+    //             child: Text('Continuar'),
+    //             onPressed: (){
+    //               Navigator.of(context).pop({
+    //                 'url': urlKey.currentState.value,
+    //                 'port': urlKey.currentState.value
+    //               });
+    //             },
+    //           )
+    //         ]
+    //       ),
+    //     ),
+    //   )
+    // );
+
+    // ServerApi.instance().host = 'localhost';//conf['url'];
+    // ServerApi.instance().port = 3000;//int.parse(conf['port']);
+
+    // await RemoteConfigApi.instance().initialize();
+    
   }
 
 }

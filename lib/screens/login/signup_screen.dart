@@ -119,6 +119,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: 'NAME',
 
                   key: fieldKeys['name'],
 
@@ -142,10 +143,9 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: 'SURNAME',
 
                   key: fieldKeys['surname'],
-
-                  initialValue: personalInfo.surname,
 
                   decoration: const InputDecoration(
                     hintText: 'Apellido',
@@ -167,6 +167,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: '12345678',
 
                   key: fieldKeys['docId'],
 
@@ -191,7 +192,8 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropDown<DocType>(
-
+                  initialValue: DocType.DNI,
+                  
                   key: fieldKeys['docType'],
 
                   hint: 'Tipo de documento',
@@ -217,6 +219,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: '1234',
 
                   key: fieldKeys['phone'],
 
@@ -241,6 +244,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropDown<PhoneType>(
+                  initialValue: PhoneType.LANDLINE,
 
                   key: fieldKeys['phoneType'],
 
@@ -273,6 +277,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropDown<String>(
+                  initialValue: 'Argentina',
 
                   key: fieldKeys['country'],
 
@@ -297,6 +302,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropDown<String>(
+                  initialValue: 'Buenos Aires',
 
                   key: fieldKeys['state'],
 
@@ -320,6 +326,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: 'CITY',
 
                   key: fieldKeys['city'],
 
@@ -343,6 +350,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: 'ADDRESS',
 
                   key: fieldKeys['address'],
 
@@ -366,6 +374,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: '12',
 
                   key: fieldKeys['addressNumber'],
 
@@ -389,6 +398,7 @@ class SignupScreen extends StatelessWidget{
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  initialValue: '4321',
 
                   key: fieldKeys['zip'],
 
