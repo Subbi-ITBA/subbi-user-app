@@ -9,6 +9,11 @@
 .history
 .svn/
 
+# Android Studio related
+._windows/
+.codestyles/
+*.xml
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -35,3 +40,4 @@ lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+android/key.properties
