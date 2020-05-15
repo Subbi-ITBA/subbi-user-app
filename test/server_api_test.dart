@@ -16,7 +16,11 @@ main() {
 
   var mockClient = MockClient();
   
-  ServerApi api = ServerApi.instance(testMode: true, httpClient: mockClient);
+  ServerApi.host = 'test';
+  ServerApi.port = 80;
+  ServerApi.client = mockClient;
+
+  ServerApi api = ServerApi.instance();
 
   group('login', () {
 
@@ -30,7 +34,7 @@ main() {
     var mockLoginReq = MockRequest();
     when(mockLoginReq.close()).thenAnswer((_) async=> mockLoginRes);
 
-    when(mockClient.postUrl(Uri.http(api.host, '/login'))).thenAnswer((_) async=> mockLoginReq);
+    when(mockClient.postUrl(Uri.http(ServerApi.host, '/login'))).thenAnswer((_) async=> mockLoginReq);
 
     test('Existing user', () async {
      

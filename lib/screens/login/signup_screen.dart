@@ -432,7 +432,7 @@ class SignupScreen extends StatelessWidget{
 
     formKey.currentState.save();
 
-    User user = Provider.of<User>(context); 
+    var user = Provider.of<User>(context); 
 
     user.personalInfo = personalInfo;
     

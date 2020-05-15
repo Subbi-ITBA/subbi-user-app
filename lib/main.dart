@@ -1,21 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/screens/loading_screen.dart';
-import 'package:subbi/screens/login/signin_screen.dart';
+import 'package:subbi/screens/main_screen.dart';
 import 'apis/remote_config_api.dart';
+import 'apis/server_api.dart';
 import 'models/user.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
 
+  final User user = User();
+
   @override
   Widget build(BuildContext context) {
 
     return ChangeNotifierProvider<User>(
       key: GlobalKey(),
-      create: (context) => User(),
+      create: (context) => user,
       child: MaterialApp(
 
         theme: ThemeData(
@@ -27,6 +30,17 @@ class MyApp extends StatelessWidget {
             title: Theme.of(context).textTheme.title.copyWith(
               color: Colors.deepPurple
             )
+          ),
+
+          buttonTheme: Theme.of(context).buttonTheme.copyWith(
+            buttonColor: Colors.deepPurple,
+            textTheme: ButtonTextTheme.primary
+          ),
+
+          tabBarTheme: Theme.of(context).tabBarTheme.copyWith(
+            labelStyle: Theme.of(context).textTheme.overline,
+            unselectedLabelStyle: Theme.of(context).textTheme.overline,
+            labelPadding: EdgeInsets.all(0)
           )
 
         ),
@@ -38,7 +52,7 @@ class MyApp extends StatelessWidget {
             switch(snapshot.connectionState){
               
               case ConnectionState.done:
-                return SigninScreen();
+                return MainScreen();
 
               default:
                 return LoadingScreen();
@@ -60,47 +74,13 @@ class MyApp extends StatelessWidget {
   ---------------------------------------------------------------------------- */
 
   Future<void> loadApp(BuildContext context) async{
+    
+    user.loadCurrentUser();
 
-    // GlobalKey<FormFieldState> urlKey = GlobalKey<FormFieldState>();
-    // GlobalKey<FormFieldState> portKey = GlobalKey<FormFieldState>();
+    ServerApi.host = '192.168.0.100';
+    ServerApi.port = 3000;
 
-    // Map<String, String> conf = await showDialog(
-    //   context: context,
-    //   child: AlertDialog(
-    //     content: Form(
-    //       child: Column(
-    //         children: [
-    //           TextField(
-    //             key: urlKey,
-    //             decoration: const InputDecoration(
-    //               hintText: 'URL',
-    //             ),
-    //           ),
-    //           TextField(
-    //             key: portKey,
-    //             decoration: const InputDecoration(
-    //               hintText: 'Port',
-    //             ),
-    //           ),
-    //           OutlineButton(
-    //             child: Text('Continuar'),
-    //             onPressed: (){
-    //               Navigator.of(context).pop({
-    //                 'url': urlKey.currentState.value,
-    //                 'port': urlKey.currentState.value
-    //               });
-    //             },
-    //           )
-    //         ]
-    //       ),
-    //     ),
-    //   )
-    // );
-
-    // ServerApi.instance().host = 'localhost';//conf['url'];
-    // ServerApi.instance().port = 3000;//int.parse(conf['port']);
-
-    // await RemoteConfigApi.instance().initialize();
+    await RemoteConfigApi.instance().initialize();
     
   }
 

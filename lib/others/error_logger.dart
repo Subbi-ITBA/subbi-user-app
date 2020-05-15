@@ -1,11 +1,10 @@
 class ErrorLogger{
 
-  static void log({String userId, String error, String context, bool throwException=true}) async{
+  static void log({String userId, String error, String context}) async{
 
     print(context+': '+error);
 
-    if(throwException)
-      throw Exception(context+': '+error);
+    throw Exception(context+': '+error);     
       
   }
 
