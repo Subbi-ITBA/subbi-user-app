@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/others/error_logger.dart';
 
 class ServerApi{
@@ -9,17 +10,17 @@ class ServerApi{
 
   ServerApi._internal();
 
-  factory ServerApi.instance({bool testMode=false, HttpClient httpClient}){
-    _singleton.host = '192.168.0.100';//testMode ? 'test' : RemoteConfigApi.instance().serverURL;
-    _singleton.client = httpClient ?? HttpClient();
-    _singleton.port = 3000;//testMode ? 80 : RemoteConfigApi.instance().serverPort;
+  factory ServerApi.instance(){
+    host = host ?? RemoteConfigApi.instance().serverURL;
+    client = client ?? HttpClient();
+    port = port ?? RemoteConfigApi.instance().serverPort;
     return _singleton;
   }
 
-  String host;
-  int port;
-  int signUpStatusCode = 404;
-  HttpClient client;
+  static String host;
+  static int port;
+  static HttpClient client;
+  static int signUpStatusCode = 404;
 
   Cookie sessionCookie;
 

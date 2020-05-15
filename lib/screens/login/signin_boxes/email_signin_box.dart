@@ -157,7 +157,7 @@ class _EmailSignInBoxState extends State<EmailSignInBox> {
 
   void signUp() async {
 
-    setState(() {
+      setState(() {
         authState = 'loading';
       });
 

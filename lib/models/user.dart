@@ -29,7 +29,16 @@ class User extends ChangeNotifier{
 
 
 
-  /* ------------------------------ FIRESTORE METHODS ------------------------------ */
+  /* ------------------------------ STORAGE METHODS ------------------------------ */
+
+  bool isSignedIn() => fbUser != null;
+
+
+  Future<void> loadCurrentUser() async{
+
+    this.fbUser = await FirebaseAuth.instance.currentUser();
+
+  }
 
 
   /* ----------------------------------------------------------------------------
