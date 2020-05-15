@@ -82,7 +82,7 @@ class User extends ChangeNotifier{
   Future<String> getToken() async{
     return (await fbUser.getIdToken()).token;
   }
-
+  
 }
 
 
