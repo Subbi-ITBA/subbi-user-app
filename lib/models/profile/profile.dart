@@ -13,20 +13,50 @@ class Profile{
   String profilePicURL;
   String location;
 
-  List<ProfileRating> ratings;
-  List<Auction> pastAuctions;
+  List<ProfileRating> _ratings;
+  List<Auction> _pastAuctions;
 
   Chat chat;
   bool following;
 
   Profile({@required this.user, @required this.uid, @required this.name, @required this.profilePicURL, @required this.location,
-    @required this.ratings, @required this.pastAuctions, @required this.chat, @required this.following});
+    @required this.chat, @required this.following});
 
-
-  Future<void> rate(int rate) => throw UnimplementedError();
+  
 
   Future<void> follow() => throw UnimplementedError();
 
   Future<void> unfollow() => throw UnimplementedError();
+
+
+  void rate(int rate) => throw UnimplementedError();
+
+
+  /* ------------------------------------------------------------
+    Fetches ratings if they haven't been fetched already
+  ------------------------------------------------------------ */
+
+  Future<List<ProfileRating>> get ratings async{
+
+    if(_ratings==null);
+      // Fetch ratings from server
+
+    return _ratings;
+
+  }
+
+
+  /* ------------------------------------------------------------
+    Fetches past auctions if they haven't been fetched already
+  ------------------------------------------------------------ */
+
+  Future<List<Auction>> get pastAuctions async{
+
+    if(_pastAuctions==null);
+      // Fetch past auctions from server
+
+    return _pastAuctions;
+
+  }
 
 }
