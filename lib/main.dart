@@ -15,9 +15,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return ChangeNotifierProvider<User>(
+    return ChangeNotifierProvider<User>.value(
       key: GlobalKey(),
-      create: (context) => user,
+      value: user,
       child: MaterialApp(
 
         theme: ThemeData(
