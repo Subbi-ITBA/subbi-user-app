@@ -11,6 +11,7 @@
 
 # Android Studio related
 ._windows/
+.windows/
 .codestyles/
 *.xml
 
@@ -34,6 +35,7 @@
 .pub-cache/
 .pub/
 /build/
+.pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
