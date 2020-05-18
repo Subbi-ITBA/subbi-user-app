@@ -5,14 +5,14 @@ import '../user.dart';
 
 class ProfileRating{
 
-  User user;
-  Profile ratedProfile;
+  Profile ratingUserProfile;
+  Profile ratedUserProfile;
   
   int rate;
   String comment;
   DateTime date;
 
-  ProfileRating({@required this.ratedProfile, @required this.user, @required this.rate, @required this.comment, @required this.date});
+  ProfileRating({@required this.ratingUserProfile, @required this.ratedUserProfile, @required this.rate, @required this.comment, @required this.date});
 
 
   Future<void> post() => throw UnimplementedError();

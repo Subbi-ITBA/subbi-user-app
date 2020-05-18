@@ -18,19 +18,15 @@ class MainScreen extends StatelessWidget{
           child: TabBar(
             tabs: [
               Tab(
-                text: 'Home',
                 icon: Icon(Icons.home)
               ),
               Tab(
-                text: 'Chats',
                 icon: Icon(Icons.chat),
               ),
               Tab(
-                text: 'Mis Subastas',
                 icon: Icon(Icons.shopping_cart)
               ),
               Tab(
-                text: 'Perfil',
                 icon: Icon(Icons.person),
               )
             ],

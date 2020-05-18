@@ -20,7 +20,13 @@ class Profile{
   bool following;
 
   Profile({@required this.user, @required this.uid, @required this.name, @required this.profilePicURL, @required this.location,
-    @required this.chat, @required this.following});
+    @required this.chat, @required this.following, ratings, pastAuctions}){
+
+      // TODO: Remove this, it's only for mocking purposes
+      this._ratings = ratings;
+      this._pastAuctions = pastAuctions;
+
+  }
 
   
 
