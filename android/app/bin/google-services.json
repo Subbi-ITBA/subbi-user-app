@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "409631018522",
+    "firebase_url": "https://subbi-275914.firebaseio.com",
+    "project_id": "subbi-275914",
+    "storage_bucket": "subbi-275914.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409631018522:android:cb21e7ede79ccc25098ba3",
+        "android_client_info": {
+          "package_name": "com.example.subbi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409631018522-qf4nghs29npl42pnd97f8asj1do4megu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.subbi",
+            "certificate_hash": "664bbb0eab48622dfcb3ee340a47fa03685866cd"
+          }
+        },
+        {
+          "client_id": "409631018522-7tp8h3kv3hn2agh4b77dog0fful9l03d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9i8oEdDDS_jZTF3J_-VBybNsioX5WBIw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409631018522-7tp8h3kv3hn2agh4b77dog0fful9l03d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
