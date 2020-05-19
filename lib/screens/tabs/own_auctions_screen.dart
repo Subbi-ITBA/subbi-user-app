@@ -15,7 +15,7 @@ class OwnAuctionsScreen extends StatelessWidget {
     final cantAuct = 0;
     final cantBids = 0;
 
-    if (!user.isSignedIn()) return UnauthenticatedBox();
+    // if (!user.isSignedIn()) return UnauthenticatedBox();
 
     return Scaffold(
         body: SafeArea(
@@ -40,6 +40,7 @@ class OwnAuctionsScreen extends StatelessWidget {
                             title: Padding(
                                 padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                                 child: Text("No participas en ninguna subasta!",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Theme.of(context).accentColor,
                                         fontSize: 16,
@@ -73,6 +74,7 @@ class OwnAuctionsScreen extends StatelessWidget {
                             title: Padding(
                                 padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                                 child: Text("No tienes ninguna subasta activa!",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Theme.of(context).accentColor,
                                         fontSize: 16,

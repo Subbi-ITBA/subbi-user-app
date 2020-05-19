@@ -11,10 +11,7 @@
 
 # Android Studio related
 ._windows/
-<<<<<<< HEAD
-=======
 .windows/
->>>>>>> 78b78fb1558bde0ce89a78ad59a5302c30ab0533
 .codestyles/
 *.xml
 
