@@ -49,7 +49,7 @@ class SignupScreen extends StatelessWidget{
                         child: Center(
                           child: Text(
                             'Bienvenido',
-                            style: Theme.of(context).textTheme.title,
+                            style: Theme.of(context).textTheme.headline6,
                           ),
                         ),
                       ),

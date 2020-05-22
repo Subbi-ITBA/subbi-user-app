@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.deepPurple,
 
           textTheme: Theme.of(context).textTheme.copyWith(
-            title: Theme.of(context).textTheme.title.copyWith(
+            headline6: Theme.of(context).textTheme.headline6.copyWith(
               color: Colors.deepPurple
             )
           ),

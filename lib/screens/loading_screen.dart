@@ -36,7 +36,7 @@ class LoadingScreen extends StatelessWidget{
 
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Subbi', style: Theme.of(context).textTheme.title,),
+              child: Text('Subbi', style: Theme.of(context).textTheme.headline6,),
             ),
 
             Padding(

@@ -38,6 +38,41 @@ class OwnProfileScreen extends StatelessWidget {
           rate: 4,
           date: DateTime.now(),
           comment: 'Muy buen vendedor'
+        ),
+        ProfileRating(
+          ratingUserProfile: Profile(name: 'Ana Banana', user: null, uid: null, profilePicURL: null, location: null, chat: null, following: null),
+          ratedUserProfile: profile,
+          rate: 2,
+          date: DateTime.now(),
+          comment: 'Pésimo'
+        ),
+        ProfileRating(
+          ratingUserProfile: Profile(name: 'Ana Banana', user: null, uid: null, profilePicURL: null, location: null, chat: null, following: null),
+          ratedUserProfile: profile,
+          rate: 4,
+          date: DateTime.now(),
+          comment: 'Muy buen vendedor'
+        ),
+        ProfileRating(
+          ratingUserProfile: Profile(name: 'Ana Banana', user: null, uid: null, profilePicURL: null, location: null, chat: null, following: null),
+          ratedUserProfile: profile,
+          rate: 4,
+          date: DateTime.now(),
+          comment: 'Muy buen vendedor'
+        ),
+        ProfileRating(
+          ratingUserProfile: Profile(name: 'Ana Banana', user: null, uid: null, profilePicURL: null, location: null, chat: null, following: null),
+          ratedUserProfile: profile,
+          rate: 4,
+          date: DateTime.now(),
+          comment: 'Muy buen vendedor'
+        ),
+        ProfileRating(
+          ratingUserProfile: Profile(name: 'Ana Banana', user: null, uid: null, profilePicURL: null, location: null, chat: null, following: null),
+          ratedUserProfile: profile,
+          rate: 4,
+          date: DateTime.now(),
+          comment: 'Muy buen vendedor'
         )
       ]
     );
@@ -82,13 +117,7 @@ class OwnProfileScreen extends StatelessWidget {
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton.icon(
-                          onPressed: ()=>{},
-                          icon: Icon(Icons.person_add),
-                          label: Text('Follow'),
-                          textColor: Colors.white,
-                          color: Colors.deepPurple[300],
-                        )
+                        child: FollowButton(following: profile.following)
                       )
 
                     ]
@@ -186,15 +215,11 @@ class OwnProfileScreen extends StatelessWidget {
                               buildOpinionsResume(context, snapshot.data),
 
                               snapshot.data.length>0
-                                ? buildOpinionDetail(context, snapshot.data[0])
+                                ? buildOpinionDetail(context, snapshot.data[0], true)
                                 : Container(),
 
                               snapshot.data.length>1
-                                ? buildOpinionDetail(context, snapshot.data[1])
-                                : Container(),
-
-                              snapshot.data.length>2
-                                ? buildOpinionDetail(context, snapshot.data[2])
+                                ? buildOpinionDetail(context, snapshot.data[1], true)
                                 : Container(),
 
                               Padding(
@@ -204,7 +229,7 @@ class OwnProfileScreen extends StatelessWidget {
                                   children: <Widget>[
 
                                     OutlineButton(
-                                      onPressed: (){},
+                                      onPressed: () => displayOpinionsSheet(context, snapshot.data),
                                       child: Text('Ver más opiniones')
                                     ),
 
@@ -254,7 +279,7 @@ class OwnProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                "$averageRating",
+                "${averageRating.toStringAsPrecision(3)}",
                 style: Theme.of(context).textTheme.headline2,
               ),
             ),
@@ -319,50 +344,138 @@ class OwnProfileScreen extends StatelessWidget {
   }
 
 
-  Widget buildOpinionDetail(BuildContext context, ProfileRating rating){
+  Widget buildOpinionDetail(BuildContext context, ProfileRating rating, bool withSeparator){
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
 
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Divider(),
-        ),
+          withSeparator
+          ?  Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Divider(),
+            )
+          : Container(),
 
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Row(
-            children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Row(
+              children: <Widget>[
 
-              Icon(Icons.star),
+                Icon(Icons.star),
 
-              Text(
-                "${rating.rate}   ${rating.comment}",
-                style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.grey[600])
-              )
+                Text(
+                  "${rating.rate}   ${rating.comment}",
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.grey[600])
+                )
 
-            ],
+              ],
+            ),
           ),
-        ),
 
-        // Padding(
-        //   padding: const EdgeInsets.all(4.0),
-        //   child: Text(
-        //     "${rating.comment}",
-        //     style: Theme.of(context).textTheme.bodyText2.copyWith(color: Colors.grey[600])
-        //   ),
-        // ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              "${rating.ratingUserProfile.name} - ${rating.date.day}/${rating.date.month}/${rating.date.year}",
+            ),
+          )
 
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Text(
-            "${rating.ratingUserProfile.name} - ${rating.date.day}/${rating.date.month}/${rating.date.year}",
-          ),
-        )
-
-      ]
+        ]
+      ),
     );
+
+  }
+
+
+  void displayOpinionsSheet(BuildContext context, List<ProfileRating> ratings){
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) =>
+            Container(
+              constraints: BoxConstraints.loose(
+                Size.fromHeight(constraints.maxHeight/2)
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: ratings.length,
+                itemBuilder: (context, i){
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: buildOpinionDetail(context, ratings[i], false),
+                  );
+                },
+                separatorBuilder: (context, i) => Divider(),
+              ),
+            ),
+        ),
+      )
+    );
+
+  }
+
+}
+
+
+class FollowButton extends StatefulWidget {
+
+  final bool following;
+
+  const FollowButton({@required this.following});
+
+  @override
+  _FollowButtonState createState() => _FollowButtonState();
+
+}
+
+class _FollowButtonState extends State<FollowButton> {
+
+  bool following;
+
+  @override
+  void initState() {
+    following = widget.following;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return following
+    ? RaisedButton.icon(
+        onPressed: () => unfollow(),
+        icon: Icon(Icons.remove),
+        label: Text('Unfollow'),
+        textColor: Colors.white,
+        color: Colors.deepPurple[300],
+      )
+    : RaisedButton.icon(
+        onPressed: () => follow(),
+        icon: Icon(Icons.person_add),
+        label: Text('Follow'),
+        textColor: Colors.white,
+        color: Colors.deepPurple[300],
+      );
+  }
+
+
+  void follow(){
+    
+    setState(() {
+      following=true;
+    });
+
+  }
+
+  void unfollow(){
+
+    setState(() {
+      following=false;
+    });
 
   }
 
