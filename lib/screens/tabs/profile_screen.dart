@@ -9,7 +9,7 @@ import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
 import 'package:subbi/widgets/cross_shrinked_listview.dart';
 
-class OwnProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

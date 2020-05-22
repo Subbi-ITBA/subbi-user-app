@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/home_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
-import 'package:subbi/screens/tabs/own_profile_screen.dart';
 
 class MainScreen extends StatelessWidget{
   
@@ -44,7 +43,7 @@ class MainScreen extends StatelessWidget{
             
             OwnAuctionsScreen(),
 
-            OwnProfileScreen()
+            Container(),
 
           ],
         ) 
