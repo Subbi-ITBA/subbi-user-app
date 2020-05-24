@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:subbi/apis/server_api.dart';
+import 'package:subbi/models/profile/profile.dart';
 
 class User extends ChangeNotifier{
 
@@ -11,6 +12,7 @@ class User extends ChangeNotifier{
 
   FirebaseUser fbUser;
   PersonalInformation personalInfo;
+  Profile profile;
 
 
   /* ------------------------------ INITIALIZATION METHODS ------------------------------ */

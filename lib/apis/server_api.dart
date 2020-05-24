@@ -116,6 +116,25 @@ class ServerApi{
   }
 
 
+  Future<void> followProfile({@required String uid, @required String followUid, @required bool follow}){
+
+  }
+
+
+  Future<void> rateProfile({@required String uid, @required String rateUid, @required int rating}){
+
+  }
+
+
+  Future<List<Map<String, dynamic>>> getRatings({@required String ofUid}){
+
+  }
+
+
+  Future<List<Map<String, dynamic>>> getAuctions({@required String ofUid}){
+
+  }
+
 }
 
 enum DocType{DNI, CI, PASSPORT}

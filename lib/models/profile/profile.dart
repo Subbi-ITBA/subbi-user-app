@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 
@@ -28,14 +29,32 @@ class Profile{
 
   }
 
-  
 
-  Future<void> follow() => throw UnimplementedError();
+  Future<void> follow() => ServerApi.instance().followProfile(
+    uid: user.fbUser.uid, followUid: uid, follow: true
+  );
 
-  Future<void> unfollow() => throw UnimplementedError();
+
+  Future<void> unfollow() => ServerApi.instance().followProfile(
+    uid: user.fbUser.uid, followUid: uid, follow: false
+  );
 
 
-  void rate(int rate) => throw UnimplementedError();
+  void rate(String comment, int rate){
+
+    var newRating = ProfileRating(
+      comment: comment,
+      rate: rate,
+      date: DateTime.now(),
+      ratedUserProfile: this,
+      ratingUserProfile: user.profile
+    );
+
+    _ratings.add(newRating);
+
+    newRating.post();
+
+  }
 
 
   /* ------------------------------------------------------------
@@ -44,8 +63,9 @@ class Profile{
 
   Future<List<ProfileRating>> get ratings async{
 
-    if(_ratings==null);
-      // Fetch ratings from server
+    if(_ratings==null){
+      _ratings = await ProfileRating.getRatings(uid);
+    }
 
     return _ratings;
 
@@ -58,8 +78,9 @@ class Profile{
 
   Future<List<Auction>> get pastAuctions async{
 
-    if(_pastAuctions==null);
-      // Fetch past auctions from server
+    if(_pastAuctions==null){
+      _pastAuctions = await Auction.getAuctions(uid);
+    }
 
     return _pastAuctions;
 

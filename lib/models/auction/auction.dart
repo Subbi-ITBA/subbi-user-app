@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/profile/profile.dart';
 
 import 'bid.dart';
@@ -38,6 +39,21 @@ class Auction{
 
 
   Future<Profile> get owner => throw UnimplementedError();
+
+
+  
+  static Future<List<Auction>> getAuctions(String ofUid) async{
+
+    var jsons = await ServerApi.instance().getAuctions(ofUid: ofUid);
+
+    return jsons.map((json) => fromJson(json));
+
+  }
+
+
+  static Auction fromJson(Map<String, dynamic> json){
+
+  }
 
 
 }
