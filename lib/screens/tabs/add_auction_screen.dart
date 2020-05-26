@@ -15,10 +15,13 @@ class _State extends State<AddAuctionScreen> {
   var _lot = Lot();
 
   final _categories = getCategories();
+
   @override
   Widget build(BuildContext context) {
-    // final _user = Provider.of<User>(context);
+    var user = Provider.of<User>(context);
+    // testing
 
+    if (!user.isSignedIn()) return UnauthenticatedBox();
     return Scaffold(
         appBar: AppBar(
           title: Text('Send new lot'),

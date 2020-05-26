@@ -15,7 +15,7 @@ class OwnAuctionsScreen extends StatelessWidget {
     final cantAuct = 1;
     final cantBids = 1;
 
-    // if (!user.isSignedIn()) return UnauthenticatedBox();
+    if (!user.isSignedIn()) return UnauthenticatedBox();
 
     return Scaffold(
         body: SafeArea(
