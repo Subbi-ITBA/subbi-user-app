@@ -4,39 +4,49 @@ import 'package:subbi/models/profile/profile.dart';
 
 import 'bid.dart';
 
-class Auction{
+class Auction {
 
-  String title;
-  String imagesURL;
-  DateTime deadLine;
   String ownerUid;
+  String title;
+  String description;
+  String category;
+  String imageURL;
+  DateTime deadLine;
+  int quantity;
+  double initialPrice;
 
   List<Bid> _bids;
 
+  Auction({
+    @required this.ownerUid,
+    @required this.title,
+    @required this.description,
+    @required this.category,
+    @required this.imageURL,
+    @required this.deadLine,
+    @required this.quantity,
+    @required this.initialPrice
+  });
 
-  Auction({@required owner, @required this.title, @required this.imagesURL, @required this.deadLine, @required this.ownerUid});
+  Bid getHighestBid() => this._bids.last;
+  List<Bid> getBids() => this._bids;
 
   Future<void> post() => throw UnimplementedError();
 
   Future<void> delete() => throw UnimplementedError();
 
-
   /* ------------------------------------------------------------
     Fetches bids if they haven't been fetched already
   ------------------------------------------------------------ */
 
-  Future<List<Bid>> get bids async{
-
-    if(_bids==null);
-      // Fetch bids from server
+  Future<List<Bid>> get bids async {
+    if (_bids == null) ;
+    // Fetch bids from server
 
     return _bids;
-
   }
 
-
   Stream<Bid> subscribeToBids() => throw UnimplementedError();
-
 
   Future<Profile> get owner => throw UnimplementedError();
 

@@ -117,22 +117,22 @@ class ServerApi{
 
 
   Future<void> followProfile({@required String uid, @required String followUid, @required bool follow}){
-
+    throw UnimplementedError();
   }
 
 
   Future<void> rateProfile({@required String uid, @required String rateUid, @required int rating}){
-
+    throw UnimplementedError();
   }
 
 
   Future<List<Map<String, dynamic>>> getRatings({@required String ofUid}){
-
+    throw UnimplementedError();
   }
 
 
   Future<List<Map<String, dynamic>>> getAuctions({@required String ofUid}){
-
+    throw UnimplementedError();
   }
 
 }

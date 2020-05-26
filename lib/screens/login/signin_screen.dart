@@ -9,87 +9,71 @@ import 'package:subbi/screens/login/signup_screen.dart';
 
 BuildContext screenContext;
 
-class SigninScreen extends StatelessWidget{
-
+class SigninScreen extends StatelessWidget {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context){
-  
+  Widget build(BuildContext context) {
     screenContext = context;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-
       body: Center(
         child: SingleChildScrollView(
-                  child: Container(
+          child: Container(
             height: 500,
             width: 300,
             child: Card(
               child: Form(
                 key: formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset('assets/logo.png', height: 70, width: 70),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Welcome',
-                        style: Theme.of(context).textTheme.display1,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/logo.png',
+                            height: 70, width: 70),
                       ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: EmailSignInBox(
-                        parentCallback: signIn,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Bienvenido',
+                          style: Theme.of(context).textTheme.display1,
+                        ),
                       ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GoogleSignInBox(
-                        parentCallback: signIn,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: EmailSignInBox(
+                          parentCallback: signIn,
+                        ),
                       ),
-                    ),
-
-                  ]
-                ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GoogleSignInBox(
+                          parentCallback: signIn,
+                        ),
+                      ),
+                    ]),
               ),
             ),
           ),
         ),
       ),
-
     );
-
   }
 
-  
-  void signIn(FirebaseUser fbUser) async{
-
+  void signIn(FirebaseUser fbUser) async {
     // Initialize user
     User user = Provider.of<User>(screenContext, listen: false);
     user.initialize(fbUser);
 
     // If user is new, go to sign up screen
     bool exists = await user.signIn();
-    if(!exists){
-      await Navigator.of(screenContext).push(
-        MaterialPageRoute<void>(builder: (BuildContext context) => SignupScreen())
-      );
+    if (!exists) {
+      await Navigator.of(screenContext).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => SignupScreen()));
     }
 
     Navigator.of(screenContext).pop();
-
   }
-
-
 }

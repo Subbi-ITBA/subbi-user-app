@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
+import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 
 import '../user.dart';
 import 'chat.dart';
 
-class Profile{
-
+class Profile {
   User user;
   String uid;
   String name;
@@ -16,6 +16,7 @@ class Profile{
 
   List<ProfileRating> _ratings;
   List<Auction> _pastAuctions;
+  List<Bid> _active_Bids;
 
   Chat chat;
   bool following;
@@ -56,7 +57,6 @@ class Profile{
 
   }
 
-
   /* ------------------------------------------------------------
     Fetches ratings if they haven't been fetched already
   ------------------------------------------------------------ */
@@ -68,9 +68,7 @@ class Profile{
     }
 
     return _ratings;
-
   }
-
 
   /* ------------------------------------------------------------
     Fetches past auctions if they haven't been fetched already
@@ -85,5 +83,4 @@ class Profile{
     return _pastAuctions;
 
   }
-
 }

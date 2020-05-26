@@ -9,7 +9,6 @@ import 'models/user.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   final User user = User();
 
   @override
@@ -67,20 +66,16 @@ class MyApp extends StatelessWidget {
 
   }
 
-
   /* ----------------------------------------------------------------------------
     Load data that is needed before app start
   ---------------------------------------------------------------------------- */
 
-  Future<void> loadApp(BuildContext context) async{
-    
+  Future<void> loadApp(BuildContext context) async {
     user.loadCurrentUser();
 
     ServerApi.host = '192.168.0.100';
     ServerApi.port = 3000;
 
     await RemoteConfigApi.instance().initialize();
-    
   }
-
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:subbi/screens/tabs/add_auction_screen.dart';
 import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/home_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
@@ -10,7 +11,7 @@ class MainScreen extends StatelessWidget{
   Widget build(BuildContext context) {
 
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         
         bottomNavigationBar: BottomAppBar(
@@ -39,11 +40,13 @@ class MainScreen extends StatelessWidget{
 
             HomeScreen(),
 
-            ChatScreen(),
-            
             OwnAuctionsScreen(),
 
-            Container(),
+            AddAuctionScreen(),
+
+            ChatScreen(),
+
+            Container()
 
           ],
         ) 
