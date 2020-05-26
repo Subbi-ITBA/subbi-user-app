@@ -12,14 +12,6 @@ class Auction {
 
   List<Bid> _bids;
 
-/*
-  Auction(
-      {@required owner,
-      @required this.title,
-      @required this.imagesURL,
-      @required this.deadLine,
-      @required this.ownerUid});*/
-
   Auction(
       {@required this.title,
       @required this.imageURL,

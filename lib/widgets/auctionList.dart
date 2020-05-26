@@ -4,6 +4,8 @@ import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/widgets/crossShrinkedListView.dart';
 
 class AuctionList extends StatefulWidget {
+  final String type;
+  AuctionList({this.type});
   @override
   _AuctionListState createState() => _AuctionListState();
 }
@@ -13,38 +15,57 @@ class _AuctionListState extends State<AuctionList> {
     Auction(
         title: "Hatsune Miku figure",
         imageURL:
-            "https://images-na.ssl-images-amazon.com/images/I/71R%2BeXyM9sL._AC_SX425_.jpg",
-        deadLine: DateTime.now().add(new Duration(
-          minutes: 1,
-        )),
-        ownerUid: "1"),
+            "https://images-na.ssl-images-amazon.com/images/I/41MpMzeyfaL._AC_SY400_.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
     Auction(
-        title: "Hatsune Miku figure",
+        title:
+            "Batman 181 - Poison Ivy - Con grapas - Primera edición - (1966/1966)",
         imageURL:
-            "https://images-na.ssl-images-amazon.com/images/I/71R%2BeXyM9sL._AC_SX425_.jpg",
-        deadLine: DateTime.now().add(new Duration(
-          days: 1,
-          hours: 3,
-        )),
-        ownerUid: "1"),
+            "https://assets.catawiki.nl/assets/2020/5/14/5/f/a/5fa78646-70c7-4a12-b4fb-25ec43d71fea.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
     Auction(
-        title: "Hatsune Miku figure",
+        title: "14 quilates Oro - Anillo - 0.79 ct Diamante",
         imageURL:
-            "https://images-na.ssl-images-amazon.com/images/I/71R%2BeXyM9sL._AC_SX425_.jpg",
-        deadLine: DateTime.now().add(new Duration(
-          minutes: 1,
-        )),
-        ownerUid: "1"),
+            "https://assets.catawiki.nl/assets/2020/5/14/a/9/c/a9caba4a-eb7d-4bdd-b796-885da9bc0de2.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
   ];
-  final List<String> entries = <String>['A', 'B', 'C'];
-  final List<int> colorCodes = <int>[600, 500, 100];
+
+  List<Auction> active_auctions = [
+    Auction(
+        title:
+            "18 quilates Oro blanco - Anillo - 0.25 ct Esmeralda - Diamantes",
+        imageURL:
+            "https://assets.catawiki.nl/assets/2020/5/12/f/5/9/f5900e98-9db0-4649-a91b-c7e40d367cf0.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
+    Auction(
+        title: "18 quilates Oro blanco - Anillo - 3.03 ct Zafiro - Diamantes",
+        imageURL:
+            "https://assets.catawiki.nl/assets/2020/5/9/5/6/a/56a681b2-3cfb-4797-8fef-dad1491db191.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
+    Auction(
+        title:
+            "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
+        imageURL:
+            "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg",
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123"),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return CrossShrinkedListView(
       alignment: Axis.horizontal,
       itemCount: auctions.length,
       itemBuilder: (int index) {
-        return AuctionCard(auction: this.auctions[index]);
+        return AuctionCard(
+            auction: widget.type == "active"
+                ? this.active_auctions[index]
+                : this.auctions[index]);
       },
     );
   }
@@ -57,12 +78,12 @@ class AuctionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 265,
-        width: 190,
+        width: 195,
         child: Card(
           elevation: 2,
           margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -83,7 +104,7 @@ class AuctionCard extends StatelessWidget {
                         ? "Sin apuestas"
                         : "Highest Bid: ${this.auction.getHighestBid().amount}")),
                 Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: StreamBuilder(
                         stream: Stream.periodic(Duration(seconds: 1), (i) => i),
                         builder: (BuildContext context,

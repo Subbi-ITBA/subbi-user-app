@@ -12,8 +12,8 @@ class OwnAuctionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var user = Provider.of<User>(context);
     // testing
-    final cantAuct = 0;
-    final cantBids = 0;
+    final cantAuct = 1;
+    final cantBids = 1;
 
     // if (!user.isSignedIn()) return UnauthenticatedBox();
 
@@ -53,7 +53,8 @@ class OwnAuctionsScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 20)),
                               ),
                             ))))),
-            fallbackBuilder: (context) => Container(child: AuctionList())),
+            fallbackBuilder: (context) =>
+                Container(child: AuctionList(type: "null"))),
         Container(
           padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
           child: Text(
@@ -87,7 +88,8 @@ class OwnAuctionsScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 20)),
                               ),
                             ))))),
-            fallbackBuilder: (context) => Container(child: AuctionList()))
+            fallbackBuilder: (context) =>
+                Container(child: AuctionList(type: "active")))
       ],
     )));
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:subbi/models/auction/auction.dart';
+import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 
 import '../user.dart';
@@ -14,6 +15,7 @@ class Profile {
 
   List<ProfileRating> _ratings;
   List<Auction> _auctions;
+  List<Bid> _active_Bids;
 
   Chat chat;
   bool following;
