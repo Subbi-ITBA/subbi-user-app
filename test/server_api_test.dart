@@ -6,6 +6,8 @@ import 'package:subbi/apis/server_api.dart';
 
 class MockClient extends Mock implements HttpClient {}
 
+class MockHeaders extends Mock implements HttpHeaders{}
+
 class MockRequest extends Mock implements HttpClientRequest {}
 
 class MockResponse extends Mock implements HttpClientResponse {}
@@ -16,7 +18,11 @@ main() {
 
   var mockClient = MockClient();
   
-  ServerApi api = ServerApi.instance(testMode: true, httpClient: mockClient);
+  ServerApi.host = 'test';
+  ServerApi.port = 80;
+  ServerApi.client = mockClient;
+
+  ServerApi api = ServerApi.instance();
 
   group('login', () {
 
@@ -29,8 +35,9 @@ main() {
 
     var mockLoginReq = MockRequest();
     when(mockLoginReq.close()).thenAnswer((_) async=> mockLoginRes);
+    when(mockLoginReq.headers).thenReturn(MockHeaders());
 
-    when(mockClient.postUrl(Uri.http(api.host, '/login'))).thenAnswer((_) async=> mockLoginReq);
+    when(mockClient.post(ServerApi.host, ServerApi.port, '/login')).thenAnswer((_) async=> mockLoginReq);
 
     test('Existing user', () async {
      

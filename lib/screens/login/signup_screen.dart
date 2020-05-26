@@ -49,7 +49,7 @@ class SignupScreen extends StatelessWidget{
                         child: Center(
                           child: Text(
                             'Bienvenido',
-                            style: Theme.of(context).textTheme.title,
+                            style: Theme.of(context).textTheme.headline6,
                           ),
                         ),
                       ),
@@ -432,7 +432,7 @@ class SignupScreen extends StatelessWidget{
 
     formKey.currentState.save();
 
-    User user = Provider.of<User>(context); 
+    var user = Provider.of<User>(context); 
 
     user.personalInfo = personalInfo;
     
