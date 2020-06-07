@@ -44,6 +44,15 @@ class Auction {
     return _bids;
   }
 
+  String printHighestBid() {
+    if (_bids == null) {
+      return "Sin apuestas";
+    }
+
+    double amount = _bids.first.amount;
+    return '\$' + amount.toString();
+  }
+
   Stream<Bid> subscribeToBids() => throw UnimplementedError();
 
   Future<Profile> get owner => throw UnimplementedError();
