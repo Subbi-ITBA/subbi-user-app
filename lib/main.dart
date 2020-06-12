@@ -10,6 +10,7 @@ import 'package:subbi/screens/tabs/add_auction_screen.dart';
 import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
 import 'package:subbi/screens/tabs/auction_screen.dart';
+import 'package:subbi/screens/tabs/category_auctions_screen.dart';
 import 'apis/remote_config_api.dart';
 import 'apis/server_api.dart';
 import 'models/user.dart';
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
               "/chat": (context) => ChatScreen(),
               "/auction": (context) => AuctionScreen(),
               "/signin": (context) => SigninScreen(),
-              "/signup": (context) => SignupScreen()
+              "/signup": (context) => SignupScreen(),
+              "/category_auctions": (context) => CategoryAuctionsScreen()
             },
             theme: ThemeData(
                 backgroundColor: Colors.grey[200],
