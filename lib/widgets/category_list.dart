@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/category.dart';
 
 class CategoryList extends StatelessWidget {
@@ -25,7 +26,11 @@ class CategoryList extends StatelessWidget {
         itemBuilder: (context,i)
     {
       return GestureDetector(
-        onTap: (){print('object');},
+        onTap: (){
+          Navigator.pushNamed(context,"/category_auctions",arguments: {
+            'category': categories[i].name
+          });
+          },
         child: Column(
           children: <Widget>[
             Container(

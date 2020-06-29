@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/widgets/crossShrinkedListView.dart';
+import 'package:subbi/widgets/auction_card.dart';
 
 class AuctionList extends StatefulWidget {
   final String type;
@@ -102,6 +103,7 @@ class _AuctionListState extends State<AuctionList> {
     );
   }
 }
+<<<<<<< HEAD
 
 class AuctionCard extends StatelessWidget {
   final Auction auction;
@@ -169,3 +171,5 @@ class AuctionCard extends StatelessWidget {
             )));
   }
 }
+=======
+>>>>>>> a08eefaa55a9bc90c0f60e65dca249d427085206
