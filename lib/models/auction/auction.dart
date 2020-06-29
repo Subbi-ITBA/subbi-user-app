@@ -46,7 +46,7 @@ class Auction {
 
   String printHighestBid() {
     if (_bids == null) {
-      return "Sin apuestas";
+      return "Sin pujas";
     }
 
     double amount = _bids.first.amount;

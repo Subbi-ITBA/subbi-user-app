@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:subbi/models/user.dart';
 
 class AuctionScreen extends StatelessWidget {
   Map data = {};
@@ -10,37 +11,33 @@ class AuctionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     data = ModalRoute.of(context).settings.arguments;
     Auction auction = this.data['auction'];
+    Size size = MediaQuery.of(context).size;
     // Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.grey[300],
+        extendBodyBehindAppBar: false,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 0.0,
-
-          leading: Transform.scale(
-            scale: 0.8,
-            child: FlatButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  side: BorderSide(color: Theme.of(context).primaryColor)),
-              color: Colors.white,
-              textColor: Theme.of(context).primaryColor,
-              padding: EdgeInsets.all(0),
-              onPressed: () => Navigator.pop(context),
-              child: Icon(Icons.arrow_back,
-                  size: 35, color: Theme.of(context).primaryColor),
-            ),
-          ),
-
-          // actions: <Widget>[
-          //   IconButton(
-          //       icon: Icon(Icons.more, color: Theme.of(context).primaryColor),
-          //       onPressed: () => Navigator.pop(context)),
-          // ],
+          leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                size: 35,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.pop(context)),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.favorite, color: Colors.white),
+                onPressed: () => Navigator.pop(context)),
+            IconButton(
+                icon: Icon(Icons.notifications, color: Colors.white),
+                onPressed: () => Navigator.pop(context)),
+          ],
         ),
-        body: Body(auction: auction));
+        body: Body(auction: auction),
+        bottomNavigationBar: AuctionInfo(auction: auction));
   }
 }
 
@@ -51,47 +48,110 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Stack(
-      overflow: Overflow.visible,
+    return Column(
+      children: <Widget>[
+        //ImageSlider(imageUrl: this.auction.imageURL),
+
+        Expanded(
+            child: Container(
+          width: size.width,
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  this.auction.title,
+                  softWrap: true,
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+              ),
+              Divider(),
+              UserInfo(),
+              Divider(),
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+}
+class Body2 extends StatelessWidget {
+  final Auction auction;
+  Body2({@required this.auction});
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Column(
+      children: <Widget>[
+        Container(
+          height: size.height * 0.4,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: size.height *0.4-50,
+                decoration: BoxDecoration(
+                  image:DecorationImage(
+                    image: NetworkImage(this.auction.imageURL.first),
+                    fit: BoxFit.cover
+
+                  )
+                )
+
+              )
+            ],
+          )
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
+class UserInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: <Widget>[
         Column(
           children: <Widget>[
-            ImageSlider(imageUrl: this.auction.imageURL),
-            SizedBox(height: 30),
-            Expanded(
-                child: Container(
-              width: size.width,
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(width: double.infinity, height: 25),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 3),
-                    child: Text(
-                      this.auction.title,
-                      softWrap: true,
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
-                    ),
-                  ),
-                ],
-              ),
-            )),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                        "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png"))),
           ],
         ),
-        Positioned.fill(
-            top: 260,
-            child: Align(
-                alignment: Alignment.topCenter,
-                child: AuctionInfo(auction: this.auction)))
+        Column(
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  child: Text(
+                    "Carlos Gardel",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).accentColor),
+                  ),
+                ))
+          ],
+        )
       ],
     );
   }
@@ -105,7 +165,7 @@ class AuctionInfo extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Container(
         width: size.width * 0.9,
-        height: 75,
+        height: 87,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             boxShadow: [
@@ -123,14 +183,54 @@ class AuctionInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(
-              child: Text(this.auction.printHighestBid(),
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text("Puja actual:",
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600)),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
+                      child: Text(this.auction.printHighestBid(),
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Theme.of(context).primaryColor)),
+                  onPressed: () {},
+                  color: Theme.of(context).primaryColor,
+                  textColor: Colors.white,
+                  icon: Icon(Icons.gavel),
+                  label: Text("Pujar".toUpperCase(),
+                      style: TextStyle(fontSize: 12)),
+                ),
+              ],
             ),
-            Container(child: DeadlineTimer(auction: this.auction)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  child: Text("Termina en:",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
+                ),
+                DeadlineTimer(auction: this.auction),
+              ],
+            ),
           ],
         ));
   }
@@ -157,6 +257,7 @@ class DeadlineTimer extends StatelessWidget {
 
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Column(children: <Widget>[
                 DecoratedBox(
@@ -176,7 +277,7 @@ class DeadlineTimer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Days",
+                  "Días",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Theme.of(context).accentColor, fontSize: 12),
@@ -210,7 +311,7 @@ class DeadlineTimer extends StatelessWidget {
                             ),
                           ))),
                   Text(
-                    "Hours",
+                    "Horas",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).accentColor, fontSize: 12),
@@ -245,7 +346,7 @@ class DeadlineTimer extends StatelessWidget {
                             ),
                           ))),
                   Text(
-                    "Minutes",
+                    "Minutos",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).accentColor, fontSize: 12),
@@ -253,7 +354,7 @@ class DeadlineTimer extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                padding: EdgeInsets.fromLTRB(4, 0, 0, 15),
                 child: Text(
                   ":",
                   style: TextStyle(
@@ -280,7 +381,7 @@ class DeadlineTimer extends StatelessWidget {
                             ),
                           ))),
                   Text(
-                    "Seconds",
+                    "Segundos",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).accentColor, fontSize: 12),
@@ -293,13 +394,6 @@ class DeadlineTimer extends StatelessWidget {
   }
 }
 
-class UserInfo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
 class ImageSlider extends StatelessWidget {
   final List<String> imageUrl;
 
@@ -309,12 +403,12 @@ class ImageSlider extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return CarouselSlider(
         options: CarouselOptions(
-          height: size.height * 0.4,
+          height: size.height * 0.37,
           aspectRatio: 16 / 9,
-          viewportFraction: 0.8,
+          viewportFraction: 0.65,
           initialPage: 0,
           enlargeCenterPage: true,
-          enableInfiniteScroll: false,
+          enableInfiniteScroll: true,
         ),
         items: this.imageUrl.map((i) {
           return Builder(
@@ -323,8 +417,7 @@ class ImageSlider extends StatelessWidget {
                 margin: EdgeInsets.all(15.0),
                 child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    child:
-                        Image.network('$i', fit: BoxFit.fill, width: 1000.0)),
+                    child: Image.network('$i', fit: BoxFit.fill)),
               );
             },
           );

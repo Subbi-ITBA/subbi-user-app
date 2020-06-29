@@ -139,8 +139,8 @@ class AuctionCard extends StatelessWidget {
                     Padding(
                         padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                         child: Text(this.auction.getBids() == null
-                            ? "Sin apuestas"
-                            : "Highest Bid: ${this.auction.getHighestBid().amount}")),
+                            ? "Sin pujas"
+                            : "Puja actual: ${this.auction.getHighestBid().amount}")),
                     Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                         child: StreamBuilder(
