@@ -5,28 +5,26 @@ import 'package:subbi/models/profile/profile.dart';
 import 'bid.dart';
 
 class Auction {
-
   String ownerUid;
   String title;
   String description;
   String category;
-  String imageURL;
+  List<String> imageURL;
   DateTime deadLine;
   int quantity;
   double initialPrice;
 
   List<Bid> _bids;
 
-  Auction({
-    @required this.ownerUid,
-    @required this.title,
-    @required this.description,
-    @required this.category,
-    @required this.imageURL,
-    @required this.deadLine,
-    @required this.quantity,
-    @required this.initialPrice
-  });
+  Auction(
+      {@required this.ownerUid,
+      @required this.title,
+      @required this.description,
+      @required this.category,
+      @required this.imageURL,
+      @required this.deadLine,
+      @required this.quantity,
+      @required this.initialPrice});
 
   Bid getHighestBid() => this._bids.last;
   List<Bid> getBids() => this._bids;
@@ -46,24 +44,24 @@ class Auction {
     return _bids;
   }
 
+  String printHighestBid() {
+    if (_bids == null) {
+      return "Sin pujas";
+    }
+
+    double amount = _bids.first.amount;
+    return '\$' + amount.toString();
+  }
+
   Stream<Bid> subscribeToBids() => throw UnimplementedError();
 
   Future<Profile> get owner => throw UnimplementedError();
 
-
-  
-  static Future<List<Auction>> getAuctions(String ofUid) async{
-
+  static Future<List<Auction>> getAuctions(String ofUid) async {
     var jsons = await ServerApi.instance().getAuctions(ofUid: ofUid);
 
     return jsons.map((json) => fromJson(json));
-
   }
 
-
-  static Auction fromJson(Map<String, dynamic> json){
-
-  }
-
-
+  static Auction fromJson(Map<String, dynamic> json) {}
 }

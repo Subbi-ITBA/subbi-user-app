@@ -70,8 +70,7 @@ class SigninScreen extends StatelessWidget {
     // If user is new, go to sign up screen
     bool exists = await user.signIn();
     if (!exists) {
-      await Navigator.of(screenContext).push(MaterialPageRoute<void>(
-          builder: (BuildContext context) => SignupScreen()));
+      await Navigator.pushNamed(screenContext, '/signup');
     }
 
     Navigator.of(screenContext).pop();
