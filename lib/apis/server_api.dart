@@ -24,6 +24,10 @@ class ServerApi{
 
   Cookie sessionCookie;
 
+  /* -------------------------------------------------------------------------------------------------------------------------------
+                                                         ACCOUNT MANAGEMENT
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
 
   /* ----------------------------------------------------------------------------
     POST /login
@@ -116,6 +120,14 @@ class ServerApi{
   }
 
 
+  /* -------------------------------------------------------------------------------------------------------------------------------
+                                                      PROFILE
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  Future<Map<String, dynamic>> getProfile({@required String uid}){
+    throw UnimplementedError();
+  }
+
   Future<void> followProfile({@required String uid, @required String followUid, @required bool follow}){
     throw UnimplementedError();
   }
@@ -131,7 +143,50 @@ class ServerApi{
   }
 
 
-  Future<List<Map<String, dynamic>>> getAuctions({@required String ofUid}){
+  /* -------------------------------------------------------------------------------------------------------------------------------
+                                                      AUCTION
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  Future<List<Map<String, dynamic>>> getProfileAuctions({@required String ofUid}){
+    throw UnimplementedError();
+  }
+
+
+  Future<List<Map<String, dynamic>>> getPopularAuctions({@required Category category}){
+    throw UnimplementedError();
+  }
+
+
+  Future<List<Map<String, dynamic>>> getLatestAuctions({@required Category category}){
+    throw UnimplementedError();
+  }
+
+
+  Future<List<Map<String, dynamic>>> getEndingAuctions(){
+    throw UnimplementedError();
+  }
+
+  Future<void> postAuction({@required Map<String, dynamic> auctionJson}){
+    throw UnimplementedError();
+  }
+
+  Future<void> deleteAuction({@required String auctionId}){
+    throw UnimplementedError();
+  }
+
+  /* -------------------------------------------------------------------------------------------------------------------------------
+                                                      BIDS
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  Future<List<Map<String, dynamic>>> getCurrentBids({@required String auctionId}){
+    throw UnimplementedError();
+  }
+
+  Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}){
+    throw UnimplementedError();
+  }
+
+  Future<void> postBid({@required Map<String, dynamic> bidJson}){
     throw UnimplementedError();
   }
 
@@ -140,3 +195,5 @@ class ServerApi{
 enum DocType{DNI, CI, PASSPORT}
 
 enum PhoneType{MOBILE, LANDLINE}
+
+enum Category{TECHNOLOGY}

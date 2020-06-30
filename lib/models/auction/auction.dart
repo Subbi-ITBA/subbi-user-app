@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:subbi/apis/server_api.dart';
-import 'package:subbi/models/profile/profile.dart';
-
 import 'bid.dart';
 
 class Auction {
+
+  String auctionId;
   String ownerUid;
   String title;
   String description;
@@ -16,52 +16,112 @@ class Auction {
 
   List<Bid> _bids;
 
-  Auction(
-      {@required this.ownerUid,
-      @required this.title,
-      @required this.description,
-      @required this.category,
-      @required this.imageURL,
-      @required this.deadLine,
-      @required this.quantity,
-      @required this.initialPrice});
+  Auction({
+    @required this.ownerUid,
+    @required this.title,
+    @required this.description,
+    @required this.category,
+    @required this.imageURL,
+    @required this.deadLine,
+    @required this.quantity,
+    @required this.initialPrice,
+  });
 
-  Bid getHighestBid() => this._bids.last;
-  List<Bid> getBids() => this._bids;
 
-  Future<void> post() => throw UnimplementedError();
-
-  Future<void> delete() => throw UnimplementedError();
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 RETRIEVING AUCTIONS
+  ------------------------------------------------------------------------------------------------------------------------ */
 
   /* ------------------------------------------------------------
-    Fetches bids if they haven't been fetched already
+    Get auctions of a profile
   ------------------------------------------------------------ */
 
-  Future<List<Bid>> get bids async {
-    if (_bids == null) ;
+  static Future<List<Auction>> getAuctions(String ofUid) async {
+    var jsons = await ServerApi.instance().getProfileAuctions(ofUid: ofUid);
+
+    return jsons.map((json) => _fromJson(json));
+  }
+
+  /* ------------------------------------------------------------
+    Get latest auctions
+  ------------------------------------------------------------ */
+
+  static Future<List<Auction>> getLatestAuctions(Category category) async {
+    var jsons =
+        await ServerApi.instance().getLatestAuctions(category: category);
+
+    return jsons.map((json) => _fromJson(json));
+  }
+
+  /* ------------------------------------------------------------
+    Get popular auctions
+  ------------------------------------------------------------ */
+
+  static Future<List<Auction>> getPopularAuctions(Category category) async {
+    var jsons =
+        await ServerApi.instance().getPopularAuctions(category: category);
+
+    return jsons.map((json) => _fromJson(json));
+  }
+
+  /* ------------------------------------------------------------
+    Get ending auctions
+  ------------------------------------------------------------ */
+
+  static Future<List<Auction>> getEndingAuctions() async {
+    var jsons = await ServerApi.instance().getEndingAuctions();
+
+    return jsons.map((json) => _fromJson(json));
+  }
+
+
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 RETRIEVING BIDS
+  ------------------------------------------------------------------------------------------------------------------------ */
+
+  /* ------------------------------------------------------------
+    Get current bids, fetch them if they haven't already
+  ------------------------------------------------------------ */
+
+  Future<List<Bid>> getCurrentBids() async {
+    if (_bids == null)
+      _bids = await Bid.getCurrentBids(auctionId: auctionId);
     // Fetch bids from server
 
     return _bids;
   }
 
-  String printHighestBid() {
-    if (_bids == null) {
-      return "Sin pujas";
-    }
+  /* ------------------------------------------------------------
+    Get a stream of bids
+  ------------------------------------------------------------ */
 
-    double amount = _bids.first.amount;
-    return '\$' + amount.toString();
-  }
+  Stream<Bid> subscribeToBids() => Bid.getBidsStream(auctionId: auctionId);
 
-  Stream<Bid> subscribeToBids() => throw UnimplementedError();
 
-  Future<Profile> get owner => throw UnimplementedError();
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 MANAGING AUCTION
+  ------------------------------------------------------------------------------------------------------------------------ */
 
-  static Future<List<Auction>> getAuctions(String ofUid) async {
-    var jsons = await ServerApi.instance().getAuctions(ofUid: ofUid);
+  /* ------------------------------------------------------------
+    Post an auction
+  ------------------------------------------------------------ */
 
-    return jsons.map((json) => fromJson(json));
-  }
+  Future<void> post() =>
+      ServerApi.instance().postAuction(auctionJson: _toJson());
 
-  static Auction fromJson(Map<String, dynamic> json) {}
+  /* ------------------------------------------------------------
+    Delete an auction
+  ------------------------------------------------------------ */
+
+  Future<void> delete() => ServerApi.instance().deleteAuction(auctionId: auctionId);
+
+
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 SERIALIZATION
+  ------------------------------------------------------------------------------------------------------------------------ */
+
+  Map<String, dynamic> _toJson() => throw UnimplementedError();
+
+  static Auction _fromJson(Map<String, dynamic> json) => throw UnimplementedError();
+  
 }
