@@ -82,11 +82,11 @@ class Body extends StatelessWidget {
                           fontSize: 18),
                     ),
                   ),
-                  Divider(),
+                  Divider(color: Colors.grey),
                   UserInfo(),
-                  Divider(),
+                  Divider(color: Colors.grey),
                   AuctionDescription(auction: this.auction),
-                  Divider(),
+                  Divider(color: Colors.grey),
                   BidList()
                 ],
               ),
@@ -663,9 +663,9 @@ class ImageSlider extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return CarouselSlider(
       options: CarouselOptions(
-        height: size.height * 0.37,
+        height: size.height * 0.35,
         aspectRatio: 16 / 9,
-        viewportFraction: 0.65,
+        viewportFraction: 0.5,
         initialPage: 0,
         enlargeCenterPage: true,
         enableInfiniteScroll: true,
