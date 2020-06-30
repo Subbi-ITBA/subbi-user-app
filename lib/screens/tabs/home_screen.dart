@@ -12,54 +12,12 @@ class HomeScreen extends StatelessWidget {
     final user = Provider.of<User>(context);
 
     return Scaffold(
-<<<<<<< HEAD
-        backgroundColor: Theme.of(context).backgroundColor,
-        appBar: AppBar(
-          leading: IconButton(
-              icon: Image.asset('assets/logo-white.png', scale: 0.8),
-              splashColor: Colors.transparent,
-              onPressed: () {}),
-              title: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20)
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    hintText: 'Buscar productos'
-                  ),
-                ),
-              ),
-//          title: TextField(
-//            decoration: InputDecoration(
-//                prefixIcon: Icon(Icons.search),
-//                hintText: 'Buscar productos',
-//                filled: true,
-//                fillColor: Colors.white,
-//                border: OutlineInputBorder(
-//                    borderSide: BorderSide(color: Colors.grey),
-//                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
-//                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
-//          ),
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.notifications_none),
-            )
-          ],
-=======
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: Image.asset('assets/logo-white.png', scale: 0.8),
           splashColor: Colors.transparent,
           onPressed: () {},
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
         ),
         title: TextField(
           decoration: InputDecoration(
@@ -128,23 +86,11 @@ class HomeScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-<<<<<<< HEAD
-                          FlatButton(
-                            onPressed: (){
-                              Navigator.pushNamed(context, '/signin');
-                            },
-                            child: Text('Ya tengo una cuenta', style: TextStyle(color: Colors.deepPurpleAccent))
-                          )
-                      ],),
-                    )),
-                  Text('Categorías', style: TextStyle(fontSize: 20)),
-=======
                         ),
                   Text(
                     'Categories',
                     style: TextStyle(fontSize: 20),
                   ),
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
                   CategoryList(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

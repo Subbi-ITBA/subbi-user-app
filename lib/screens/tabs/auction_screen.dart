@@ -54,286 +54,45 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-<<<<<<< HEAD
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ImageSlider(imageUrl: this.auction.imageURL),
-
           Flexible(
-
             fit: FlexFit.loose,
             child: Container(
               width: size.width,
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-               color: Colors.white,
-               borderRadius: BorderRadius.only(
-                   topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30))),
               child: Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: <Widget>[
-               Padding(
-                 padding: const EdgeInsets.all(8),
-                 child: Text(
-                   this.auction.title,
-                   softWrap: true,
-                   style: TextStyle(
-                       color: Theme.of(context).primaryColor,
-                       fontWeight: FontWeight.bold,
-                       fontSize: 18),
-                 ),
-               ),
-               Divider(),
-               UserInfo(),
-               Divider(),
-               AuctionDescription(auction: this.auction)
-             ],
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      this.auction.title,
+                      softWrap: true,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
+                    ),
+                  ),
+                  Divider(),
+                  UserInfo(),
+                  Divider(),
+                  AuctionDescription(auction: this.auction)
+                ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-}
-class Body2 extends StatelessWidget {
-  final Auction auction;
-  Body2({@required this.auction});
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Column(
-      children: <Widget>[
-        Container(
-          height: size.height * 0.3,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: size.height *0.3-50,
-                decoration: BoxDecoration(
-                  image:DecorationImage(
-                    image: NetworkImage(this.auction.imageURL.first),
-                    fit: BoxFit.fill
-                  )
-                )
-
-              )
-            ],
-          )
-=======
-    return Column(
-      children: <Widget>[
-        ImageSlider(imageUrl: this.auction.imageURL),
-        Expanded(
-          child: Container(
-            width: size.width,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    this.auction.title,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                Divider(),
-                UserInfo(userId: auction.ownerUid),
-                Divider(),
-              ],
-            ),
-          ),
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
-        ),
-      ],
-    );
-  }
-}
-
-// class Body2 extends StatelessWidget {
-//   final Auction auction;
-//   Body2({@required this.auction,});
-//   @override
-//   Widget build(BuildContext context) {
-//     Size size = MediaQuery.of(context).size;
-
-//     return Column(
-//       children: <Widget>[
-//         Container(
-//           height: size.height * 0.4,
-//           child: Stack(
-//             children: <Widget>[
-//               Container(
-//                 height: size.height * 0.4 - 50,
-//                 decoration: BoxDecoration(
-//                   image: DecorationImage(
-//                     image: NetworkImage(this.auction.imageURL.first),
-//                     fit: BoxFit.cover,
-//                   ),
-//                 ),
-//               )
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-class UserInfo extends StatelessWidget {
-  final String userId;
-
-  const UserInfo({Key key, this.userId}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Row(
-
-              children: <Widget>[
-                Column(
-
-                  children: <Widget>[
-                    Text(
-                      "Vendedor",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                          ,
-                          color:  Colors.grey,)
-                    )
-                  ],
-                )
-              ],
-            ),
-            Row(
-
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                      child: CircleAvatar(
-                          radius: 25,
-                          backgroundImage: NetworkImage(
-                              "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Text(
-                          "Carlos Gardel",
-
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).accentColor),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-
-
-              ],
-            ),
-          ],
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Row(
-
-              children: <Widget>[
-                Column(
-
-                  children: <Widget>[
-                    Text(
-                      "Nuestro experto",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                          ,
-                          color: Colors.grey,),
-                    )
-                  ],
-                )
-              ],
-            ),
-            Row(
-
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                      child: CircleAvatar(
-                          radius: 25,
-                          backgroundImage: NetworkImage(
-                              "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Text(
-                          "Clark Kent",
-
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).accentColor),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-
-
-              ],
-            ),
-          ],
-        ),
-
-
-      ],
     );
   }
 }
@@ -345,98 +104,176 @@ class AuctionDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      child:
-        Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Description",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                      ,
-                      color: Colors.grey,),
-                  ),
-                ),
-
-              ],
+        child: Column(children: <Widget>[
+      Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Description",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
-            Row(
-              children: <Widget>[
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                     this.auction.description,
-                      overflow: TextOverflow.visible,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400
-                        ,
-                        color: Colors.grey,),
-=======
+          ),
+        ],
+      ),
+      Row(children: <Widget>[
+        Flexible(
+            child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  this.auction.description,
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                )))
+      ])
+    ]));
+  }
+}
+
+class UserInfo extends StatelessWidget {
+  final String userId;
+
+  const UserInfo({Key key, this.userId}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
-      future: Profile.getProfile(ofUid: userId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+        future: Profile.getProfile(ofUid: userId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        Profile profile = snapshot.data;
+          Profile profile = snapshot.data;
 
-        return Row(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(
-                      profile.profilePicURL,
-                    ),
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text("Vendedor",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ))
+                        ],
+                      )
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Text(
-                      profile.name,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).accentColor,
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                            child: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                    "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
+                          ),
+                        ],
                       ),
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
-                    ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {},
+                              child: Text(
+                                "Carlos Gardel",
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-              ],
-<<<<<<< HEAD
-            )
-          ],
-        )
-=======
-            ),
-          ],
-        );
-      },
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
-    );
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            "Nuestro experto",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                            child: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                    "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {},
+                              child: Text(
+                                "Clark Kent",
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }
 
@@ -451,10 +288,6 @@ class _BidderListState extends State<BidderList> {
     return Container();
   }
 }
-
-
-
-
 
 class AuctionInfo extends StatelessWidget {
   final Auction auction;
@@ -502,8 +335,7 @@ class AuctionInfo extends StatelessWidget {
                   FutureBuilder<List<Bid>>(
                     future: Bid.getCurrentBids(auctionId: auction.auctionId),
                     builder: (context, snap) {
-
-                      if(snap.connectionState == ConnectionState.waiting){
+                      if (snap.connectionState == ConnectionState.waiting) {
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -750,17 +582,6 @@ class ImageSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return CarouselSlider(
-<<<<<<< HEAD
-        options: CarouselOptions(
-          height: size.height * 0.35,
-
-          viewportFraction: 0.5,
-          initialPage: 0,
-          enlargeCenterPage: true,
-          enableInfiniteScroll: true,
-        ),
-        items: this.imageUrl.map((i) {
-=======
       options: CarouselOptions(
         height: size.height * 0.37,
         aspectRatio: 16 / 9,
@@ -771,7 +592,6 @@ class ImageSlider extends StatelessWidget {
       ),
       items: this.imageUrl.map(
         (i) {
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
           return Builder(
             builder: (BuildContext context) {
               return Container(
