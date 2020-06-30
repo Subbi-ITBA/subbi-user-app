@@ -5,7 +5,6 @@ import 'package:subbi/models/auction/auction.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
-import 'package:subbi/models/user.dart';
 
 Map data;
 
@@ -86,7 +85,9 @@ class Body extends StatelessWidget {
                   Divider(),
                   UserInfo(),
                   Divider(),
-                  AuctionDescription(auction: this.auction)
+                  AuctionDescription(auction: this.auction),
+                  Divider(),
+                  BidList()
                 ],
               ),
             ),
@@ -110,12 +111,12 @@ class AuctionDescription extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Description",
+              "Descripción",
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Theme.of(context).accentColor,
               ),
             ),
           ),
@@ -137,6 +138,96 @@ class AuctionDescription extends StatelessWidget {
                 )))
       ])
     ]));
+  }
+}
+
+class BidList extends StatefulWidget {
+  @override
+  _BidListState createState() => _BidListState();
+}
+
+class _BidListState extends State<BidList> {
+  List<Bid> bidList;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Pujas",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).accentColor,
+            ),
+          ),
+        ),
+        Card(
+          child: Column(
+            children: <Widget>[
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null)
+            ],
+          ),
+        ),
+      ],
+    ));
+  }
+}
+
+class BidderInfo extends StatelessWidget {
+  final Bid bid;
+
+  BidderInfo({@required this.bid});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
+                    )),
+              ),
+              Text(
+                "Susana Horia",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+              Text(
+                "25-07-2020 18:65:65",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+              Text(
+                "\$35",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -189,7 +280,8 @@ class UserInfo extends StatelessWidget {
                             child: CircleAvatar(
                                 radius: 25,
                                 backgroundImage: NetworkImage(
-                                    "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
+                                  profile.profilePicURL,
+                                )),
                           ),
                         ],
                       ),
@@ -200,7 +292,7 @@ class UserInfo extends StatelessWidget {
                             child: InkWell(
                               onTap: () {},
                               child: Text(
-                                "Carlos Gardel",
+                                profile.name,
                                 style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     fontSize: 14,
@@ -274,18 +366,6 @@ class UserInfo extends StatelessWidget {
             ],
           );
         });
-  }
-}
-
-class BidderList extends StatefulWidget {
-  @override
-  _BidderListState createState() => _BidderListState();
-}
-
-class _BidderListState extends State<BidderList> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
 
