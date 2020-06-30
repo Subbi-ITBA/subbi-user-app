@@ -13,109 +13,108 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Profile profile;
-    profile = Profile(
-        name: 'Fulano Mengano',
-        location: 'Buenos Aires, Argentina',
-        profilePicURL:
-            'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/04/fulano.jpg',
-        uid: "1",
-        user: Provider.of<User>(context),
-        following: true,
-        chat: null,
-        pastAuctions: <Auction>[],
-        ratings: [
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Josefo Fino',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 3,
-              date: DateTime.now(),
-              comment: 'Meh... Normal'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 4,
-              date: DateTime.now(),
-              comment: 'Muy buen vendedor'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 2,
-              date: DateTime.now(),
-              comment: 'Pésimo'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 4,
-              date: DateTime.now(),
-              comment: 'Muy buen vendedor'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 4,
-              date: DateTime.now(),
-              comment: 'Muy buen vendedor'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 4,
-              date: DateTime.now(),
-              comment: 'Muy buen vendedor'),
-          ProfileRating(
-              ratingUserProfile: Profile(
-                  name: 'Ana Banana',
-                  user: null,
-                  uid: null,
-                  profilePicURL: null,
-                  location: null,
-                  chat: null,
-                  following: null),
-              ratedUserProfile: profile,
-              rate: 4,
-              date: DateTime.now(),
-              comment: 'Muy buen vendedor')
-        ]);
+    // profile = Profile(
+    //     name: 'Fulano Mengano',
+    //     location: 'Buenos Aires, Argentina',
+    //     profilePicURL:
+    //         'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/04/fulano.jpg',
+    //     uid: "1",
+    //     user: Provider.of<User>(context),
+    //     following: true,
+    //     chat: null,
+    //     ratings: [
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Josefo Fino',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 3,
+    //           date: DateTime.now(),
+    //           comment: 'Meh... Normal'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 4,
+    //           date: DateTime.now(),
+    //           comment: 'Muy buen vendedor'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 2,
+    //           date: DateTime.now(),
+    //           comment: 'Pésimo'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 4,
+    //           date: DateTime.now(),
+    //           comment: 'Muy buen vendedor'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 4,
+    //           date: DateTime.now(),
+    //           comment: 'Muy buen vendedor'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 4,
+    //           date: DateTime.now(),
+    //           comment: 'Muy buen vendedor'),
+    //       ProfileRating(
+    //           ratingUserProfile: Profile(
+    //               name: 'Ana Banana',
+    //               user: null,
+    //               uid: null,
+    //               profilePicURL: null,
+    //               location: null,
+    //               chat: null,
+    //               following: null),
+    //           ratedUserProfile: profile,
+    //           rate: 4,
+    //           date: DateTime.now(),
+    //           comment: 'Muy buen vendedor')
+    //     ]);
 
     var user = Provider.of<User>(context);
 

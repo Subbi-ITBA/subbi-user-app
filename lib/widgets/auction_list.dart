@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/auction.dart';
-import 'package:subbi/widgets/crossShrinkedListView.dart';
+import 'package:subbi/widgets/cross_shrinked_listview.dart';
 import 'package:subbi/widgets/auction_card.dart';
 
 class AuctionList extends StatefulWidget {
