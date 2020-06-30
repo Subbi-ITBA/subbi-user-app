@@ -8,12 +8,7 @@ class Bid {
   String bidId;
 
   double amount;
-<<<<<<< HEAD
-
-  Profile placer;
-=======
   String placerUid;
->>>>>>> f1877410c72aa98bda612fd4e24e6dd434280143
   DateTime date;
 
   Bid({
