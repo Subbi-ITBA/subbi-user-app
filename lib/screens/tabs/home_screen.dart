@@ -93,12 +93,6 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                FlatButton(
-                                    onPressed: (){
-                                      Navigator.pushNamed(context, '/signin');
-                                    },
-                                    child: Text('Ya tengo una cuenta', style: TextStyle(color: Colors.deepPurpleAccent))
-                                )
                               ],
                             ),
                           ),
