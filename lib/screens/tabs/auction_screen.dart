@@ -24,7 +24,6 @@ class AuctionScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            size: 35,
             color: Colors.white,
           ),
           onPressed: () => Navigator.pop(context),
