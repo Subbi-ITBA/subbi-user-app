@@ -24,7 +24,7 @@ class _AuctionListState extends State<AuctionList> {
         ownerUid: "123",
         initialPrice: null,
         category: null,
-        description: null,
+        description: "*No Reserve Price*\n 100% Natural White Diamond (Untreated)\n Ideally suited as an investment, collector's item, or to set in jewellery.\nThis diamond includes a full ALGT Laboratory certificate (Belgium).\nPlease see attached report for specifics.\nALGT Report Number: 23112987*\nCOVID-19 Shipping Disclaimer:\nWe follow all safety measures taken by each individual country regarding postal delivery, so far no delays have occurred.\nAll orders are packed & shipped with great care and delivered by an Express Courier Service.are insured for Full Value and have accurate Online Tracking, striving for a 48-hour delivery time within the EU. (All EU shipments are Exempt from import Duties.)",
         quantity: null),
     Auction(
         title:
