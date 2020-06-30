@@ -17,17 +17,32 @@ class HomeScreen extends StatelessWidget {
               icon: Image.asset('assets/logo-white.png', scale: 0.8),
               splashColor: Colors.transparent,
               onPressed: () {}),
-          title: TextField(
-            decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Buscar productos',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
-          ),
+              title: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintText: 'Buscar productos'
+                  ),
+                ),
+              ),
+//          title: TextField(
+//            decoration: InputDecoration(
+//                prefixIcon: Icon(Icons.search),
+//                hintText: 'Buscar productos',
+//                filled: true,
+//                fillColor: Colors.white,
+//                border: OutlineInputBorder(
+//                    borderSide: BorderSide(color: Colors.grey),
+//                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
+//                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
+//          ),
           centerTitle: true,
           actions: <Widget>[
             IconButton(
@@ -68,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                           )
                       ],),
                     )),
-                  Text('Categories', style: TextStyle(fontSize: 20)),
+                  Text('Categorías', style: TextStyle(fontSize: 20)),
                   CategoryList(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
