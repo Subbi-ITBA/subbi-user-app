@@ -10,7 +10,7 @@ class CategoryAuctionsScreen extends StatefulWidget {
 
 class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
   Map data = {};
-  ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController;
   String dropDownVal = 'Novedad';
 
   List<Auction> auctions = [
@@ -73,35 +73,73 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
         category: null,
         description: null,
         quantity: null),
+  ];
+  List<Auction> aux = [
+  Auction(
+  title:
+  "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
+  imageURL: [
+  "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
+  ].toList(),
+  deadLine: DateTime.now().add(new Duration(days: 3)),
+  ownerUid: "123",
+  initialPrice: null,
+  category: null,
+  description: null,
+  quantity: null),
+    Auction(
+        title: "18 quilates Oro blanco - Anillo - 3.03 ct Zafiro - Diamantes",
+        imageURL: [
+          "https://assets.catawiki.nl/assets/2020/5/9/5/6/a/56a681b2-3cfb-4797-8fef-dad1491db191.jpg"
+        ].toList(),
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123",
+        initialPrice: null,
+        category: null,
+        description: null,
+        quantity: null),
+  Auction(
+  title:
+  "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
+  imageURL: [
+  "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
+  ].toList(),
+  deadLine: DateTime.now().add(new Duration(days: 3)),
+  ownerUid: "123",
+  initialPrice: null,
+  category: null,
+  description: null,
+  quantity: null),
+    Auction(
+        title: "18 quilates Oro blanco - Anillo - 3.03 ct Zafiro - Diamantes",
+        imageURL: [
+          "https://assets.catawiki.nl/assets/2020/5/9/5/6/a/56a681b2-3cfb-4797-8fef-dad1491db191.jpg"
+        ].toList(),
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123",
+        initialPrice: null,
+        category: null,
+        description: null,
+        quantity: null),
 
   ];
-  Auction aux = Auction(
-      title:
-      "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
-      imageURL: [
-        "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
-      ].toList(),
-      deadLine: DateTime.now().add(new Duration(days: 3)),
-      ownerUid: "123",
-      initialPrice: null,
-      category: null,
-      description: null,
-      quantity: null);
+
 
   @override
   void initState(){
     super.initState();
+    _scrollController = ScrollController();
     //TODO FETCH AUCTIONS 20
-    print('scroll to be init');
     _scrollController.addListener(() {
-      if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent){
+      if(_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange){
         // if end of the screen is reached show more auctions if the are more
         print('reached end');
         setState(() {
-          auctions.add(aux);
+          auctions.addAll(aux);
         });
         //TODO SHOW MORE 20 AUCTIONS
-      }
+    }
     });
   }
 
@@ -120,63 +158,63 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
         centerTitle: true,
         title: Text(data['category']),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 25,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey[400],
-                    width: 1
-                  )
+      body: ListView(
+        controller: _scrollController,
+
+        children: <Widget>[
+          Container(
+            height: 25,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey[400],
+                  width: 1
                 )
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(5,0,5,0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('${auctions.length} resultados'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Text('Ordernar por: '),
-                        DropdownButton<String>(
-                          value: dropDownVal,
-                          onChanged: (String newVal){
-                            setState(() {
-                              dropDownVal = newVal;
-                            });
-                          },
-                          items: <String>['Novedad','Popular']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        )
-                      ],
-                    ),
-                ],),
               )
             ),
-            // TODO Listar auctions
-            GridView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5,0,5,0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('${auctions.length} resultados'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text('Ordernar por: '),
+                      DropdownButton<String>(
+                        value: dropDownVal,
+                        onChanged: (String newVal){
+                          setState(() {
+                            dropDownVal = newVal;
+                          });
+                        },
+                        items: <String>['Novedad','Popular']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+              ],),
+            )
+          ),
+          // TODO Listar auctions
+          GridView.builder(
+            scrollDirection: Axis.vertical,
+              physics: ScrollPhysics(),
+            shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,),
-              itemCount: auctions.length,
-              itemBuilder: (context,i){
-                return AuctionCard(auction: auctions.elementAt(i));
-              }
-            ),
-          ],
-        ),
+                crossAxisCount: 2,),
+            itemCount: auctions.length,
+            itemBuilder: (context,i){
+              return AuctionCard(auction: auctions.elementAt(i));
+            }
+          ),
+        ],
       )
     );
   }
