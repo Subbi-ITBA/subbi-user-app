@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user  = Provider.of<User>(context);
+    final user = Provider.of<User>(context);
+
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
@@ -51,79 +52,92 @@ class HomeScreen extends StatelessWidget {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0,20,0,10),
-                child: AdsCarrousel(),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20,0,20,0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    user.isSignedIn() ? Container(height: 0, width: 0) : Card(child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text('Create una cuenta para tener una mejor experiencia!',style: TextStyle(fontSize: 15)),
-                          RaisedButton(
-                            onPressed: (){
-                              Navigator.pushNamed(context, '/signin');
-                            },
-                            child: Text('Crear una cuenta'),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+              child: AdsCarrousel(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  user.isSignedIn()
+                      ? Container(height: 0, width: 0)
+                      : Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Create una cuenta para tener una mejor experiencia!',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                RaisedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/signin');
+                                  },
+                                  child: Text('Crear una cuenta'),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/signin');
+                                  },
+                                  child: Text(
+                                    'Ya tengo una cuenta',
+                                    style: TextStyle(
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                  ),
+                                ),
+                                FlatButton(
+                                    onPressed: (){
+                                      Navigator.pushNamed(context, '/signin');
+                                    },
+                                    child: Text('Ya tengo una cuenta', style: TextStyle(color: Colors.deepPurpleAccent))
+                                )
+                              ],
+                            ),
                           ),
-                          FlatButton(
-                            onPressed: (){
-                              Navigator.pushNamed(context, '/signin');
-                            },
-                            child: Text('Ya tengo una cuenta', style: TextStyle(color: Colors.deepPurpleAccent))
-                          )
-                      ],),
-                    )),
+              )],),
+                    ),
                   Text('Categorías', style: TextStyle(fontSize: 20)),
                   CategoryList(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('Más populares', style: TextStyle(fontSize: 20)),
-                      GestureDetector(onTap: (){},child: Text('Ver más', style: TextStyle(color: Colors.deepPurpleAccent)))
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          'Ver más',
+                          style: TextStyle(color: Colors.deepPurpleAccent),
+                        ),
+                      )
                     ],
                   ),
-                    // TODO most popular auctions
+                  // TODO most popular auctions
                   AuctionList(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('Novedades', style: TextStyle(fontSize: 20)),
-                      GestureDetector(onTap: (){},child: Text('ver más', style: TextStyle(color: Colors.deepPurpleAccent)))
-                ],)
-                    // TODO new auctions
-
-
-                  ],
-                ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          'ver más',
+                          style: TextStyle(color: Colors.deepPurpleAccent),
+                        ),
+                      )
+                    ],
+                  )
+                  // TODO new auctions
+                ],
               ),
-            ],
-          ),
-        ));
-    // return Column(
-    //   children: [
-
-    //     Container(
-    //       height: 100,
-    //       child: AppBar(),
-    //     ),
-
-    //     Expanded(
-    //       child: Center(
-    //         child: Text('Hello'),
-    //       ),
-    //     )
-
-    //   ]
-    // );
+            ),
+        );
   }
 }
