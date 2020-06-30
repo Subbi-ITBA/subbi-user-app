@@ -3,6 +3,7 @@ import 'package:subbi/models/profile/profile.dart';
 
 class Bid {
   double amount;
+
   Profile placer;
   DateTime date;
 
