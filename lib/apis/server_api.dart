@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/apis/remote_config_api.dart';
+import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/others/error_logger.dart';
 
 class ServerApi{
@@ -152,17 +153,47 @@ class ServerApi{
   }
 
 
-  Future<List<Map<String, dynamic>>> getPopularAuctions({@required Category category}){
-    throw UnimplementedError();
+  Future<List<Auction>> getPopularAuctions ({@required String category, @required int limit, @required int offset}) async {
+    print('entro');
+    var cat = category.toString().substring(category.toString().indexOf(".") + 1).toLowerCase();
+    String path = category == null ? '/auction/list?sort=popularity&limit=$limit&offset=$offset' : '/auction/list?sort=popularity&limit=$limit&offset=$offset&category=$cat';
+    print(path);
+    var req = await client.get(host,port,path);
+    var res = await req.close();
+    if(res.statusCode != 200){
+      ErrorLogger.log(context: "Getting popular auctions", error: res.reasonPhrase);
+    }
+    await for (var contents in res.transform(Utf8Decoder())){
+      print(contents);
+    }
+    print('');
+    print('hola');
+    return null;
   }
 
 
-  Future<List<Map<String, dynamic>>> getLatestAuctions({@required Category category}){
-    throw UnimplementedError();
+  Future<List<Auction>> getLatestAuctions({@required String category, @required int limit, @required int offset}) async{
+    print('entro');
+    var cat = category.toString().substring(category.toString().indexOf(".") + 1).toLowerCase();
+    String path = category == null ? '/auction/list?sort=deadline&limit=$limit&offset=$offset' : '/auction/list?sort=deadline&limit=$limit&offset=$offset&category=$cat';
+    print(path);
+    var req = await client.get(host,port,path);
+    print('jejeje 1');
+    var res = await req.close();
+    print('jejeje 2');
+    if(res.statusCode != 200){
+      ErrorLogger.log(context: 'Getting latest auctions', error: res.reasonPhrase);
+    }
+    await for (var contents in res.transform(Utf8Decoder())){
+      print(contents);
+    }
+    print('');
+    print('hola');
+    return null;
   }
 
 
-  Future<List<Map<String, dynamic>>> getEndingAuctions(){
+  Future<List<Auction>> getEndingAuctions(){
     throw UnimplementedError();
   }
 
