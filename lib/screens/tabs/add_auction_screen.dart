@@ -28,7 +28,7 @@ class _State extends State<AddAuctionScreen> {
     // if (!_user.isSignedIn()) return UnauthenticatedBox();
     return Scaffold(
         appBar: AppBar(
-          title: Text('Send new lot'),
+          title: Text('Enviar lote'),
           leading: Icon(Icons.description),
         ),
         body: SingleChildScrollView(
@@ -46,7 +46,7 @@ class _State extends State<AddAuctionScreen> {
                               child: DropdownButton<String>(
                                 isExpanded: true,
                                 value: _category,
-                                hint: Text('Select category'),
+                                hint: Text('Elija una categoría'),
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 16,
@@ -74,8 +74,8 @@ class _State extends State<AddAuctionScreen> {
                               child: TextFormField(
                                 maxLength: 30,
                                 decoration: InputDecoration(
-                                    hintText: "Enter your lot name",
-                                    labelText: "Name"),
+                                    hintText: "Inserte el título del lote",
+                                    labelText: "Título"),
                                 onChanged: (String newValue) {
                                   setState(() {
                                     _name = newValue;
@@ -89,8 +89,8 @@ class _State extends State<AddAuctionScreen> {
                                 maxLength: 512,
                                 decoration: InputDecoration(
                                   isDense: true,
-                                  hintText: "Enter your lot description",
-                                  labelText: "Description",
+                                  hintText: "Inserte la descripción del lote",
+                                  labelText: "Descripción",
                                 ),
                                 onChanged: (String newValue) {
                                   setState(() {
@@ -110,8 +110,8 @@ class _State extends State<AddAuctionScreen> {
                                         decoration: InputDecoration(
                                           isDense: true,
                                           hintText:
-                                              "Enter the item quantity in your lot",
-                                          labelText: "Quantity",
+                                              "Inserte la cantidad de artículos en su lote",
+                                          labelText: "Cantidad",
                                         ),
                                         onChanged: (String newValue) {
                                           setState(() {
@@ -131,8 +131,8 @@ class _State extends State<AddAuctionScreen> {
                                                   .primaryColor),
                                           isDense: true,
                                           hintText:
-                                              "Enter your desired initial price",
-                                          labelText: "Initial Price",
+                                              "Inserte su precio deseado (el experto podrá modificarlo)",
+                                          labelText: "Precio inicial",
                                         ),
                                         onChanged: (String newValue) {
                                           setState(() {
