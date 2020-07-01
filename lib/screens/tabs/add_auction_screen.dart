@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
+import 'dart:convert';
 
 class AddAuctionScreen extends StatefulWidget {
   @override
@@ -20,6 +22,9 @@ class _State extends State<AddAuctionScreen> {
   String _description;
   int _quantity;
   double _initialPrice;
+  bool _autovalidate = false;
+  final int _descLength = 350;
+  final int _nameLength = 80;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +43,14 @@ class _State extends State<AddAuctionScreen> {
               child: Builder(
                   builder: (context) => Form(
                       key: _formKey,
+                      autovalidate: _autovalidate,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: DropdownButton<String>(
+                              child: DropdownButtonFormField<String>(
                                 isExpanded: true,
                                 value: _category,
                                 hint: Text('Elija una categoría'),
@@ -51,15 +58,14 @@ class _State extends State<AddAuctionScreen> {
                                 iconSize: 24,
                                 elevation: 16,
                                 style: TextStyle(color: Colors.deepPurple),
-                                underline: Container(
-                                  height: 2,
-                                  color: Colors.deepPurpleAccent,
-                                ),
                                 onChanged: (String newValue) {
                                   setState(() {
                                     _category = newValue;
                                   });
                                 },
+                                validator: (value) => value != null
+                                    ? null
+                                    : "Categoria no puede ser vacía",
                                 items: _categories
                                     .map<DropdownMenuItem<String>>(
                                         (String value) {
@@ -72,21 +78,26 @@ class _State extends State<AddAuctionScreen> {
                           Padding(
                               padding: EdgeInsets.all(8.0),
                               child: TextFormField(
-                                maxLength: 30,
+                                maxLength: _nameLength,
                                 decoration: InputDecoration(
-                                    hintText: "Inserte el título del lote",
-                                    labelText: "Título"),
+                                  hintText: "Inserte el título del lote",
+                                  labelText: "Título",
+                                ),
                                 onChanged: (String newValue) {
                                   setState(() {
                                     _name = newValue;
                                   });
                                 },
+                                validator: (value) => value.isEmpty
+                                    ? "Nombre no puede ser vacío"
+                                    : null,
                               )),
                           Padding(
                               padding: EdgeInsets.all(8.0),
                               child: TextFormField(
-                                maxLines: 2,
-                                maxLength: 512,
+                                initialValue: null,
+                                maxLines: 3,
+                                maxLength: _descLength,
                                 decoration: InputDecoration(
                                   isDense: true,
                                   hintText: "Inserte la descripción del lote",
@@ -97,74 +108,120 @@ class _State extends State<AddAuctionScreen> {
                                     _description = newValue;
                                   });
                                 },
+                                validator: (value) => value.isEmpty
+                                    ? "Descripción no puede ser vacío"
+                                    : null,
+                              )),
+                          Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: TextFormField(
+                                initialValue: null,
+                                maxLines: 1,
+                                maxLength: 3,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText:
+                                      "Inserte la cantidad de artículos en su lote",
+                                  labelText: "Cantidad",
+                                ),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    _quantity = int.parse(newValue);
+                                  });
+                                },
+                                validator: (value) => (value.isEmpty ||
+                                        (value.isNotEmpty &&
+                                            int.parse(value) <= 0))
+                                    ? "Cantidad debe ser un numero entero mayor a cero"
+                                    : null,
+                              )),
+                          Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: TextFormField(
+                                initialValue: null,
+                                maxLines: 1,
+                                maxLength: 3,
+                                decoration: InputDecoration(
+                                  icon: Icon(Icons.monetization_on,
+                                      color: Theme.of(context).primaryColor),
+                                  isDense: true,
+                                  hintText: "Inserte su precio deseado",
+                                  labelText: "Precio inicial",
+                                ),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    _initialPrice = double.parse(newValue);
+                                  });
+                                },
+                                validator: (value) => (value.isEmpty ||
+                                        (value.isNotEmpty &&
+                                            int.parse(value) <= 0))
+                                    ? "Precio inicial debe ser un numero mayor a cero"
+                                    : null,
                               )),
                           Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Expanded(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        maxLines: 1,
-                                        maxLength: 3,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          hintText:
-                                              "Inserte la cantidad de artículos en su lote",
-                                          labelText: "Cantidad",
-                                        ),
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            _quantity = int.parse(newValue);
-                                          });
-                                        },
-                                      ))),
-                              Expanded(
-                                  child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        maxLines: 1,
-                                        maxLength: 3,
-                                        decoration: InputDecoration(
-                                          icon: Icon(Icons.monetization_on,
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                          isDense: true,
-                                          hintText:
-                                              "Inserte su precio deseado (el experto podrá modificarlo)",
-                                          labelText: "Precio inicial",
-                                        ),
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            _initialPrice =
-                                                double.parse(newValue);
-                                          });
-                                        },
-                                      )))
-                            ],
-                          ),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[_buildSendLotButton()],
+                          )
                         ],
                       )))),
         ));
   }
 
-  void submit() {
-    Auction auction = new Auction(
-      ownerUid: _user.fbUser.uid,
-      title: _name,
-      description: _description,
-      category: _category,
-      imageURL: null,
-      deadLine: null,
-      quantity: _quantity,
-      initialPrice: _initialPrice,
-    );
-
-    auction.post();
+  static List<String> getCategories() {
+    return <String>[
+      'Musica',
+      'Autos',
+      'Consolas & Videojuegos',
+      'Juguetes & Juegos',
+      'Joyas y Relojes',
+      'Electrodomésticos',
+      'Peliculas & Series',
+      'Antigüedades',
+      'Muebles'
+    ].toList();
   }
 
-  static List<String> getCategories() {
-    return <String>['Juguetes', 'Insturmento', 'Joyas', 'Reloj', 'Wea cuantica']
-        .toList();
+  Widget _buildSendLotButton() {
+    return new RaisedButton.icon(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18.0),
+      ),
+      onPressed: () {
+        if (_formKey.currentState.validate()) {
+          print(
+              "isValid $_name, $_description $_category $_initialPrice $_quantity");
+          //form is valid, proceed further
+          //  _formKey.currentState
+          //    .save(); //save once fields are valid, onSaved method invoked for every form fields
+          ServerApi.instance().postLot(
+              name: _name,
+              category: _category,
+              description: _description,
+              initialPrice: _initialPrice,
+              quantity: _quantity);
+        } else {
+          setState(() {
+            _autovalidate = true; //enable realtime validation
+          });
+        }
+      },
+      color: Theme.of(context).primaryColor,
+      textColor: Colors.white,
+      icon: Icon(Icons.send),
+      label: Text(
+        "Enviar lote".toUpperCase(),
+        style: TextStyle(fontSize: 12),
+      ),
+    );
+  }
+
+  void _sendLot() {
+    ServerApi.instance().postLot(
+        name: _name,
+        category: _category,
+        description: _description,
+        initialPrice: _initialPrice,
+        quantity: _quantity);
   }
 }
