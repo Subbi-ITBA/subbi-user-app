@@ -95,7 +95,6 @@ class _State extends State<AddAuctionScreen> {
                           Padding(
                               padding: EdgeInsets.all(8.0),
                               child: TextFormField(
-                                initialValue: null,
                                 maxLines: 3,
                                 maxLength: _descLength,
                                 decoration: InputDecoration(
@@ -115,7 +114,6 @@ class _State extends State<AddAuctionScreen> {
                           Padding(
                               padding: EdgeInsets.all(8.0),
                               child: TextFormField(
-                                initialValue: null,
                                 maxLines: 1,
                                 maxLength: 3,
                                 decoration: InputDecoration(
@@ -140,7 +138,7 @@ class _State extends State<AddAuctionScreen> {
                               child: TextFormField(
                                 initialValue: null,
                                 maxLines: 1,
-                                maxLength: 3,
+                                maxLength: 5,
                                 decoration: InputDecoration(
                                   icon: Icon(Icons.monetization_on,
                                       color: Theme.of(context).primaryColor),
@@ -195,7 +193,7 @@ class _State extends State<AddAuctionScreen> {
           //  _formKey.currentState
           //    .save(); //save once fields are valid, onSaved method invoked for every form fields
           ServerApi.instance().postLot(
-              name: _name,
+              title: _name,
               category: _category,
               description: _description,
               initialPrice: _initialPrice,
@@ -214,14 +212,5 @@ class _State extends State<AddAuctionScreen> {
         style: TextStyle(fontSize: 12),
       ),
     );
-  }
-
-  void _sendLot() {
-    ServerApi.instance().postLot(
-        name: _name,
-        category: _category,
-        description: _description,
-        initialPrice: _initialPrice,
-        quantity: _quantity);
   }
 }

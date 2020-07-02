@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/others/error_logger.dart';
+import 'package:subbi/models/auction/bid.dart';
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -12,8 +13,10 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
+
     client = client ?? HttpClient();
     port = port ?? RemoteConfigApi.instance().serverPort;
+
     return _singleton;
   }
 
@@ -165,7 +168,7 @@ class ServerApi {
     if(res.statusCode != 200){
       ErrorLogger.log(context: 'Getting $sort auctions', error: res.reasonPhrase);
     }
-    await for (var contents in res.transform(Utf8Decoder())){
+    await for (var contents in res.transform(Utf8Decoder())) {
       print(contents);
     }
     print('');
@@ -188,7 +191,7 @@ class ServerApi {
     if(res.statusCode != 200){
       ErrorLogger.log(context: 'Getting user participating auctions', error: res.reasonPhrase);
     }
-    await for (var contents in res.transform(Utf8Decoder())){
+    await for (var contents in res.transform(Utf8Decoder())) {
       print(contents);
     }
     return null;
@@ -198,16 +201,17 @@ class ServerApi {
                                                       LOTS
   ------------------------------------------------------------------------------------------------------------------------------- */
   Future<void> postLot(
-      {@required String name,
+      {@required String title,
       @required String category,
       @required String description,
       @required double initialPrice,
       @required int quantity}) async {
     var req = await client.post(host, port, '/lot');
-
+    req.cookies.add(sessionCookie);
     req.headers.add('Content-Type', 'application/json');
+
     req.write(jsonEncode({
-      "name": name,
+      "name": title,
       "category": category,
       "description": description,
       "initial_price": initialPrice,
@@ -223,10 +227,7 @@ class ServerApi {
                                                       BIDS
   ------------------------------------------------------------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getCurrentBids(
-      {@required String auctionId}) {
-    throw UnimplementedError();
-  }
+  Future<List<Bid>> getCurrentBids({@required String auctionId}) {}
 
   Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}) {
     throw UnimplementedError();
