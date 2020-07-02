@@ -3,7 +3,6 @@ import 'package:subbi/apis/server_api.dart';
 import 'bid.dart';
 
 class Auction {
-
   String auctionId;
   String ownerUid;
   String title;
@@ -27,7 +26,6 @@ class Auction {
     @required this.initialPrice,
   });
 
-
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  RETRIEVING AUCTIONS
   ------------------------------------------------------------------------------------------------------------------------ */
@@ -46,10 +44,14 @@ class Auction {
     Get latest auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getLatestAuctions(String category, int limit, int offset) async {
+  static Future<List<Auction>> getLatestAuctions(
+      String category, int limit, int offset) async {
     print('enter serverapi');
-    var jsons =
-        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'latest');
+    var jsons = await ServerApi.instance().getAuctionsBySort(
+        category: category,
+        limit: limit,
+        offset: offset,
+        sort: AuctionSort.LATEST);
 
 //    return jsons.map((json) => _fromJson(json));
     return null;
@@ -59,25 +61,33 @@ class Auction {
     Get popular auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getPopularAuctions(String category, int limit, int offset) async {
-    var jsons =
-        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'popularity');
+  static Future<List<Auction>> getPopularAuctions(
+      String category, int limit, int offset) async {
+    var jsons = await ServerApi.instance().getAuctionsBySort(
+        category: category,
+        limit: limit,
+        offset: offset,
+        sort: AuctionSort.POPULARITY);
 
 //    return jsons.map((json) => _fromJson(json));
-  return null;
+    return null;
   }
 
   /* ------------------------------------------------------------
     Get ending auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getEndingAuctions(String category, int limit, int offset) async {
-    var jsons = await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset, sort: 'deadline');
+  static Future<List<Auction>> getEndingAuctions(
+      String category, int limit, int offset) async {
+    var jsons = await ServerApi.instance().getAuctionsBySort(
+        category: category,
+        limit: limit,
+        offset: offset,
+        sort: AuctionSort.DEADLINE);
 
 //    return jsons.map((json) => _fromJson(json));
-  return null;
+    return null;
   }
-
 
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  RETRIEVING BIDS
@@ -88,8 +98,7 @@ class Auction {
   ------------------------------------------------------------ */
 
   Future<List<Bid>> getCurrentBids() async {
-    if (_bids == null)
-      _bids = await Bid.getCurrentBids(auctionId: auctionId);
+    if (_bids == null) _bids = await Bid.getCurrentBids(auctionId: auctionId);
     // Fetch bids from server
 
     return _bids;
@@ -100,7 +109,6 @@ class Auction {
   ------------------------------------------------------------ */
 
   Stream<Bid> subscribeToBids() => Bid.getBidsStream(auctionId: auctionId);
-
 
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  MANAGING AUCTION
@@ -117,8 +125,8 @@ class Auction {
     Delete an auction
   ------------------------------------------------------------ */
 
-  Future<void> delete() => ServerApi.instance().deleteAuction(auctionId: auctionId);
-
+  Future<void> delete() =>
+      ServerApi.instance().deleteAuction(auctionId: auctionId);
 
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  SERIALIZATION
@@ -126,6 +134,6 @@ class Auction {
 
   Map<String, dynamic> _toJson() => throw UnimplementedError();
 
-  static Auction _fromJson(Map<String, dynamic> json) => throw UnimplementedError();
-  
+  static Auction _fromJson(Map<String, dynamic> json) =>
+      throw UnimplementedError();
 }

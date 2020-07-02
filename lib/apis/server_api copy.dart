@@ -5,7 +5,6 @@ import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
-import 'package:http/http.dart' as http;
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -14,14 +13,19 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-    //client = client ?? HttpClient();
+
+    client = client ?? HttpClient();
+    port = port ?? RemoteConfigApi.instance().serverPort;
+
     return _singleton;
   }
 
   static String host;
+  static int port;
+  static HttpClient client;
   static int signUpStatusCode = 404;
 
-  String sessionCookie;
+  Cookie sessionCookie;
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT
@@ -34,20 +38,18 @@ class ServerApi {
   Future<bool> signIn({
     @required String userToken,
   }) async {
-    var res = await http.post(
-      host + '/login',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        'idToken': userToken,
-      },
-    );
+    var req = await client.post(host, port, '/login');
+
+    req.headers.add('Content-Type', 'application/json');
+    req.write(jsonEncode({'idToken': userToken}));
+
+    var res = await req.close();
 
     if (res.statusCode != 200 && res.statusCode != 404)
       ErrorLogger.log(context: "Loging in", error: res.reasonPhrase);
 
-    sessionCookie = res.headers['Cookie'];
+    sessionCookie =
+        res.cookies.firstWhere((cookie) => cookie.name == 'session');
 
     return res.statusCode != signUpStatusCode;
   }
@@ -70,27 +72,26 @@ class ServerApi {
     @required String addressNumber,
     @required String zip,
   }) async {
-    var res = await http.post(
-      host + '/register',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-      body: {
-        "name": name,
-        "last_name": surname,
-        "document_type": docType.toString().split('.')[1].toLowerCase(),
-        "document": docId,
-        "telephone_type": phoneType.toString().split('.')[1].toLowerCase(),
-        "telephone": phone,
-        "country": country,
-        "province": state,
-        "location": city,
-        "zip": zip,
-        "street": address,
-        "street_number": addressNumber,
-      },
-    );
+    var req = await client.post(host, port, '/register');
+    req.cookies.add(sessionCookie);
+
+    req.headers.add('Content-Type', 'application/json');
+    req.write(jsonEncode({
+      "name": name,
+      "last_name": surname,
+      "document_type": docType.toString().split('.')[1].toLowerCase(),
+      "document": docId,
+      "telephone_type": phoneType.toString().split('.')[1].toLowerCase(),
+      "telephone": phone,
+      "country": country,
+      "province": state,
+      "location": city,
+      "zip": zip,
+      "street": address,
+      "street_number": addressNumber
+    }));
+
+    var res = await req.close();
 
     if (res.statusCode != 201)
       ErrorLogger.log(context: "Signing up", error: res.reasonPhrase);
@@ -103,13 +104,10 @@ class ServerApi {
   Future<void> deleteAccount({
     @required String uid,
   }) async {
-    var res = await http.delete(
-      host + '/user/' + uid,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-    );
+    var req = await client.delete(host, port, '/user/' + uid);
+    req.cookies.add(sessionCookie);
+
+    var res = await req.close();
 
     if (res.statusCode != 200)
       ErrorLogger.log(context: "Deleting account", error: res.reasonPhrase);
@@ -183,117 +181,83 @@ class ServerApi {
   }
 
   /* ----------------------------------------------------------------------------
-   Get a specific set of auctions (LATEST, POPULARITY, DEADLINE)
+   Get a specific set of auctions ()
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getAuctionsBySort({
+  Future<List<Auction>> getAuctionsBySort({
     @required String category,
     @required int limit,
     @required int offset,
-    @required AuctionSort sort,
+    @required String sort,
   }) async {
-    var sortString = sort
+    var cat = category
         .toString()
-        .toLowerCase()
-        .split('.')[1]; // Conversion from enum to string
+        .substring(category.toString().indexOf(".") + 1)
+        .toLowerCase();
 
     String path = category == null
-        ? '/auction/list?sort=$sortString&limit=$limit&offset=$offset'
-        : '/auction/list?sort=$sortString&limit=$limit&offset=$offset&category=$category';
+        ? '/auction/list?sort=$sort&limit=$limit&offset=$offset'
+        : '/auction/list?sort=$sort&limit=$limit&offset=$offset&category=$cat';
 
-    var res = await http.get(
-      host + path,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-    );
+    var req = await client.get(host, port, path);
+    var res = await req.close();
 
     if (res.statusCode != 200) {
       ErrorLogger.log(
-        context: 'Getting $sort auctions',
-        error: res.reasonPhrase,
-      );
+          context: 'Getting $sort auctions', error: res.reasonPhrase);
     }
 
-    return jsonDecode(res.body);
-  }
+    await for (var contents in res.transform(Utf8Decoder())) {
+      print(contents);
+    }
 
-  /* ----------------------------------------------------------------------------
-   Post an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
+    return null;
+  }
 
   Future<void> postAuction({@required Map<String, dynamic> auctionJson}) {
     throw UnimplementedError();
   }
 
-  /* ----------------------------------------------------------------------------
-   Delete an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
   Future<void> deleteAuction({@required String auctionId}) {
     throw UnimplementedError();
   }
 
-  /* ----------------------------------------------------------------------------
-   Get the auctions on which a user is participating
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<List<Map<String, dynamic>>> getParticipatingAuctions({
-    @required String uid,
-    @required limit,
-    @required offset,
-  }) async {
-    var res = await http.get(
-      host + '/auction/list/',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-    );
-
+  Future<List<Auction>> getParticipatingAuctions(
+      {@required String uid, @required limit, @required offset}) async {
+    var req = await client.get(host, port, '/auction/list/');
+    var res = await req.close();
     if (res.statusCode != 200) {
       ErrorLogger.log(
-        context: 'Getting user participating auctions',
-        error: res.reasonPhrase,
-      );
+          context: 'Getting user participating auctions',
+          error: res.reasonPhrase);
     }
-
-    return jsonDecode(res.body);
+    await for (var contents in res.transform(Utf8Decoder())) {
+      print(contents);
+    }
+    return null;
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                       LOTS
   ------------------------------------------------------------------------------------------------------------------------------- */
+  Future<void> postLot(
+      {@required String title,
+      @required String category,
+      @required String description,
+      @required double initialPrice,
+      @required int quantity}) async {
+    var req = await client.post(host, port, '/lot');
+    req.cookies.add(sessionCookie);
+    req.headers.add('Content-Type', 'application/json');
 
-  /* ----------------------------------------------------------------------------
-   Post a new lot
-  ---------------------------------------------------------------------------- */
-
-  Future<void> postLot({
-    @required String title,
-    @required String category,
-    @required String description,
-    @required double initialPrice,
-    @required int quantity,
-  }) async {
-    var res = await http.post(
-      host + '/lot',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-      body: {
-        "name": title,
-        "category": category,
-        "description": description,
-        "initial_price": initialPrice,
-        "quantity": quantity,
-      },
-    );
+    req.write(jsonEncode({
+      "name": title,
+      "category": category,
+      "description": description,
+      "initial_price": initialPrice,
+      "quantity": quantity
+    }));
+    var res = await req.close();
 
     if (res.statusCode != 201)
       ErrorLogger.log(context: "Send lot", error: res.reasonPhrase);
@@ -303,26 +267,11 @@ class ServerApi {
                                                       BIDS
   ------------------------------------------------------------------------------------------------------------------------------- */
 
-  /* ----------------------------------------------------------------------------
-   Get the current bids of an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
   Future<List<Bid>> getCurrentBids({@required String auctionId}) {}
-
-  /* ----------------------------------------------------------------------------
-   Get a stream of bids of an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
 
   Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}) {
     throw UnimplementedError();
   }
-
-  /* ----------------------------------------------------------------------------
-   Post a new bid
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
 
   Future<void> postBid({@required Map<String, dynamic> bidJson}) {
     throw UnimplementedError();
@@ -332,5 +281,7 @@ class ServerApi {
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
+
+enum Category { TECHNOLOGY }
 
 enum AuctionSort { LATEST, POPULARITY, DEADLINE }
