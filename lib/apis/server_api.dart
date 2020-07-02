@@ -45,7 +45,10 @@ class ServerApi {
     );
 
     if (res.statusCode != 200 && res.statusCode != 404)
-      ErrorLogger.log(context: "Loging in", error: res.reasonPhrase);
+      ErrorLogger.log(
+        context: "Loging in",
+        error: res.reasonPhrase,
+      );
 
     sessionCookie = res.headers['Cookie'];
 
@@ -93,7 +96,10 @@ class ServerApi {
     );
 
     if (res.statusCode != 201)
-      ErrorLogger.log(context: "Signing up", error: res.reasonPhrase);
+      ErrorLogger.log(
+        context: "Signing up",
+        error: res.reasonPhrase,
+      );
   }
 
   /* ----------------------------------------------------------------------------
@@ -112,7 +118,10 @@ class ServerApi {
     );
 
     if (res.statusCode != 200)
-      ErrorLogger.log(context: "Deleting account", error: res.reasonPhrase);
+      ErrorLogger.log(
+        context: "Deleting account",
+        error: res.reasonPhrase,
+      );
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -296,7 +305,10 @@ class ServerApi {
     );
 
     if (res.statusCode != 201)
-      ErrorLogger.log(context: "Send lot", error: res.reasonPhrase);
+      ErrorLogger.log(
+        context: "Send lot",
+        error: res.reasonPhrase,
+      );
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------

@@ -30,7 +30,9 @@ class MyApp extends StatelessWidget {
               final Map arg = settings.arguments;
               if (settings.name == AuctionListBySortScreen.route) {
                 return MaterialPageRoute(builder: (context) {
-                  return AuctionListBySortScreen(sort: arg['sort']);
+                  return AuctionListBySortScreen(
+                    sort: arg['sort'],
+                  );
                 });
               }
               assert(false, 'Need to implement ${settings.name}');
@@ -48,20 +50,23 @@ class MyApp extends StatelessWidget {
               "/category_auctions": (context) => CategoryAuctionsScreen(),
             },
             theme: ThemeData(
-                backgroundColor: Colors.grey[200],
-                primarySwatch: Colors.deepPurple,
-                textTheme: Theme.of(context).textTheme.copyWith(
-                    headline6: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        .copyWith(color: Colors.deepPurple)),
-                buttonTheme: Theme.of(context).buttonTheme.copyWith(
+              backgroundColor: Colors.grey[200],
+              primarySwatch: Colors.deepPurple,
+              textTheme: Theme.of(context).textTheme.copyWith(
+                    headline6: Theme.of(context).textTheme.headline6.copyWith(
+                          color: Colors.deepPurple,
+                        ),
+                  ),
+              buttonTheme: Theme.of(context).buttonTheme.copyWith(
                     buttonColor: Colors.deepPurple,
-                    textTheme: ButtonTextTheme.primary),
-                tabBarTheme: Theme.of(context).tabBarTheme.copyWith(
+                    textTheme: ButtonTextTheme.primary,
+                  ),
+              tabBarTheme: Theme.of(context).tabBarTheme.copyWith(
                     labelStyle: Theme.of(context).textTheme.overline,
                     unselectedLabelStyle: Theme.of(context).textTheme.overline,
-                    labelPadding: EdgeInsets.all(0))),
+                    labelPadding: EdgeInsets.all(0),
+                  ),
+            ),
             home: FutureBuilder(
                 future: loadApp(context),
                 builder: (context, snapshot) {

@@ -7,12 +7,11 @@ class CrossShrinkedListView extends StatelessWidget {
   final Axis alignment;
   final List<Widget> items;
 
-  CrossShrinkedListView({
-      this.itemCount,
+  CrossShrinkedListView(
+      {this.itemCount,
       this.itemBuilder,
       this.items,
-      this.alignment = Axis.vertical
-  });
+      this.alignment = Axis.vertical});
 
   @override
   Widget build(BuildContext context) {

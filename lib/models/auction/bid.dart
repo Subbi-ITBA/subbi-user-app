@@ -32,16 +32,17 @@ class Bid {
   ------------------------------------------------------------ */
 
   static Future<List<Bid>> getCurrentBids({@required String auctionId}) async {
-    //var jsons = await ServerApi.instance().getCurrentBids(auctionId: auctionId);
+    //var jsons = await ServerApi.instance().getCurrentBids(auctionId: auctionId,);
 
     //return jsons.map((json) => _fromJson(json));    // TODO: Unmock this
     return [
       Bid(
-          amount: 20,
-          date: DateTime.now(),
-          placerUid: null,
-          auctionId: null,
-          bidId: null)
+        amount: 20,
+        date: DateTime.now(),
+        placerUid: null,
+        auctionId: null,
+        bidId: null,
+      )
     ];
   }
 
@@ -50,7 +51,9 @@ class Bid {
   ------------------------------------------------------------ */
 
   static Stream<Bid> getBidsStream({@required String auctionId}) {
-    var jsons = ServerApi.instance().getBidsStream(auctionId: auctionId);
+    var jsons = ServerApi.instance().getBidsStream(
+      auctionId: auctionId,
+    );
 
     return jsons.map((json) => _fromJson(json));
   }

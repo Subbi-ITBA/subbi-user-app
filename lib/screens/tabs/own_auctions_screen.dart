@@ -40,24 +40,31 @@ class OwnAuctionsScreen extends StatelessWidget {
                             "No participas en ninguna subasta!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Theme.of(context).accentColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                              color: Theme.of(context).accentColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         subtitle: Padding(
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
                             onPressed: () {},
-                            child: const Text('Ver subastas',
-                                style: TextStyle(fontSize: 20)),
+                            child: const Text(
+                              'Ver subastas',
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   )
                 : Container(
-                    child: AuctionList(type: "null"),
+                    child: AuctionList(
+                      type: "null",
+                    ),
                   ),
             Container(
               padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
@@ -79,9 +86,10 @@ class OwnAuctionsScreen extends StatelessWidget {
                             "No tienes ninguna subasta activa!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Theme.of(context).accentColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                              color: Theme.of(context).accentColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         subtitle: Padding(
@@ -90,7 +98,9 @@ class OwnAuctionsScreen extends StatelessWidget {
                             onPressed: () {},
                             child: const Text(
                               'Enviar lote',
-                              style: TextStyle(fontSize: 20),
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -98,7 +108,9 @@ class OwnAuctionsScreen extends StatelessWidget {
                     ),
                   )
                 : Container(
-                    child: AuctionList(type: "active"),
+                    child: AuctionList(
+                      type: "active",
+                    ),
                   )
           ],
         ),
