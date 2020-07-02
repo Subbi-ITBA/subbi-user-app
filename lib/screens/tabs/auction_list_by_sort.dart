@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/widgets/auction_card.dart';
 
-class CategoryAuctionsScreen extends StatefulWidget {
+class AuctionListBySortScreen extends StatefulWidget {
+  static const String route = "/auction_list_by_sort";
+  final String sort;
+
+  const AuctionListBySortScreen({Key key, @required this.sort}) : super(key: key);
+
   @override
-  _CategoryAuctionsScreenState createState() => _CategoryAuctionsScreenState();
+  _AuctionListBySortScreenState createState() => _AuctionListBySortScreenState();
 }
 
-class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
-  Map data = {};
+class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
   ScrollController _scrollController;
-  String dropDownVal = 'Novedad';
-
   List<Auction> auctions = [
     Auction(
         title: "Hatsune Miku figure",
@@ -76,18 +77,18 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
         quantity: null),
   ];
   List<Auction> aux = [
-  Auction(
-  title:
-  "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
-  imageURL: [
-  "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
-  ].toList(),
-  deadLine: DateTime.now().add(new Duration(days: 3)),
-  ownerUid: "123",
-  initialPrice: null,
-  category: null,
-  description: null,
-  quantity: null),
+    Auction(
+        title:
+        "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
+        imageURL: [
+          "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
+        ].toList(),
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123",
+        initialPrice: null,
+        category: null,
+        description: null,
+        quantity: null),
     Auction(
         title: "18 quilates Oro blanco - Anillo - 3.03 ct Zafiro - Diamantes",
         imageURL: [
@@ -99,18 +100,18 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
         category: null,
         description: null,
         quantity: null),
-  Auction(
-  title:
-  "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
-  imageURL: [
-  "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
-  ].toList(),
-  deadLine: DateTime.now().add(new Duration(days: 3)),
-  ownerUid: "123",
-  initialPrice: null,
-  category: null,
-  description: null,
-  quantity: null),
+    Auction(
+        title:
+        "14 quilates Oro blanco - Anillo - 1.00 ct Turmalina - Diamantes",
+        imageURL: [
+          "https://assets.catawiki.nl/assets/2020/5/10/b/c/8/bc861d6d-50f7-40b5-a7e7-ded2cc01f98a.jpg"
+        ].toList(),
+        deadLine: DateTime.now().add(new Duration(days: 3)),
+        ownerUid: "123",
+        initialPrice: null,
+        category: null,
+        description: null,
+        quantity: null),
     Auction(
         title: "18 quilates Oro blanco - Anillo - 3.03 ct Zafiro - Diamantes",
         imageURL: [
@@ -124,14 +125,11 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
         quantity: null),
 
   ];
-
-
   @override
   void initState(){
     super.initState();
     print('enter fetch');
     getAuctions();
-    Auction.getLatestAuctions("Bazar", 2, 0);
     _scrollController = ScrollController();
     //TODO FETCH AUCTIONS 20
     _scrollController.addListener(() {
@@ -143,7 +141,7 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
           auctions.addAll(aux);
         });
         //TODO SHOW MORE 20 AUCTIONS
-    }
+      }
     });
   }
 
@@ -155,84 +153,43 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
-
+    final String title = widget.sort.substring(0,1).toUpperCase() + widget.sort.substring(1) + " Auctions";
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(data['category']),
-      ),
-      body: ListView(
-        controller: _scrollController,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(title),
+        ),
+        body: ListView(
+          controller: _scrollController,
 
-        children: <Widget>[
-          Container(
-            height: 25,
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey[400],
-                  width: 1
-                )
-              )
+          children: <Widget>[
+            // TODO Listar auctions
+            GridView.builder(
+                scrollDirection: Axis.vertical,
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,),
+                itemCount: auctions.length,
+                itemBuilder: (context,i){
+                  return AuctionCard(auction: auctions.elementAt(i));
+                }
             ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(5,0,5,0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('${auctions.length} resultados'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text('Ordernar por: '),
-                      DropdownButton<String>(
-                        value: dropDownVal,
-                        onChanged: (String newVal){
-                          setState(() {
-                            dropDownVal = newVal;
-                          });
-                        },
-                        items: <String>['Novedad','Popular','Finalizando']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  ),
-              ],),
-            )
-          ),
-          // TODO Listar auctions
-          GridView.builder(
-            scrollDirection: Axis.vertical,
-              physics: ScrollPhysics(),
-            shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,),
-            itemCount: auctions.length,
-            itemBuilder: (context,i){
-              return AuctionCard(auction: auctions.elementAt(i));
-            }
-          ),
-        ],
-      )
+          ],
+        )
     );
   }
 
   void getAuctions() {
-    switch(dropDownVal){
-      case "Novedad":
-        Auction.getLatestAuctions(data['category'], 20, 0);
+    switch(widget.sort){
+      case "popularity":
+        Auction.getPopularAuctions(null, 20, 0);
         break;
-      case "Popular":
-        Auction.getPopularAuctions(data['category'], 20, 0);
+      case "latest":
+        Auction.getLatestAuctions(null, 20, 0);
         break;
-      case "Finalizando":
-        Auction.getEndingAuctions(data['category'], 20, 0);
+      case "deadline":
+        Auction.getEndingAuctions(null, 20, 0);
         break;
     }
   }

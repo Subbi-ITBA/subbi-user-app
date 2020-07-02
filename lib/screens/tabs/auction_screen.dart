@@ -1,10 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
-import 'package:subbi/models/user.dart';
 
 Map data;
 
@@ -24,7 +24,6 @@ class AuctionScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            size: 35,
             color: Colors.white,
           ),
           onPressed: () => Navigator.pop(context),
@@ -53,76 +52,183 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      children: <Widget>[
-        ImageSlider(imageUrl: this.auction.imageURL),
-        Expanded(
-          child: Container(
-            width: size.width,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    this.auction.title,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ImageSlider(imageUrl: this.auction.imageURL),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Container(
+              width: size.width,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      this.auction.title,
+                      softWrap: true,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
                     ),
                   ),
-                ),
-                Divider(),
-                UserInfo(userId: auction.ownerUid),
-                Divider(),
-              ],
+                  Divider(color: Colors.grey),
+                  UserInfo(),
+                  Divider(color: Colors.grey),
+                  AuctionDescription(auction: this.auction),
+                  Divider(color: Colors.grey),
+                  BidList()
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// class Body2 extends StatelessWidget {
-//   final Auction auction;
-//   Body2({@required this.auction,});
-//   @override
-//   Widget build(BuildContext context) {
-//     Size size = MediaQuery.of(context).size;
+class AuctionDescription extends StatelessWidget {
+  final Auction auction;
+  AuctionDescription({@required this.auction});
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+        child: Column(children: <Widget>[
+      Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Descripción",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+      Row(children: <Widget>[
+        Flexible(
+            child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  this.auction.description,
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                )))
+      ])
+    ]));
+  }
+}
 
-//     return Column(
-//       children: <Widget>[
-//         Container(
-//           height: size.height * 0.4,
-//           child: Stack(
-//             children: <Widget>[
-//               Container(
-//                 height: size.height * 0.4 - 50,
-//                 decoration: BoxDecoration(
-//                   image: DecorationImage(
-//                     image: NetworkImage(this.auction.imageURL.first),
-//                     fit: BoxFit.cover,
-//                   ),
-//                 ),
-//               )
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
+class BidList extends StatefulWidget {
+  @override
+  _BidListState createState() => _BidListState();
+}
+
+class _BidListState extends State<BidList> {
+  List<Bid> bidList;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Pujas",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).accentColor,
+            ),
+          ),
+        ),
+        Card(
+          child: Column(
+            children: <Widget>[
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null),
+              BidderInfo(bid: null)
+            ],
+          ),
+        ),
+      ],
+    ));
+  }
+}
+
+class BidderInfo extends StatelessWidget {
+  final Bid bid;
+
+  BidderInfo({@required this.bid});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
+                    )),
+              ),
+              Text(
+                "Susana Horia",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+              Text(
+                "25-07-2020 18:65:65",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+              Text(
+                "\$35",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
+              ),
+            ],
+          ),
+        ));
+  }
+}
 
 class UserInfo extends StatelessWidget {
   final String userId;
@@ -132,55 +238,133 @@ class UserInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
-      future: Profile.getProfile(ofUid: userId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+        future: Profile.getProfile(ofUid: userId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        Profile profile = snapshot.data;
+          Profile profile = snapshot.data;
 
-        return Row(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(
-                      profile.profilePicURL,
-                    ),
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text("Vendedor",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ))
+                        ],
+                      )
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Text(
-                      profile.name,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).accentColor,
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                            child: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                  profile.profilePicURL,
+                                )),
+                          ),
+                        ],
                       ),
-                    ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {},
+                              child: Text(
+                                profile.name,
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            "Nuestro experto",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                            child: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                    "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {},
+                              child: Text(
+                                "Clark Kent",
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }
 
@@ -230,8 +414,7 @@ class AuctionInfo extends StatelessWidget {
                   FutureBuilder<List<Bid>>(
                     future: Bid.getCurrentBids(auctionId: auction.auctionId),
                     builder: (context, snap) {
-
-                      if(snap.connectionState == ConnectionState.waiting){
+                      if (snap.connectionState == ConnectionState.waiting) {
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -479,9 +662,9 @@ class ImageSlider extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return CarouselSlider(
       options: CarouselOptions(
-        height: size.height * 0.37,
+        height: size.height * 0.35,
         aspectRatio: 16 / 9,
-        viewportFraction: 0.65,
+        viewportFraction: 0.5,
         initialPage: 0,
         enlargeCenterPage: true,
         enableInfiniteScroll: true,

@@ -11,6 +11,7 @@ import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
 import 'package:subbi/screens/tabs/auction_screen.dart';
 import 'package:subbi/screens/tabs/category_auctions_screen.dart';
+import 'package:subbi/screens/tabs/auction_list_by_sort.dart';
 import 'apis/remote_config_api.dart';
 import 'apis/server_api.dart';
 import 'models/user.dart';
@@ -26,6 +27,20 @@ class MyApp extends StatelessWidget {
         key: GlobalKey(),
         value: user,
         child: MaterialApp(
+          onGenerateRoute: (settings){
+            final Map arg = settings.arguments;
+            if(settings.name == AuctionListBySortScreen.route){
+              return MaterialPageRoute(
+                builder: (context){
+                  return AuctionListBySortScreen(
+                    sort: arg['sort']
+                  );
+                }
+              );
+            }
+            assert(false, 'Need to implement ${settings.name}');
+            return null;
+            },
             routes: {
               "/home": (context) => HomeScreen(),
               "/profile": (context) => ProfileScreen(),
@@ -35,7 +50,7 @@ class MyApp extends StatelessWidget {
               "/auction": (context) => AuctionScreen(),
               "/signin": (context) => SigninScreen(),
               "/signup": (context) => SignupScreen(),
-              "/category_auctions": (context) => CategoryAuctionsScreen()
+              "/category_auctions": (context) => CategoryAuctionsScreen(),
             },
             theme: ThemeData(
                 backgroundColor: Colors.grey[200],

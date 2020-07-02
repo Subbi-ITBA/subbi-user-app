@@ -39,8 +39,10 @@ class CategoryList extends StatelessWidget {
               height: 60,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(180.0)),
+                color: Colors.white,
                 border: Border.all(
                   width: 1,
+                  color: Colors.grey
                 ),
               ),
               child: Icon(IconData(int.parse('0x${categories[i].iconName}'), fontFamily: 'MaterialIcons'),size: 40,color: Colors.deepPurple)),
@@ -55,5 +57,4 @@ class CategoryList extends StatelessWidget {
       );
     }));
     }
-
 }

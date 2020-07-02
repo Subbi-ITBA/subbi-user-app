@@ -46,32 +46,36 @@ class Auction {
     Get latest auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getLatestAuctions(Category category) async {
+  static Future<List<Auction>> getLatestAuctions(String category, int limit, int offset) async {
+    print('enter serverapi');
     var jsons =
-        await ServerApi.instance().getLatestAuctions(category: category);
+        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'latest');
 
-    return jsons.map((json) => _fromJson(json));
+//    return jsons.map((json) => _fromJson(json));
+    return null;
   }
 
   /* ------------------------------------------------------------
     Get popular auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getPopularAuctions(Category category) async {
+  static Future<List<Auction>> getPopularAuctions(String category, int limit, int offset) async {
     var jsons =
-        await ServerApi.instance().getPopularAuctions(category: category);
+        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'popularity');
 
-    return jsons.map((json) => _fromJson(json));
+//    return jsons.map((json) => _fromJson(json));
+  return null;
   }
 
   /* ------------------------------------------------------------
     Get ending auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getEndingAuctions() async {
-    var jsons = await ServerApi.instance().getEndingAuctions();
+  static Future<List<Auction>> getEndingAuctions(String category, int limit, int offset) async {
+    var jsons = await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset, sort: 'deadline');
 
-    return jsons.map((json) => _fromJson(json));
+//    return jsons.map((json) => _fromJson(json));
+  return null;
   }
 
 

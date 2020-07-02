@@ -17,30 +17,34 @@ class OwnAuctionsScreen extends StatelessWidget {
     // if (!user.isSignedIn()) return UnauthenticatedBox();
 
     return Scaffold(
-        body: SafeArea(
-            child: ListView(
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
-            child: Text(
-              'Subastas activas',
-              style: Theme.of(context).textTheme.headline6,
-            )),
-        cantBids == 0
-            ? Container(
-                width: 300,
-                child: Card(
-                    margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
-                    elevation: 2,
-                    child: ListTile(
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
+              child: Text(
+                'Subastas activas',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            cantBids == 0
+                ? Container(
+                    width: 300,
+                    child: Card(
+                      margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
+                      elevation: 2,
+                      child: ListTile(
                         title: Padding(
-                            padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
-                            child: Text("No participas en ninguna subasta!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold))),
+                          padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
+                          child: Text(
+                            "No participas en ninguna subasta!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).accentColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         subtitle: Padding(
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
@@ -48,40 +52,57 @@ class OwnAuctionsScreen extends StatelessWidget {
                             child: const Text('Ver subastas',
                                 style: TextStyle(fontSize: 20)),
                           ),
-                        ))))
-            : Container(child: AuctionList(type: "null")),
-        Container(
-          padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
-          child: Text(
-            'Tus subastas',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ),
-        cantAuct == 0
-            ? Container(
-                width: 300,
-                child: Card(
-                    margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
-                    elevation: 2,
-                    child: ListTile(
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    child: AuctionList(type: "null"),
+                  ),
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
+              child: Text(
+                'Tus subastas',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            cantAuct == 0
+                ? Container(
+                    width: 300,
+                    child: Card(
+                      margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
+                      elevation: 2,
+                      child: ListTile(
                         title: Padding(
-                            padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
-                            child: Text("No tienes ninguna subasta activa!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold))),
+                          padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
+                          child: Text(
+                            "No tienes ninguna subasta activa!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).accentColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         subtitle: Padding(
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
                             onPressed: () {},
-                            child: const Text('Enviar lote',
-                                style: TextStyle(fontSize: 20)),
+                            child: const Text(
+                              'Enviar lote',
+                              style: TextStyle(fontSize: 20),
+                            ),
                           ),
-                        ))))
-            : Container(child: AuctionList(type: "active"))
-      ],
-    )));
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    child: AuctionList(type: "active"),
+                  )
+          ],
+        ),
+      ),
+    );
   }
 }
