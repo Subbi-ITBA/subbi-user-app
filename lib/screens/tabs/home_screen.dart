@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:subbi/screens/tabs/auction_list_by_sort.dart';
 import 'package:subbi/widgets/ads_carrousel.dart';
 import 'package:subbi/widgets/category_list.dart';
 import 'package:subbi/widgets/auction_list.dart';
@@ -7,10 +8,10 @@ import 'package:subbi/models/user.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
@@ -100,7 +101,11 @@ class HomeScreen extends StatelessWidget {
                       children: <Widget>[
                         Text('Más populares', style: TextStyle(fontSize: 20)),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'sort': "popularity",
+                            });
+                          },
                           child: Text(
                             'Ver más',
                             style: TextStyle(color: Colors.deepPurpleAccent),
@@ -115,7 +120,11 @@ class HomeScreen extends StatelessWidget {
                       children: <Widget>[
                         Text('Novedades', style: TextStyle(fontSize: 20)),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'sort': "latest",
+                            });
+                          },
                           child: Text(
                             'ver más',
                             style: TextStyle(color: Colors.deepPurpleAccent),

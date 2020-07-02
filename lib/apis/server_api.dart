@@ -153,36 +153,17 @@ class ServerApi {
   }
 
 
-  Future<List<Auction>> getPopularAuctions ({@required String category, @required int limit, @required int offset}) async {
+  Future<List<Auction>> getAuctionsBySort ({@required String category, @required int limit, @required int offset, @required String sort}) async {
     print('entro');
     var cat = category.toString().substring(category.toString().indexOf(".") + 1).toLowerCase();
-    String path = category == null ? '/auction/list?sort=popularity&limit=$limit&offset=$offset' : '/auction/list?sort=popularity&limit=$limit&offset=$offset&category=$cat';
-    print(path);
-    var req = await client.get(host,port,path);
-    var res = await req.close();
-    if(res.statusCode != 200){
-      ErrorLogger.log(context: "Getting popular auctions", error: res.reasonPhrase);
-    }
-    await for (var contents in res.transform(Utf8Decoder())){
-      print(contents);
-    }
-    print('');
-    print('hola');
-    return null;
-  }
-
-
-  Future<List<Auction>> getLatestAuctions({@required String category, @required int limit, @required int offset}) async{
-    print('entro');
-    var cat = category.toString().substring(category.toString().indexOf(".") + 1).toLowerCase();
-    String path = category == null ? '/auction/list?sort=latest&limit=$limit&offset=$offset' : '/auction/list?sort=latest&limit=$limit&offset=$offset&category=$cat';
+    String path = category == null ? '/auction/list?sort=$sort&limit=$limit&offset=$offset' : '/auction/list?sort=$sort&limit=$limit&offset=$offset&category=$cat';
     print(path);
     var req = await client.get(host,port,path);
     print('jejeje 1');
     var res = await req.close();
     print('jejeje 2');
     if(res.statusCode != 200){
-      ErrorLogger.log(context: 'Getting latest auctions', error: res.reasonPhrase);
+      ErrorLogger.log(context: 'Getting $sort auctions', error: res.reasonPhrase);
     }
     await for (var contents in res.transform(Utf8Decoder())){
       print(contents);
@@ -192,26 +173,6 @@ class ServerApi {
     return null;
   }
 
-
-  Future<List<Auction>> getEndingAuctions({@required String category, @required int limit, @required int offset}) async{
-    print('entro');
-    var cat = category.toString().substring(category.toString().indexOf(".") + 1).toLowerCase();
-    String path = category == null ? '/auction/list?sort=deadline&limit=$limit&offset=$offset' : '/auction/list?sort=deadline&limit=$limit&offset=$offset&category=$cat';
-    print(path);
-    var req = await client.get(host,port,path);
-    print('jejeje 1');
-    var res = await req.close();
-    print('jejeje 2');
-    if(res.statusCode != 200){
-      ErrorLogger.log(context: 'Getting latest auctions', error: res.reasonPhrase);
-    }
-    await for (var contents in res.transform(Utf8Decoder())){
-      print(contents);
-    }
-    print('');
-    print('hola');
-    return null;
-  }
 
   Future<void> postAuction({@required Map<String, dynamic> auctionJson}) {
     throw UnimplementedError();
@@ -221,6 +182,18 @@ class ServerApi {
     throw UnimplementedError();
   }
 
+  Future<List<Auction>> getParticipatingAuctions({@required String uid, @required limit, @required offset}) async{
+    var req = await client.get(host, port, '/auction/list/');
+    var res = await req.close();
+    if(res.statusCode != 200){
+      ErrorLogger.log(context: 'Getting user participating auctions', error: res.reasonPhrase);
+    }
+    await for (var contents in res.transform(Utf8Decoder())){
+      print(contents);
+    }
+    return null;
+
+  }
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                       LOTS
   ------------------------------------------------------------------------------------------------------------------------------- */

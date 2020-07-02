@@ -49,7 +49,7 @@ class Auction {
   static Future<List<Auction>> getLatestAuctions(String category, int limit, int offset) async {
     print('enter serverapi');
     var jsons =
-        await ServerApi.instance().getLatestAuctions(category: category, limit: limit, offset: offset);
+        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'latest');
 
 //    return jsons.map((json) => _fromJson(json));
     return null;
@@ -61,7 +61,7 @@ class Auction {
 
   static Future<List<Auction>> getPopularAuctions(String category, int limit, int offset) async {
     var jsons =
-        await ServerApi.instance().getPopularAuctions(category: category, limit: limit, offset: offset);
+        await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset,sort: 'popularity');
 
 //    return jsons.map((json) => _fromJson(json));
   return null;
@@ -71,8 +71,8 @@ class Auction {
     Get ending auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getEndingAuctions() async {
-    var jsons = await ServerApi.instance().getEndingAuctions();
+  static Future<List<Auction>> getEndingAuctions(String category, int limit, int offset) async {
+    var jsons = await ServerApi.instance().getAuctionsBySort(category: category, limit: limit, offset: offset, sort: 'deadline');
 
 //    return jsons.map((json) => _fromJson(json));
   return null;
