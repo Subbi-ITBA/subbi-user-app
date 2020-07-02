@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/login/signin_boxes/email_signin_box.dart';
 import 'package:subbi/screens/login/signin_boxes/google_signin_box.dart';
-import 'package:subbi/screens/login/signup_screen.dart';
 
 BuildContext screenContext;
 
