@@ -160,7 +160,6 @@ class ServerApi {
       @required int limit,
       @required int offset,
       @required String sort}) async {
-    print('entro');
     var cat = category
         .toString()
         .substring(category.toString().indexOf(".") + 1)
@@ -170,9 +169,9 @@ class ServerApi {
         : '/auction/list?sort=$sort&limit=$limit&offset=$offset&category=$cat';
     print(path);
     var req = await client.get(host, port, path);
-    print('jejeje 1');
+
     var res = await req.close();
-    print('jejeje 2');
+
     if (res.statusCode != 200) {
       ErrorLogger.log(
           context: 'Getting $sort auctions', error: res.reasonPhrase);
@@ -180,8 +179,7 @@ class ServerApi {
     await for (var contents in res.transform(Utf8Decoder())) {
       print(contents);
     }
-    print('');
-    print('hola');
+
     return null;
   }
 
@@ -238,7 +236,17 @@ class ServerApi {
                                                       BIDS
   ------------------------------------------------------------------------------------------------------------------------------- */
 
-  Future<List<Bid>> getCurrentBids({@required String auctionId}) {}
+  Future<List<Bid>> getCurrentBids(
+      {@required String auctionId, @required offset, @required limit}) async {
+    var req = await client.post(host, port,
+        '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset");
+    req.cookies.add(sessionCookie);
+
+    var res = await req.close();
+
+    if (res.statusCode != 201)
+      ErrorLogger.log(context: "Get current bids", error: res.reasonPhrase);
+  }
 
   Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}) {
     throw UnimplementedError();
