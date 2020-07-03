@@ -213,6 +213,31 @@ class ServerApi {
     throw UnimplementedError();
   }
 
+/* -------------------------------------------------------------------------------------------------------------------------------
+                                                      CATEGORY
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  /* ----------------------------------------------------------------------------
+   Get all categories
+   //TODO: Implement
+  ---------------------------------------------------------------------------- */
+
+  Future<List<Map<String, dynamic>>> getCategories() async{
+    var res = await http.get(host + '/lot/categories',headers: {
+      'Content-Type': 'application/json',
+      'Cookie': sessionCookie,
+      },
+    );
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting categories',
+        error: res.reasonPhrase,
+      );
+    }
+    print(res.body);
+    return List<Map<String,dynamic>>.from(jsonDecode(res.body));
+  }
+
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                       AUCTION
   ------------------------------------------------------------------------------------------------------------------------------- */
@@ -457,4 +482,4 @@ enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
 
-enum AuctionSort { LATEST, POPULARITY, DEADLINE }
+enum AuctionSort { CREATION_DATE, POPULARITY, DEADLINE }

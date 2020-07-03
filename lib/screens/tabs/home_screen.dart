@@ -107,6 +107,11 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+                    Text('Categorias',
+                      style: TextStyle(
+                        fontSize: 20
+                      ),
+                    ),
                     CategoryList(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
