@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (context){
                   return AuctionListBySortScreen(
-                    sort: arg['sort']
+                    sort: arg['sort'],
+                    title: arg['title']
                   );
                 }
               );

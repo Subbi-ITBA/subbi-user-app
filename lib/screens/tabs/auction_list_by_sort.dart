@@ -6,8 +6,9 @@ import 'package:subbi/widgets/auction_card.dart';
 class AuctionListBySortScreen extends StatefulWidget {
   static const String route = "/auction_list_by_sort";
   final String sort;
+  final String title;
 
-  const AuctionListBySortScreen({Key key, @required this.sort}) : super(key: key);
+  const AuctionListBySortScreen({Key key, @required this.sort, @required this.title}) : super(key: key);
 
   @override
   _AuctionListBySortScreenState createState() => _AuctionListBySortScreenState();
@@ -153,11 +154,10 @@ class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String title = widget.sort.substring(0,1).toUpperCase() + widget.sort.substring(1) + " Auctions";
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(title),
+          title: Text(widget.title),
         ),
         body: ListView(
           controller: _scrollController,

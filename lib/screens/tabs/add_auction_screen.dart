@@ -6,6 +6,7 @@ import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
 import 'dart:convert';
+import 'package:subbi/widgets/image_uploader_view.dart';
 
 class AddAuctionScreen extends StatefulWidget {
   @override
@@ -157,6 +158,8 @@ class _State extends State<AddAuctionScreen> {
                                     ? "Precio inicial debe ser un numero mayor a cero"
                                     : null,
                               )),
+                          Text('Incluya fotos del producto (al menos 3)'),
+                          ImageUploaderView(),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[_buildSendLotButton()],

@@ -103,6 +103,7 @@ class HomeScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'title': 'Más populares',
                               'sort': "popularity",
                             });
                           },
@@ -122,6 +123,7 @@ class HomeScreen extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'title': 'Novedades',
                               'sort': "latest",
                             });
                           },
