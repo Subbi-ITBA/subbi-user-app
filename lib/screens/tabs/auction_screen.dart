@@ -442,7 +442,30 @@ class AuctionInfo extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Theme.of(context).primaryColor),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    20.0)), //this right here
+                            child: StreamBuilder<void>(
+                              stream: Bid.getBidsStream(
+                                  auctionId: this.auction.auctionId),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.none:
+                                    return LinearProgressIndicator();
+                                  case ConnectionState.active:
+                                  case ConnectionState.done:
+                                    return _bidDialog();
+                                }
+                              },
+                            ));
+                      });
+                },
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 icon: Icon(Icons.gavel),
@@ -474,6 +497,8 @@ class AuctionInfo extends StatelessWidget {
     );
   }
 }
+
+Widget _bidDialog() {}
 
 class DeadlineTimer extends StatelessWidget {
   final Auction auction;
