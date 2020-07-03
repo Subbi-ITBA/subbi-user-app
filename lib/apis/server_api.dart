@@ -320,7 +320,24 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Bid>> getCurrentBids({@required String auctionId}) {}
+  Future<List<Bid>> getCurrentBids({
+    @required String auctionId,
+    @required offset,
+    @required limit,
+  }) async {
+    var res = await http.get(
+        host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': sessionCookie,
+        });
+
+    if (res.statusCode != 201)
+      ErrorLogger.log(
+        context: "Get current bids",
+        error: res.reasonPhrase,
+      );
+  }
 
   /* ----------------------------------------------------------------------------
    Get a stream of bids of an auction
