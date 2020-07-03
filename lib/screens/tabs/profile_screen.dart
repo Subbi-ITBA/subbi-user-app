@@ -161,15 +161,17 @@ class ProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             profile.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2
-                                .copyWith(color: Colors.white),
+                            style:
+                                Theme.of(context).textTheme.bodyText2.copyWith(
+                                      color: Colors.white,
+                                    ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: FollowButton(following: profile.following),
+                          child: FollowButton(
+                            following: profile.following,
+                          ),
                         ),
                       ]),
                 ),
@@ -183,30 +185,27 @@ class ProfileScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Ubicación',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                                color: Colors.white,
+                              ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           profile.location,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyText2.copyWith(
+                                color: Colors.white,
+                              ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Reputación',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              .copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                                color: Colors.white,
+                              ),
                         ),
                       ),
                       Padding(
@@ -220,7 +219,9 @@ class ProfileScreen extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
-                                          .copyWith(color: Colors.white),
+                                          .copyWith(
+                                            color: Colors.white,
+                                          ),
                                     )
                                   : CircularProgressIndicator(),
                         ),
@@ -322,12 +323,13 @@ class ProfileScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: SmoothStarRating(
-                starCount: 5,
-                rating: averageRating,
-                size: 30.0,
-                color: Colors.orangeAccent,
-                borderColor: Colors.orangeAccent,
-                spacing: 0.0),
+              starCount: 5,
+              rating: averageRating,
+              size: 30.0,
+              color: Colors.orangeAccent,
+              borderColor: Colors.orangeAccent,
+              spacing: 0.0,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -386,10 +388,9 @@ class ProfileScreen extends StatelessWidget {
                   Icon(Icons.star),
                   Text(
                     "${rating.rate}   ${rating.comment}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        .copyWith(color: Colors.grey[600]),
+                    style: Theme.of(context).textTheme.bodyText2.copyWith(
+                          color: Colors.grey[600],
+                        ),
                   ),
                 ],
               ),

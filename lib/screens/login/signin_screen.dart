@@ -30,8 +30,11 @@ class SigninScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/logo.png',
-                            height: 70, width: 70),
+                        child: Image.asset(
+                          'assets/logo.png',
+                          height: 70,
+                          width: 70,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -63,7 +66,10 @@ class SigninScreen extends StatelessWidget {
 
   void signIn(FirebaseUser fbUser) async {
     // Initialize user
-    User user = Provider.of<User>(screenContext, listen: false);
+    User user = Provider.of<User>(
+      screenContext,
+      listen: false,
+    );
     user.initialize(fbUser);
 
     // If user is new, go to sign up screen

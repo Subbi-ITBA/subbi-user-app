@@ -19,10 +19,17 @@ class _AdsCarrouselState extends State<AdsCarrousel> {
               width: double.infinity,
               height: 125,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black)),
-              child: Image.asset('$i',
-                  height: 125, width: double.infinity, fit: BoxFit.contain),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.black,
+                ),
+              ),
+              child: Image.asset(
+                '$i',
+                height: 125,
+                width: double.infinity,
+                fit: BoxFit.contain,
+              ),
             );
           },
         );

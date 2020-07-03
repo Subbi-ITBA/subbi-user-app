@@ -46,7 +46,7 @@ class Profile {
         chat: null,
         following: false,
       );
-  // _fromJson(await ServerApi.instance().getProfile(uid: ofUid));
+  // _fromJson(await ServerApi.instance().getProfile(uid: ofUid,));
   // TODO: Unmock
 
   /* ------------------------------------------------------------------------------------------------------------------------
@@ -57,15 +57,21 @@ class Profile {
     Follow this user
   ------------------------------------------------------------ */
 
-  Future<void> follow() => ServerApi.instance()
-      .followProfile(uid: user.fbUser.uid, followUid: uid, follow: true);
+  Future<void> follow() => ServerApi.instance().followProfile(
+        uid: user.fbUser.uid,
+        followUid: uid,
+        follow: true,
+      );
 
   /* ------------------------------------------------------------
     Unfollow this user
   ------------------------------------------------------------ */
 
-  Future<void> unfollow() => ServerApi.instance()
-      .followProfile(uid: user.fbUser.uid, followUid: uid, follow: false);
+  Future<void> unfollow() => ServerApi.instance().followProfile(
+        uid: user.fbUser.uid,
+        followUid: uid,
+        follow: false,
+      );
 
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  RATINGS
@@ -89,11 +95,12 @@ class Profile {
 
   void rate(String comment, int rate) {
     var newRating = ProfileRating(
-        comment: comment,
-        rate: rate,
-        date: DateTime.now(),
-        ratedUserProfile: this,
-        ratingUserProfile: user.profile);
+      comment: comment,
+      rate: rate,
+      date: DateTime.now(),
+      ratedUserProfile: this,
+      ratingUserProfile: user.profile,
+    );
 
     _ratings.add(newRating);
 

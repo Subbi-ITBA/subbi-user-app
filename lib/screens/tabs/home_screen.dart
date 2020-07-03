@@ -8,7 +8,6 @@ import 'package:subbi/models/user.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -16,19 +15,27 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           leading: IconButton(
-              icon: Image.asset('assets/logo-white.png', scale: 0.8),
+              icon: Image.asset(
+                'assets/logo-white.png',
+                scale: 0.8,
+              ),
               splashColor: Colors.transparent,
               onPressed: () {}),
           title: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: TextField(
               decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  hintText: 'Buscar productos'),
+                prefixIcon: Icon(Icons.search),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                hintText: 'Buscar productos',
+              ),
             ),
           ),
 //          title: TextField(
@@ -38,9 +45,9 @@ class HomeScreen extends StatelessWidget {
 //                filled: true,
 //                fillColor: Colors.white,
 //                border: OutlineInputBorder(
-//                    borderSide: BorderSide(color: Colors.grey),
-//                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
-//                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0)),
+//                    borderSide: BorderSide(color: Colors.grey,),
+//                    borderRadius: BorderRadius.all(Radius.circular(32.0),),),
+//                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),),
 //          ),
           centerTitle: true,
           actions: <Widget>[
@@ -64,7 +71,10 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     user.isSignedIn()
-                        ? Container(height: 0, width: 0)
+                        ? Container(
+                            height: 0,
+                            width: 0,
+                          )
                         : Card(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -72,7 +82,9 @@ class HomeScreen extends StatelessWidget {
                                 children: <Widget>[
                                   Text(
                                     'Create una cuenta para tener una mejor experiencia!',
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
                                   RaisedButton(
                                     onPressed: () {
@@ -99,16 +111,24 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text('Más populares', style: TextStyle(fontSize: 20)),
+                        Text(
+                          'Más populares',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'title': 'Más populares',
                               'sort': "popularity",
                             });
                           },
                           child: Text(
                             'Ver más',
-                            style: TextStyle(color: Colors.deepPurpleAccent),
+                            style: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                            ),
                           ),
                         )
                       ],
@@ -118,16 +138,24 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text('Novedades', style: TextStyle(fontSize: 20)),
+                        Text(
+                          'Novedades',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(context, AuctionListBySortScreen.route,arguments:{
+                              'title': 'Novedades',
                               'sort': "latest",
                             });
                           },
                           child: Text(
                             'ver más',
-                            style: TextStyle(color: Colors.deepPurpleAccent),
+                            style: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                            ),
                           ),
                         )
                       ],

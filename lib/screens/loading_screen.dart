@@ -13,15 +13,20 @@ class LoadingScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Stack(alignment: Alignment.center, children: <Widget>[
-                Image.asset('assets/logo.png',
-                    width: _loadingLogoSize, height: _loadingLogoSize),
-                SizedBox(
-                    child: CircularProgressIndicator(),
-                    height: _loadingCircleSize,
-                    width: _loadingCircleSize),
-              ])),
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(alignment: Alignment.center, children: <Widget>[
+              Image.asset(
+                'assets/logo.png',
+                width: _loadingLogoSize,
+                height: _loadingLogoSize,
+              ),
+              SizedBox(
+                child: CircularProgressIndicator(),
+                height: _loadingCircleSize,
+                width: _loadingCircleSize,
+              ),
+            ]),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(

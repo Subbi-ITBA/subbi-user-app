@@ -30,17 +30,27 @@ class AuctionScreen extends StatelessWidget {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.favorite, color: Colors.white),
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.white),
+            icon: Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
-      body: Body(auction: auction),
-      bottomNavigationBar: AuctionInfo(auction: auction),
+      body: Body(
+        auction: auction,
+      ),
+      bottomNavigationBar: AuctionInfo(
+        auction: auction,
+      ),
     );
   }
 }
@@ -56,17 +66,21 @@ class Body extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          ImageSlider(imageUrl: this.auction.imageURL),
+          ImageSlider(
+            imageUrl: this.auction.imageURL,
+          ),
           Flexible(
             fit: FlexFit.loose,
             child: Container(
               width: size.width,
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -76,16 +90,25 @@ class Body extends StatelessWidget {
                       this.auction.title,
                       softWrap: true,
                       style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
-                  Divider(color: Colors.grey),
+                  Divider(
+                    color: Colors.grey,
+                  ),
                   UserInfo(),
-                  Divider(color: Colors.grey),
-                  AuctionDescription(auction: this.auction),
-                  Divider(color: Colors.grey),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  AuctionDescription(
+                    auction: this.auction,
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                  ),
                   BidList()
                 ],
               ),
@@ -168,11 +191,21 @@ class _BidListState extends State<BidList> {
         Card(
           child: Column(
             children: <Widget>[
-              BidderInfo(bid: null),
-              BidderInfo(bid: null),
-              BidderInfo(bid: null),
-              BidderInfo(bid: null),
-              BidderInfo(bid: null)
+              BidderInfo(
+                bid: null,
+              ),
+              BidderInfo(
+                bid: null,
+              ),
+              BidderInfo(
+                bid: null,
+              ),
+              BidderInfo(
+                bid: null,
+              ),
+              BidderInfo(
+                bid: null,
+              )
             ],
           ),
         ),
@@ -198,31 +231,35 @@ class BidderInfo extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                    radius: 25,
-                    backgroundImage: NetworkImage(
-                      "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
-                    )),
+                  radius: 25,
+                  backgroundImage: NetworkImage(
+                    "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
+                  ),
+                ),
               ),
               Text(
                 "Susana Horia",
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
               ),
               Text(
                 "25-07-2020 18:65:65",
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
               ),
               Text(
                 "\$35",
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
               ),
             ],
           ),
@@ -233,12 +270,17 @@ class BidderInfo extends StatelessWidget {
 class UserInfo extends StatelessWidget {
   final String userId;
 
-  const UserInfo({Key key, this.userId}) : super(key: key);
+  const UserInfo({Key key, this.userId})
+      : super(
+          key: key,
+        );
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
-        future: Profile.getProfile(ofUid: userId),
+        future: Profile.getProfile(
+          ofUid: userId,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -277,10 +319,11 @@ class UserInfo extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
                             child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(
-                                  profile.profilePicURL,
-                                )),
+                              radius: 25,
+                              backgroundImage: NetworkImage(
+                                profile.profilePicURL,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -334,9 +377,11 @@ class UserInfo extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
                             child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(
-                                    "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png")),
+                              radius: 25,
+                              backgroundImage: NetworkImage(
+                                "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png",
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -412,7 +457,9 @@ class AuctionInfo extends StatelessWidget {
                     ),
                   ),
                   FutureBuilder<List<Bid>>(
-                    future: Bid.getCurrentBids(auctionId: auction.auctionId),
+                    future: Bid.getCurrentBids(
+                      auctionId: auction.auctionId,
+                    ),
                     builder: (context, snap) {
                       if (snap.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -428,9 +475,10 @@ class AuctionInfo extends StatelessWidget {
                         child: Text(
                           bids.last.amount.toString(),
                           style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       );
                     },
@@ -471,7 +519,9 @@ class AuctionInfo extends StatelessWidget {
                 icon: Icon(Icons.gavel),
                 label: Text(
                   "Pujar".toUpperCase(),
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],
@@ -484,12 +534,15 @@ class AuctionInfo extends StatelessWidget {
                 child: Text(
                   "Termina en:",
                   style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                    color: Colors.grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              DeadlineTimer(auction: this.auction),
+              DeadlineTimer(
+                auction: this.auction,
+              ),
             ],
           ),
         ],
@@ -508,7 +561,11 @@ class DeadlineTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Stream.periodic(Duration(seconds: 1), (i) => i),
+      stream: Stream.periodic(
+          Duration(
+            seconds: 1,
+          ),
+          (i) => i),
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         Duration leftingTime = this.auction.deadLine.difference(DateTime.now());
         int days = leftingTime.inDays;
@@ -547,7 +604,9 @@ class DeadlineTimer extends StatelessWidget {
                   "Días",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Theme.of(context).accentColor, fontSize: 12),
+                    color: Theme.of(context).accentColor,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -701,8 +760,13 @@ class ImageSlider extends StatelessWidget {
               return Container(
                 margin: EdgeInsets.all(15.0),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  child: Image.network('$i', fit: BoxFit.fill),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5.0),
+                  ),
+                  child: Image.network(
+                    '$i',
+                    fit: BoxFit.fill,
+                  ),
                 ),
               );
             },
