@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/profile/profile.dart';
+import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,6 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-    //client = client ?? HttpClient();
     return _singleton;
   }
 
@@ -95,11 +95,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201) {
       ErrorLogger.log(
         context: "Signing up",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* ----------------------------------------------------------------------------
@@ -117,11 +118,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 200)
+    if (res.statusCode != 200) {
       ErrorLogger.log(
         context: "Deleting account",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -153,7 +155,7 @@ class ServerApi {
     var json = jsonDecode(res.body);
 
     return new Profile(
-      uid: json["id"],
+      profileUid: json["id"],
       name: json["name"] + " " + json["last_name"],
       location: json["location"],
       profilePicURL: null,
@@ -194,9 +196,8 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<void> rateProfile({
-    @required String uid,
     @required String rateUid,
-    @required int rating,
+    @required int rate,
   }) {
     throw UnimplementedError();
   }
@@ -206,7 +207,7 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getRatings({
+  Future<List<ProfileRating>> getRatings({
     @required String ofUid,
   }) {
     throw UnimplementedError();
@@ -303,7 +304,7 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getParticipatingAuctions({
+  Future<List<Auction>> getParticipatingAuctions({
     @required String uid,
     @required limit,
     @required offset,
@@ -323,7 +324,17 @@ class ServerApi {
       );
     }
 
-    return jsonDecode(res.body);
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Auction(
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: json["owner_id"],
+        imageURL: null,
+      ),
+    );
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -356,11 +367,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201){
       ErrorLogger.log(
         context: "Send lot",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -369,7 +381,6 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get the current bids of an auction
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<List<Bid>> getCurrentBids({
@@ -378,17 +389,30 @@ class ServerApi {
     @required limit,
   }) async {
     var res = await http.get(
-        host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': sessionCookie,
-        });
+      host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201) {
       ErrorLogger.log(
-        context: "Get current bids",
+        context: "Getting current bids of an auction",
         error: res.reasonPhrase,
       );
+    }
+
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Bid(
+        auctionId: auctionId,
+        placerUid: json["user_uid"],
+        amount: json["amount"],
+        date: DateTime.parse(json["time"]),
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
@@ -396,17 +420,36 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}) {
+  Stream<Bid> getBidsStream({@required String auctionId}) {
     throw UnimplementedError();
   }
 
   /* ----------------------------------------------------------------------------
    Post a new bid
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<void> postBid({@required Map<String, dynamic> bidJson}) {
-    throw UnimplementedError();
+  Future<void> postBid({
+    @required String auctionId,
+    @required double amount,
+  }) async {
+    var res = await http.post(
+      host + '/auction/' + auctionId + '/bid',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+      body: {
+        "auc_id": auctionId,
+        "amount": amount,
+      },
+    );
+
+    if (res.statusCode != 201) {
+      ErrorLogger.log(
+        context: "Posting a bid",
+        error: res.reasonPhrase,
+      );
+    }
   }
 }
 

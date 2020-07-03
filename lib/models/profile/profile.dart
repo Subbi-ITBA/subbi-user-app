@@ -6,7 +6,7 @@ import '../user.dart';
 
 class Profile {
   User user;
-  String uid;
+  String profileUid;
   String name;
   String profilePicURL;
   String location;
@@ -18,7 +18,7 @@ class Profile {
 
   Profile({
     @required this.user,
-    @required this.uid,
+    @required this.profileUid,
     @required this.name,
     @required this.profilePicURL,
     @required this.location,
@@ -49,7 +49,7 @@ class Profile {
   Future<void> follow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: uid,
+      followUid: profileUid,
       follow: true,
     );
   }
@@ -61,7 +61,7 @@ class Profile {
   Future<void> unfollow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: uid,
+      followUid: profileUid,
       follow: false,
     );
   }
@@ -76,7 +76,7 @@ class Profile {
 
   Future<List<ProfileRating>> get ratings async {
     if (_ratings == null) {
-      _ratings = await ProfileRating.getRatings(uid);
+      _ratings = await ProfileRating.getRatings(profileUid);
     }
 
     return _ratings;
@@ -94,8 +94,7 @@ class Profile {
       comment: comment,
       rate: rate,
       date: DateTime.now(),
-      ratedUserProfile: this,
-      ratingUserProfile: user.profile,
+      ratedUid: profileUid,
     );
 
     _ratings.add(newRating);
@@ -113,7 +112,7 @@ class Profile {
 
   Future<List<Auction>> get pastAuctions async {
     if (_pastAuctions == null) {
-      _pastAuctions = await Auction.getAuctions(uid);
+      _pastAuctions = await Auction.getAuctions(profileUid);
     }
 
     return _pastAuctions;
