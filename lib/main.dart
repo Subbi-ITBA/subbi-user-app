@@ -55,7 +55,6 @@ class MyApp extends StatelessWidget {
               "/auction": (context) => AuctionScreen(),
               "/signin": (context) => SigninScreen(),
               "/signup": (context) => SignupScreen(),
-              "/category_auctions": (context) => CategoryAuctionsScreen(),
             },
             theme: ThemeData(
               backgroundColor: Colors.grey[200],
@@ -82,10 +81,13 @@ class MyApp extends StatelessWidget {
                     case ConnectionState.done:
                       return MainScreen();
 
-                    default:
-                      return LoadingScreen();
-                  }
-                })));
+              default:
+                return LoadingScreen();
+            }
+          },
+        ),
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
