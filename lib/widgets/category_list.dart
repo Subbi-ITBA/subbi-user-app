@@ -107,7 +107,7 @@ class CategoryList extends StatelessWidget {
                                 categories[i].name,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 9,
+                                  fontSize: 10,
                                 ),
                               ),
                             ),

@@ -164,7 +164,12 @@ class _State extends State<AddAuctionScreen> {
                             : null,
                       ),
                     ),
-                    Text('Incluya fotos del producto (al menos 3)'),
+                    Text('Incluya fotos del producto (al menos 3)',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 17,
+                    ),
+                    ),
                     ImageUploaderView(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
