@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
@@ -11,6 +12,7 @@ import 'package:subbi/widgets/image_uploader_view.dart';
 class AddAuctionScreen extends StatefulWidget {
   @override
   _State createState() => _State();
+
 }
 
 class _State extends State<AddAuctionScreen> {
@@ -26,6 +28,12 @@ class _State extends State<AddAuctionScreen> {
   bool _autovalidate = false;
   final int _descLength = 350;
   final int _nameLength = 80;
+
+  static const MAX_IMAGES = 6;
+  List<Asset> images = List<Asset>();
+  int _availableImages = MAX_IMAGES;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +178,7 @@ class _State extends State<AddAuctionScreen> {
                       fontSize: 17,
                     ),
                     ),
-                    ImageUploaderView(),
+                    buildGridView(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[_buildSendLotButton()],
@@ -197,30 +205,134 @@ class _State extends State<AddAuctionScreen> {
     ].toList();
   }
 
+  Future<void> getImages() async{
+
+    List<Asset> resultList;
+    String error;
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: _availableImages,
+        enableCamera: true,
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+      print('error: ' + error);
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      images.addAll(resultList);
+      _availableImages -= resultList.length;
+    });
+    print('available images: ' + _availableImages.toString());
+    for(Asset image in images){
+      print(image.toString());
+    }
+  }
+
+  Widget buildGridView() {
+    print(_availableImages);
+    print(images.length);
+    if(images != null){
+      print('entre1');
+      return GridView.count(
+        primary: true,
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+        shrinkWrap: true,
+        children: List.generate(MAX_IMAGES, (index) {
+          if((MAX_IMAGES - _availableImages) > index ) {
+            return Card(
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                children: <Widget>[
+                  AssetThumb(
+                    asset: images[index],
+                    height: 300,
+                    width: 300,
+                  ),
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: InkWell(
+                      child: Icon(
+                          Icons.remove_circle, size: 20, color: Colors.red),
+                      onTap: () {
+                        setState(() {
+                          images.removeAt(index);
+                          _availableImages++;
+                          for(Asset image in images){
+                            print(image.toString());
+                          }
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+          else{
+            print('entre');
+            return Card(
+              child: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: (){getImages();},
+              ),
+            );
+          }
+        }),
+      );
+    }
+    else{
+      return Container();
+    }
+  }
+
   Widget _buildSendLotButton() {
     return new RaisedButton.icon(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18.0),
       ),
       onPressed: () {
-        if (_formKey.currentState.validate()) {
-          print(
-              "isValid $_name, $_description $_category $_initialPrice $_quantity");
-          //form is valid, proceed further
-          //  _formKey.currentState
-          //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-          ServerApi.instance().postLot(
-            title: _name,
-            category: _category,
-            description: _description,
-            initialPrice: _initialPrice,
-            quantity: _quantity,
-          );
-        } else {
-          setState(() {
-            _autovalidate = true; //enable realtime validation
-          });
-        }
+          if (_formKey.currentState.validate()) {
+            if(images.length >= 3) {
+              //TODO image assets to byte data
+              print(
+                  "isValid $_name, $_description $_category $_initialPrice $_quantity");
+              //form is valid, proceed further
+              //  _formKey.currentState
+              //    .save(); //save once fields are valid, onSaved method invoked for every form fields
+              ServerApi.instance().postLot(
+                title: _name,
+                category: _category,
+                description: _description,
+                initialPrice: _initialPrice,
+                quantity: _quantity,
+              );
+            }
+            else{
+              final imagesErrorSnackbar = SnackBar(
+                content: Text('Deben incluir al menos 3 fotos, pruebe nuevamente.'),
+                action: SnackBarAction(
+                  label: 'Cerrar',
+                  onPressed: (){Scaffold.of(context).hideCurrentSnackBar();},
+                ),
+              );
+              Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
+            }
+          } else {
+            setState(() {
+              _autovalidate = true; //enable realtime validation
+            });
+          }
+
+
       },
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
