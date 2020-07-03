@@ -490,7 +490,31 @@ class AuctionInfo extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18.0),
                   side: BorderSide(color: Theme.of(context).primaryColor),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    20.0)), //this right here
+                            child: StreamBuilder<Bid>(
+                              stream: Bid.getBidsStream(
+                                  auctionId: this.auction.auctionId),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.none:
+                                    return LinearProgressIndicator();
+                                  case ConnectionState.active:
+                                  case ConnectionState.done:
+                                    return BidDialog(highestBid: snapshot.data);
+                                }
+                                return null;
+                              },
+                            ));
+                      });
+                },
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 icon: Icon(Icons.gavel),
@@ -523,6 +547,44 @@ class AuctionInfo extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class BidDialog extends StatelessWidget {
+  final Bid highestBid;
+  double bid;
+  final _formKey = GlobalKey<FormState>();
+  BidDialog({@required this.highestBid});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                decoration: InputDecoration(
+                  // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
+                  hintText: "Puja mínima: \$20",
+                  labelText: "Puja",
+                ),
+                onChanged: (String newValue) {
+                  this.bid = double.parse(newValue);
+                },
+                validator: (value) =>
+                    value.isEmpty ? "Nombre no puede ser vacío" : null,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
