@@ -122,30 +122,31 @@ class _State extends State<AddAuctionScreen> {
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
                         keyboardType: TextInputType.number,
-                        maxLines: 1,
                         maxLength: 3,
                         decoration: InputDecoration(
-                          isDense: true,
                           hintText:
                               "Inserte la cantidad de artículos en su lote",
                           labelText: "Cantidad",
                         ),
                         onChanged: (String newValue) {
                           setState(() {
-                            _quantity = int.parse(newValue);
+                            if (newValue != null) {
+                              _quantity = int.parse(newValue);
+                            }
                           });
                         },
                         validator: (value) => (value.isEmpty ||
+                                value == null ||
                                 (value.isNotEmpty && int.parse(value) <= 0))
-                            ? "Cantidad debe ser un numero entero mayor a cero"
+                            ? "Cantidad debe ser un número entero mayor a cero"
                             : null,
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
+                        initialValue: null,
                         keyboardType: TextInputType.number,
-                        maxLines: 1,
                         maxLength: 6,
                         decoration: InputDecoration(
                           icon: Icon(Icons.monetization_on,
@@ -162,7 +163,7 @@ class _State extends State<AddAuctionScreen> {
                         validator: (value) => (value.isEmpty ||
                                 (value.isNotEmpty && int.parse(value) <= 0))
                             ? "Precio inicial debe ser un numero mayor a cero"
-                            : null,
+                            : "ta bien",
                       ),
                     ),
                     Text(
