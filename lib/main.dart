@@ -36,6 +36,13 @@ class MyApp extends StatelessWidget {
                   );
                 });
               }
+              else if(settings.name == CategoryAuctionsScreen.route){
+                return MaterialPageRoute(builder: (context) {
+                  return CategoryAuctionsScreen(
+                      category: arg['category'],
+                  );
+                });
+              }
               assert(false, 'Need to implement ${settings.name}');
               return null;
             },

@@ -57,6 +57,8 @@ class CategoryList extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
+    print(Category.getCategories());
+
     return Container(
         height: 120,
         child: ListView.builder(
