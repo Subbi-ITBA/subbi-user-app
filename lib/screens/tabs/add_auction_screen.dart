@@ -231,17 +231,10 @@ class _State extends State<AddAuctionScreen> {
       images.addAll(resultList);
       _availableImages -= resultList.length;
     });
-    print('available images: ' + _availableImages.toString());
-    for(Asset image in images){
-      print(image.toString());
-    }
   }
 
   Widget buildGridView() {
-    print(_availableImages);
-    print(images.length);
     if(images != null){
-      print('entre1');
       return GridView.count(
         primary: true,
         crossAxisCount: 3,
@@ -280,7 +273,6 @@ class _State extends State<AddAuctionScreen> {
             );
           }
           else{
-            print('entre');
             return Card(
               child: IconButton(
                 icon: Icon(Icons.add),
