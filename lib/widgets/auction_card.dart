@@ -18,7 +18,9 @@ class AuctionCard extends StatelessWidget {
           Navigator.pushNamed(
             context,
             '/auction',
-            arguments: {'auction': this.auction},
+            arguments: {
+              'auction': this.auction,
+            },
           );
         },
         child: Card(
@@ -41,8 +43,10 @@ class AuctionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child:
-                          Image.network(this.auction.imageURL[0], height: 147),
+                      child: Image.network(
+                        this.auction.imageURL[0],
+                        height: 147,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 7, 0, 3),
@@ -50,21 +54,28 @@ class AuctionCard extends StatelessWidget {
                         this.auction.title,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                          color: Theme.of(context).accentColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                      child: Text(this.auction.getCurrentBids() == null
-                          ? "Sin apuestas"
-                          : "Highest Bid: ${bids.last.amount}"),
+                      child: Text(
+                        this.auction.getCurrentBids() == null
+                            ? "Sin apuestas"
+                            : "Highest Bid: ${bids.last.amount}",
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: StreamBuilder(
-                        stream: Stream.periodic(Duration(seconds: 1), (i) => i),
+                        stream: Stream.periodic(
+                            Duration(
+                              seconds: 1,
+                            ),
+                            (i) => i),
                         builder: (
                           BuildContext context,
                           AsyncSnapshot<int> snapshot,

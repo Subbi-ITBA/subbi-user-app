@@ -39,133 +39,142 @@ class _State extends State<AddAuctionScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              child: Builder(
-                  builder: (context) => Form(
-                      key: _formKey,
-                      autovalidate: _autovalidate,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: DropdownButtonFormField<String>(
-                                isExpanded: true,
-                                value: _category,
-                                hint: Text('Elija una categoría'),
-                                icon: Icon(Icons.arrow_downward),
-                                iconSize: 24,
-                                elevation: 16,
-                                style: TextStyle(color: Colors.deepPurple),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    _category = newValue;
-                                  });
-                                },
-                                validator: (value) => value != null
-                                    ? null
-                                    : "Categoria no puede ser vacía",
-                                items: _categories
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              )),
-                          Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                maxLength: _nameLength,
-                                decoration: InputDecoration(
-                                  hintText: "Inserte el título del lote",
-                                  labelText: "Título",
-                                ),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    _name = newValue;
-                                  });
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? "Nombre no puede ser vacío"
-                                    : null,
-                              )),
-                          Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                maxLines: 3,
-                                maxLength: _descLength,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText: "Inserte la descripción del lote",
-                                  labelText: "Descripción",
-                                ),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    _description = newValue;
-                                  });
-                                },
-                                validator: (value) => value.isEmpty
-                                    ? "Descripción no puede ser vacío"
-                                    : null,
-                              )),
-                          Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                maxLines: 1,
-                                maxLength: 3,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  hintText:
-                                      "Inserte la cantidad de artículos en su lote",
-                                  labelText: "Cantidad",
-                                ),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    _quantity = int.parse(newValue);
-                                  });
-                                },
-                                validator: (value) => (value.isEmpty ||
-                                        (value.isNotEmpty &&
-                                            int.parse(value) <= 0))
-                                    ? "Cantidad debe ser un numero entero mayor a cero"
-                                    : null,
-                              )),
-                          Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                initialValue: null,
-                                maxLines: 1,
-                                maxLength: 5,
-                                decoration: InputDecoration(
-                                  icon: Icon(Icons.monetization_on,
-                                      color: Theme.of(context).primaryColor),
-                                  isDense: true,
-                                  hintText: "Inserte su precio deseado",
-                                  labelText: "Precio inicial",
-                                ),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    _initialPrice = double.parse(newValue);
-                                  });
-                                },
-                                validator: (value) => (value.isEmpty ||
-                                        (value.isNotEmpty &&
-                                            int.parse(value) <= 0))
-                                    ? "Precio inicial debe ser un numero mayor a cero"
-                                    : null,
-                              )),
-                          Text('Incluya fotos del producto (al menos 3)'),
-                          ImageUploaderView(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[_buildSendLotButton()],
-                          )
-                        ],
-                      )))),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 16,
+            ),
+            child: Builder(
+              builder: (context) => Form(
+                key: _formKey,
+                autovalidate: _autovalidate,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: _category,
+                        hint: Text('Elija una categoría'),
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _category = newValue;
+                          });
+                        },
+                        validator: (value) => value != null
+                            ? null
+                            : "Categoria no puede ser vacía",
+                        items: _categories
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        maxLength: _nameLength,
+                        decoration: InputDecoration(
+                          hintText: "Inserte el título del lote",
+                          labelText: "Título",
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _name = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value.isEmpty ? "Nombre no puede ser vacío" : null,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        maxLines: 3,
+                        maxLength: _descLength,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText: "Inserte la descripción del lote",
+                          labelText: "Descripción",
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _description = newValue;
+                          });
+                        },
+                        validator: (value) => value.isEmpty
+                            ? "Descripción no puede ser vacío"
+                            : null,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        maxLines: 1,
+                        maxLength: 3,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          hintText:
+                              "Inserte la cantidad de artículos en su lote",
+                          labelText: "Cantidad",
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _quantity = int.parse(newValue);
+                          });
+                        },
+                        validator: (value) => (value.isEmpty ||
+                                (value.isNotEmpty && int.parse(value) <= 0))
+                            ? "Cantidad debe ser un numero entero mayor a cero"
+                            : null,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        initialValue: null,
+                        maxLines: 1,
+                        maxLength: 5,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.monetization_on,
+                              color: Theme.of(context).primaryColor),
+                          isDense: true,
+                          hintText: "Inserte su precio deseado",
+                          labelText: "Precio inicial",
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _initialPrice = double.parse(newValue);
+                          });
+                        },
+                        validator: (value) => (value.isEmpty ||
+                                (value.isNotEmpty && int.parse(value) <= 0))
+                            ? "Precio inicial debe ser un numero mayor a cero"
+                            : null,
+                      ),
+                    ),
+                    Text('Incluya fotos del producto (al menos 3)'),
+                    ImageUploaderView(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[_buildSendLotButton()],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
         ));
   }
 
@@ -196,11 +205,12 @@ class _State extends State<AddAuctionScreen> {
           //  _formKey.currentState
           //    .save(); //save once fields are valid, onSaved method invoked for every form fields
           ServerApi.instance().postLot(
-              title: _name,
-              category: _category,
-              description: _description,
-              initialPrice: _initialPrice,
-              quantity: _quantity);
+            title: _name,
+            category: _category,
+            description: _description,
+            initialPrice: _initialPrice,
+            quantity: _quantity,
+          );
         } else {
           setState(() {
             _autovalidate = true; //enable realtime validation
@@ -212,7 +222,9 @@ class _State extends State<AddAuctionScreen> {
       icon: Icon(Icons.send),
       label: Text(
         "Enviar lote".toUpperCase(),
-        style: TextStyle(fontSize: 12),
+        style: TextStyle(
+          fontSize: 12,
+        ),
       ),
     );
   }
