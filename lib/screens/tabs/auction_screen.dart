@@ -498,7 +498,7 @@ class AuctionInfo extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     20.0)), //this right here
-                            child: StreamBuilder<void>(
+                            child: StreamBuilder<Bid>(
                               stream: Bid.getBidsStream(
                                   auctionId: this.auction.auctionId),
                               builder: (context, snapshot) {
@@ -508,8 +508,9 @@ class AuctionInfo extends StatelessWidget {
                                     return LinearProgressIndicator();
                                   case ConnectionState.active:
                                   case ConnectionState.done:
-                                    return _bidDialog();
+                                    return BidDialog(highestBid: snapshot.data);
                                 }
+                                return null;
                               },
                             ));
                       });
@@ -551,7 +552,43 @@ class AuctionInfo extends StatelessWidget {
   }
 }
 
-Widget _bidDialog() {}
+class BidDialog extends StatelessWidget {
+  final Bid highestBid;
+  double bid;
+  final _formKey = GlobalKey<FormState>();
+  BidDialog({@required this.highestBid});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                decoration: InputDecoration(
+                  // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
+                  hintText: "Puja mínima: \$20",
+                  labelText: "Puja",
+                ),
+                onChanged: (String newValue) {
+                  this.bid = double.parse(newValue);
+                },
+                validator: (value) =>
+                    value.isEmpty ? "Nombre no puede ser vacío" : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class DeadlineTimer extends StatelessWidget {
   final Auction auction;

@@ -121,6 +121,7 @@ class _State extends State<AddAuctionScreen> {
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
+                        keyboardType: TextInputType.number,
                         maxLines: 1,
                         maxLength: 3,
                         decoration: InputDecoration(
@@ -143,9 +144,9 @@ class _State extends State<AddAuctionScreen> {
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: TextFormField(
-                        initialValue: null,
+                        keyboardType: TextInputType.number,
                         maxLines: 1,
-                        maxLength: 5,
+                        maxLength: 6,
                         decoration: InputDecoration(
                           icon: Icon(Icons.monetization_on,
                               color: Theme.of(context).primaryColor),
@@ -164,11 +165,12 @@ class _State extends State<AddAuctionScreen> {
                             : null,
                       ),
                     ),
-                    Text('Incluya fotos del producto (al menos 3)',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 17,
-                    ),
+                    Text(
+                      'Incluya fotos del producto (al menos 3)',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 17,
+                      ),
                     ),
                     ImageUploaderView(),
                     Row(
