@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
+import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
@@ -129,11 +129,47 @@ class ServerApi {
   ------------------------------------------------------------------------------------------------------------------------------- */
 
   /* ----------------------------------------------------------------------------
-    Creates a new user, sends personal data to the server
-    //TODO: Implement
+    Get the public information of a profile
   ---------------------------------------------------------------------------- */
 
-  Future<Map<String, dynamic>> getProfile({
+  Future<Profile> getProfile({
+    @required String ofUid,
+  }) async {
+    var res = await http.get(
+      host + '/user/' + ofUid,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting a profile public information',
+        error: res.reasonPhrase,
+      );
+    }
+
+    var json = jsonDecode(res.body);
+
+    return new Profile(
+      uid: json["id"],
+      name: json["name"] + " " + json["last_name"],
+      location: json["location"],
+      profilePicURL: null,
+      following: await ServerApi.instance().isFollowing(
+        uid: ofUid,
+      ),
+      user: null,
+    );
+  }
+
+  /* ----------------------------------------------------------------------------
+   Check wether this user is following a profile
+   //TODO: Implement
+  ---------------------------------------------------------------------------- */
+
+  Future<bool> isFollowing({
     @required String uid,
   }) {
     throw UnimplementedError();
@@ -182,20 +218,44 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get the auctions of a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getProfileAuctions({
+  Future<List<Auction>> getProfileAuctions({
     @required String ofUid,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    var res = await http.get(
+      host + '/auction/byUser/' + ofUid,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting auctions posted by a user',
+        error: res.reasonPhrase,
+      );
+    }
+
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Auction(
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: ofUid,
+        imageURL: null,
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
    Get a specific set of auctions (LATEST, POPULARITY, DEADLINE)
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getAuctionsBySort({
+  Future<List<Auction>> getAuctionsBySort({
     @required String category,
     @required int limit,
     @required int offset,
@@ -225,25 +285,17 @@ class ServerApi {
       );
     }
 
-    return jsonDecode(res.body);
-  }
+    var jsons = jsonDecode(res.body);
 
-  /* ----------------------------------------------------------------------------
-   Post an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<void> postAuction({@required Map<String, dynamic> auctionJson}) {
-    throw UnimplementedError();
-  }
-
-  /* ----------------------------------------------------------------------------
-   Delete an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<void> deleteAuction({@required String auctionId}) {
-    throw UnimplementedError();
+    return jsons.map(
+      (json) => Auction(
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: json["owner_id"],
+        imageURL: null,
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
