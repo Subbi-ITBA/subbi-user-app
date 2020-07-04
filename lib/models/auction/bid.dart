@@ -60,7 +60,10 @@ class BidIterator {
   int _offset = 0;
   List<Bid> _currentPage;
 
-  BidIterator({this.size, this.auctionId});
+  BidIterator({
+    @required this.size,
+    @required this.auctionId,
+  });
 
   List<Bid> get current {
     return _currentPage;

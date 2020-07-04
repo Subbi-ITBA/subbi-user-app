@@ -222,10 +222,12 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getCategories() async{
-    var res = await http.get(host + '/lot/categories',headers: {
-      'Content-Type': 'application/json',
-      'Cookie': sessionCookie,
+  Future<List<Map<String, dynamic>>> getCategories() async {
+    var res = await http.get(
+      host + '/lot/categories',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
       },
     );
     if (res.statusCode != 200) {
@@ -235,7 +237,7 @@ class ServerApi {
       );
     }
     print(res.body);
-    return List<Map<String,dynamic>>.from(jsonDecode(res.body));
+    return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -268,6 +270,7 @@ class ServerApi {
 
     return jsons.map(
       (json) => Auction(
+        auctionId: json["lot_id"],
         title: json["name"],
         deadLine: json["deadline"],
         category: json["category"],
@@ -315,6 +318,7 @@ class ServerApi {
 
     return jsons.map(
       (json) => Auction(
+        auctionId: json["lot_id"],
         title: json["name"],
         deadLine: json["deadline"],
         category: json["category"],
@@ -353,6 +357,7 @@ class ServerApi {
 
     return jsons.map(
       (json) => Auction(
+        auctionId: json["lot_id"],
         title: json["name"],
         deadLine: json["deadline"],
         category: json["category"],
@@ -392,7 +397,7 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 201){
+    if (res.statusCode != 201) {
       ErrorLogger.log(
         context: "Send lot",
         error: res.reasonPhrase,

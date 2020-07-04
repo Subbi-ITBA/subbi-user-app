@@ -112,7 +112,7 @@ class Profile {
 
   Future<List<Auction>> get pastAuctions async {
     if (_pastAuctions == null) {
-      _pastAuctions = await Auction.getAuctions(profileUid);
+      _pastAuctions = await Auction.getProfileAuctions(profileUid);
     }
 
     return _pastAuctions;
