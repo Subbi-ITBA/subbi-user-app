@@ -10,6 +10,9 @@ class AuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bidIterator =
+        auction.getBidIterator(pageSize: 1); // Only get the highest bid
+
     return Container(
       height: 265,
       width: 195,
@@ -28,15 +31,16 @@ class AuctionCard extends StatelessWidget {
           margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Padding(
             padding: const EdgeInsets.all(5),
-            child: FutureBuilder<List<Bid>>(
-              future: auction.getCurrentBids(),
+            child: FutureBuilder<bool>(
+              future: bidIterator.moveNext(),
               builder: (context, snap) {
-                if (snap.connectionState == ConnectionState.waiting)
+                if (snap.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
+                }
 
-                var bids = snap.data;
+                var bids = bidIterator.current;
                 bids.sort((b1, b2) => b1.amount.compareTo(b2.amount));
 
                 return Column(
@@ -63,7 +67,7 @@ class AuctionCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                       child: Text(
-                        this.auction.getCurrentBids() == null
+                        bids.isEmpty
                             ? "Sin apuestas"
                             : "Highest Bid: ${bids.last.amount}",
                       ),
