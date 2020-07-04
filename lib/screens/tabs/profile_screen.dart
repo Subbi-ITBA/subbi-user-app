@@ -18,117 +18,9 @@ class ProfileScreen extends StatelessWidget {
       location: 'Buenos Aires, Argentina',
       profilePicURL:
           'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/04/fulano.jpg',
-      uid: "1",
+      profileUid: "1",
       user: Provider.of<User>(context),
       following: true,
-      chat: null,
-      ratings: [
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Josefo Fino',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 3,
-          date: DateTime.now(),
-          comment: 'Meh... Normal',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 4,
-          date: DateTime.now(),
-          comment: 'Muy buen vendedor',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 2,
-          date: DateTime.now(),
-          comment: 'Pésimo',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 4,
-          date: DateTime.now(),
-          comment: 'Muy buen vendedor',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 4,
-          date: DateTime.now(),
-          comment: 'Muy buen vendedor',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 4,
-          date: DateTime.now(),
-          comment: 'Muy buen vendedor',
-        ),
-        ProfileRating(
-          ratingUserProfile: Profile(
-            name: 'Ana Banana',
-            user: null,
-            uid: null,
-            profilePicURL: null,
-            location: null,
-            chat: null,
-            following: null,
-          ),
-          ratedUserProfile: profile,
-          rate: 4,
-          date: DateTime.now(),
-          comment: 'Muy buen vendedor',
-        ),
-      ],
     );
 
     var user = Provider.of<User>(context);
@@ -312,33 +204,35 @@ class ProfileScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Text(
-              "${averageRating.toStringAsPrecision(3)}",
-              style: Theme.of(context).textTheme.headline2,
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                "${averageRating.toStringAsPrecision(3)}",
+                style: Theme.of(context).textTheme.headline2,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: SmoothStarRating(
-              starCount: 5,
-              rating: averageRating,
-              size: 30.0,
-              color: Colors.orangeAccent,
-              borderColor: Colors.orangeAccent,
-              spacing: 0.0,
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: SmoothStarRating(
+                starCount: 5,
+                rating: averageRating,
+                size: 30.0,
+                color: Colors.orangeAccent,
+                borderColor: Colors.orangeAccent,
+                spacing: 0.0,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '${ratings.length} en total',
-              style: Theme.of(context).textTheme.subtitle1,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${ratings.length} en total',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         CrossShrinkedListView(
           alignment: Axis.vertical,
           itemCount: 5,
@@ -373,35 +267,36 @@ class ProfileScreen extends StatelessWidget {
       BuildContext context, ProfileRating rating, bool withSeparator) {
     return Container(
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            withSeparator
-                ? Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Divider(),
-                  )
-                : Container(),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.star),
-                  Text(
-                    "${rating.rate}   ${rating.comment}",
-                    style: Theme.of(context).textTheme.bodyText2.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                  ),
-                ],
-              ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          withSeparator
+              ? Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Divider(),
+                )
+              : Container(),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.star),
+                Text(
+                  "${rating.rate}   ${rating.comment}",
+                  style: Theme.of(context).textTheme.bodyText2.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                "${rating.ratingUserProfile.name} - ${rating.date.day}/${rating.date.month}/${rating.date.year}",
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              "${rating.date.day}/${rating.date.month}/${rating.date.year}",
             ),
-          ]),
+          ),
+        ],
+      ),
     );
   }
 

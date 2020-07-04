@@ -13,9 +13,8 @@ class Auction {
   int quantity;
   double initialPrice;
 
-  List<Bid> _bids;
-
   Auction({
+    @required this.auctionId,
     @required this.ownerUid,
     @required this.title,
     @required this.description,
@@ -34,64 +33,55 @@ class Auction {
     Get auctions of a profile
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getAuctions(String ofUid) async {
-    var jsons = await ServerApi.instance().getProfileAuctions(
+  static Future<List<Auction>> getProfileAuctions(String ofUid) async {
+    return await ServerApi.instance().getProfileAuctions(
       ofUid: ofUid,
     );
-
-    return jsons.map((json) => _fromJson(json));
   }
 
   /* ------------------------------------------------------------
     Get latest auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getLatestAuctions(
-      String category, int limit, int offset) async {
-    print('enter serverapi');
-    var jsons = await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getLatestAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.LATEST,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.CREATION_DATE,
     );
-
-//    return jsons.map((json) => _fromJson(json));
-    return null;
   }
 
   /* ------------------------------------------------------------
     Get popular auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getPopularAuctions(
-      String category, int limit, int offset) async {
-    var jsons = await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getPopularAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.POPULARITY,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.POPULARITY,
     );
-
-//    return jsons.map((json) => _fromJson(json));
-    return null;
   }
 
   /* ------------------------------------------------------------
     Get ending auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getEndingAuctions(
-      String category, int limit, int offset) async {
-    var jsons = await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getEndingAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.DEADLINE,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.DEADLINE,
     );
-
-//    return jsons.map((json) => _fromJson(json));
-    return null;
   }
 
   /* ------------------------------------------------------------------------------------------------------------------------
@@ -102,23 +92,24 @@ class Auction {
     Get current bids, fetch them if they haven't already
   ------------------------------------------------------------ */
 
-  Future<List<Bid>> getCurrentBids() async {
-    if (_bids == null)
-      _bids = await Bid.getCurrentBids(
-        auctionId: auctionId,
-      );
-    // Fetch bids from server
-
-    return _bids;
+  BidIterator getBidIterator({
+    @required int pageSize,
+  }) {
+    return Bid.getBidIterator(
+      auctionId: auctionId,
+      pageSize: pageSize,
+    );
   }
 
   /* ------------------------------------------------------------
     Get a stream of bids
   ------------------------------------------------------------ */
 
-  Stream<Bid> subscribeToBids() => Bid.getBidsStream(
-        auctionId: auctionId,
-      );
+  Stream<Bid> subscribeToBids() {
+    return Bid.getBidsStream(
+      auctionId: auctionId,
+    );
+  }
 
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  MANAGING AUCTION
@@ -128,23 +119,41 @@ class Auction {
     Post an auction
   ------------------------------------------------------------ */
 
-  Future<void> post() =>
-      ServerApi.instance().postAuction(auctionJson: _toJson());
+  Future<void> post() {
+    return ServerApi.instance().postLot(
+      title: title,
+      description: description,
+      category: category,
+      quantity: quantity,
+      initialPrice: initialPrice,
+    );
+  }
+}
 
-  /* ------------------------------------------------------------
-    Delete an auction
-  ------------------------------------------------------------ */
+class AuctionIterator {
+  final AuctionSort sortMethod;
+  final String category;
+  final int pageSize;
 
-  Future<void> delete() => ServerApi.instance().deleteAuction(
-        auctionId: auctionId,
-      );
+  int _offset = 0;
 
-  /* ------------------------------------------------------------------------------------------------------------------------
-                                                 SERIALIZATION
-  ------------------------------------------------------------------------------------------------------------------------ */
+  AuctionIterator({
+    @required this.category,
+    @required this.sortMethod,
+    @required this.pageSize,
+  });
 
-  Map<String, dynamic> _toJson() => throw UnimplementedError();
+  Future<List<Auction>> get current async {
+    return await ServerApi.instance().getAuctionsBySort(
+      category: category,
+      sort: sortMethod,
+      offset: _offset,
+      limit: pageSize,
+    );
+  }
 
-  static Auction _fromJson(Map<String, dynamic> json) =>
-      throw UnimplementedError();
+  Future<bool> moveNext() async {
+    _offset += pageSize;
+    return true;
+  }
 }

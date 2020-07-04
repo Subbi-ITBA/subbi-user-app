@@ -43,9 +43,7 @@ lib/generated_plugin_registrant.dart
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 android/key.properties
-<<<<<<< HEAD
-=======
 
 # VS Code related
 .vscode/
->>>>>>> 78b78fb1558bde0ce89a78ad59a5302c30ab0533
+prettify.txt

@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
+import 'package:subbi/models/profile/profile.dart';
+import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,6 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-    //client = client ?? HttpClient();
     return _singleton;
   }
 
@@ -95,11 +95,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201) {
       ErrorLogger.log(
         context: "Signing up",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* ----------------------------------------------------------------------------
@@ -117,11 +118,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 200)
+    if (res.statusCode != 200) {
       ErrorLogger.log(
         context: "Deleting account",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -129,11 +131,47 @@ class ServerApi {
   ------------------------------------------------------------------------------------------------------------------------------- */
 
   /* ----------------------------------------------------------------------------
-    Creates a new user, sends personal data to the server
-    //TODO: Implement
+    Get the public information of a profile
   ---------------------------------------------------------------------------- */
 
-  Future<Map<String, dynamic>> getProfile({
+  Future<Profile> getProfile({
+    @required String ofUid,
+  }) async {
+    var res = await http.get(
+      host + '/user/' + ofUid,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting a profile public information',
+        error: res.reasonPhrase,
+      );
+    }
+
+    var json = jsonDecode(res.body);
+
+    return new Profile(
+      profileUid: json["id"],
+      name: json["name"] + " " + json["last_name"],
+      location: json["location"],
+      profilePicURL: null,
+      following: await ServerApi.instance().isFollowing(
+        uid: ofUid,
+      ),
+      user: null,
+    );
+  }
+
+  /* ----------------------------------------------------------------------------
+   Check wether this user is following a profile
+   //TODO: Implement
+  ---------------------------------------------------------------------------- */
+
+  Future<bool> isFollowing({
     @required String uid,
   }) {
     throw UnimplementedError();
@@ -158,9 +196,8 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<void> rateProfile({
-    @required String uid,
     @required String rateUid,
-    @required int rating,
+    @required int rate,
   }) {
     throw UnimplementedError();
   }
@@ -170,10 +207,37 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getRatings({
+  Future<List<ProfileRating>> getRatings({
     @required String ofUid,
   }) {
     throw UnimplementedError();
+  }
+
+/* -------------------------------------------------------------------------------------------------------------------------------
+                                                      CATEGORY
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  /* ----------------------------------------------------------------------------
+   Get all categories
+   //TODO: Implement
+  ---------------------------------------------------------------------------- */
+
+  Future<List<Map<String, dynamic>>> getCategories() async {
+    var res = await http.get(
+      host + '/lot/categories',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting categories',
+        error: res.reasonPhrase,
+      );
+    }
+    print(res.body);
+    return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -182,20 +246,45 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get the auctions of a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getProfileAuctions({
+  Future<List<Auction>> getProfileAuctions({
     @required String ofUid,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    var res = await http.get(
+      host + '/auction/byUser/' + ofUid,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting auctions posted by a user',
+        error: res.reasonPhrase,
+      );
+    }
+
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Auction(
+        auctionId: json["lot_id"],
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: ofUid,
+        imageURL: null,
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
    Get a specific set of auctions (LATEST, POPULARITY, DEADLINE)
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getAuctionsBySort({
+  Future<List<Auction>> getAuctionsBySort({
     @required String category,
     @required int limit,
     @required int offset,
@@ -225,25 +314,18 @@ class ServerApi {
       );
     }
 
-    return jsonDecode(res.body);
-  }
+    var jsons = jsonDecode(res.body);
 
-  /* ----------------------------------------------------------------------------
-   Post an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<void> postAuction({@required Map<String, dynamic> auctionJson}) {
-    throw UnimplementedError();
-  }
-
-  /* ----------------------------------------------------------------------------
-   Delete an auction
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<void> deleteAuction({@required String auctionId}) {
-    throw UnimplementedError();
+    return jsons.map(
+      (json) => Auction(
+        auctionId: json["lot_id"],
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: json["owner_id"],
+        imageURL: null,
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
@@ -251,7 +333,7 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getParticipatingAuctions({
+  Future<List<Auction>> getParticipatingAuctions({
     @required String uid,
     @required limit,
     @required offset,
@@ -271,7 +353,18 @@ class ServerApi {
       );
     }
 
-    return jsonDecode(res.body);
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Auction(
+        auctionId: json["lot_id"],
+        title: json["name"],
+        deadLine: json["deadline"],
+        category: json["category"],
+        ownerUid: json["owner_id"],
+        imageURL: null,
+      ),
+    );
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -304,11 +397,12 @@ class ServerApi {
       },
     );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201) {
       ErrorLogger.log(
         context: "Send lot",
         error: res.reasonPhrase,
       );
+    }
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -317,7 +411,6 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get the current bids of an auction
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<List<Bid>> getCurrentBids({
@@ -326,17 +419,30 @@ class ServerApi {
     @required limit,
   }) async {
     var res = await http.get(
-        host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': sessionCookie,
-        });
+      host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
 
-    if (res.statusCode != 201)
+    if (res.statusCode != 201) {
       ErrorLogger.log(
-        context: "Get current bids",
+        context: "Getting current bids of an auction",
         error: res.reasonPhrase,
       );
+    }
+
+    var jsons = jsonDecode(res.body);
+
+    return jsons.map(
+      (json) => Bid(
+        auctionId: auctionId,
+        placerUid: json["user_uid"],
+        amount: json["amount"],
+        date: DateTime.parse(json["time"]),
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------
@@ -344,17 +450,36 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Stream<Map<String, dynamic>> getBidsStream({@required String auctionId}) {
+  Stream<Bid> getBidsStream({@required String auctionId}) {
     throw UnimplementedError();
   }
 
   /* ----------------------------------------------------------------------------
    Post a new bid
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<void> postBid({@required Map<String, dynamic> bidJson}) {
-    throw UnimplementedError();
+  Future<void> postBid({
+    @required String auctionId,
+    @required double amount,
+  }) async {
+    var res = await http.post(
+      host + '/auction/' + auctionId + '/bid',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+      body: {
+        "auc_id": auctionId,
+        "amount": amount,
+      },
+    );
+
+    if (res.statusCode != 201) {
+      ErrorLogger.log(
+        context: "Posting a bid",
+        error: res.reasonPhrase,
+      );
+    }
   }
 }
 
@@ -362,4 +487,4 @@ enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
 
-enum AuctionSort { LATEST, POPULARITY, DEADLINE }
+enum AuctionSort { CREATION_DATE, POPULARITY, DEADLINE }
