@@ -53,7 +53,7 @@ class Auction {
       category: category,
       limit: limit,
       offset: offset,
-      sort: AuctionSort.LATEST,
+      sort: AuctionSort.CREATION_DATE,
     );
   }
 
