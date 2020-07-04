@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:subbi/apis/server_api.dart';
 
 class Bid {
-  String auctionId;
+  int auctionId;
 
   double amount;
   String placerUid;
@@ -35,7 +35,7 @@ class Bid {
   ------------------------------------------------------------ */
 
   static BidIterator getBidIterator({
-    @required String auctionId,
+    @required int auctionId,
     @required int pageSize,
   }) {
     return BidIterator(auctionId: auctionId, size: pageSize);
@@ -46,7 +46,7 @@ class Bid {
   ------------------------------------------------------------ */
 
   static Stream<Bid> getBidsStream({
-    @required String auctionId,
+    @required int auctionId,
   }) {
     return ServerApi.instance().getBidsStream(
       auctionId: auctionId,
@@ -55,7 +55,7 @@ class Bid {
 }
 
 class BidIterator {
-  final String auctionId;
+  final int auctionId;
   final int size;
   int _offset = 0;
   List<Bid> _currentPage;

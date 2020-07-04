@@ -11,7 +11,7 @@ class Category {
       @required this.description,
       @required this.iconName});
 
-  factory Category.fromJson(Map<String,dynamic> parsedJson){
+  factory Category.fromJson(Map<String, dynamic> parsedJson) {
     return new Category(
       name: parsedJson['name'],
       description: parsedJson['description'],
@@ -19,9 +19,9 @@ class Category {
     );
   }
 
-  static Future<List<Category>> getCategories() async{
+  static Future<List<Category>> getCategories() async {
     var jsons = await ServerApi.instance().getCategories();
-    return jsons.map((e) => Category.fromJson(e));
+    return jsons.map((e) => Category.fromJson(e)).toList();
   }
 
   @override

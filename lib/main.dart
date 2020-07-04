@@ -91,8 +91,8 @@ class MyApp extends StatelessWidget {
   ---------------------------------------------------------------------------- */
 
   Future<void> loadApp(BuildContext context) async {
-    user.loadCurrentUser();
-
     await RemoteConfigApi.instance().initialize();
+
+    user.loadCurrentUser();
   }
 }

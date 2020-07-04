@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
+import 'package:subbi/models/user.dart';
 
 Map data;
 
@@ -99,7 +101,9 @@ class Body extends StatelessWidget {
                   Divider(
                     color: Colors.grey,
                   ),
-                  UserInfo(),
+                  ProfileInfo(
+                    profileId: auction.ownerUid,
+                  ),
                   Divider(
                     color: Colors.grey,
                   ),
@@ -267,19 +271,20 @@ class BidderInfo extends StatelessWidget {
   }
 }
 
-class UserInfo extends StatelessWidget {
-  final String userId;
+class ProfileInfo extends StatelessWidget {
+  final String profileId;
 
-  const UserInfo({Key key, this.userId})
-      : super(
-          key: key,
-        );
+  const ProfileInfo({
+    Key key,
+    @required this.profileId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
         future: Profile.getProfile(
-          ofUid: userId,
+          userUid: Provider.of<User>(context).getUID(),
+          ofUid: profileId,
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -474,7 +479,9 @@ class AuctionInfo extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
                         child: Text(
-                          bids.last.amount.toString(),
+                          bids.isNotEmpty
+                              ? bids.last.amount.toString()
+                              : "Ninguna",
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 14,

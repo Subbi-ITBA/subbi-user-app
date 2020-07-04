@@ -4,7 +4,7 @@ import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/widgets/auction_card.dart';
 
 class AuctionListBySortScreen extends StatefulWidget {
-  static const AUCTION_PAGE_SIZE = 20;
+  static const AUCTION_PAGE_SIZE = 8;
   static const String route = "/auction_list_by_sort";
   final String sort;
   final String title;
@@ -21,6 +21,7 @@ class AuctionListBySortScreen extends StatefulWidget {
 }
 
 class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
+  List<Auction> _loadedAuctions = [];
   AuctionIterator _auctionIterator;
   ScrollController _scrollController;
 
@@ -57,17 +58,9 @@ class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
         centerTitle: true,
         title: Text(widget.title),
       ),
-      body: FutureBuilder<List<Auction>>(
-        future: _auctionIterator.current,
+      body: FutureBuilder<void>(
+        future: loadAuctions(),
         builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          var auctions = snap.data;
-
           return ListView(
             controller: _scrollController,
             children: <Widget>[
@@ -78,9 +71,9 @@ class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                 ),
-                itemCount: auctions.length,
+                itemCount: _loadedAuctions.length,
                 itemBuilder: (context, i) {
-                  return AuctionCard(auction: auctions.elementAt(i));
+                  return AuctionCard(auction: _loadedAuctions.elementAt(i));
                 },
               ),
             ],
@@ -110,5 +103,9 @@ class _AuctionListBySortScreenState extends State<AuctionListBySortScreen> {
       default:
         throw ArgumentError("Unsupported sorting method");
     }
+  }
+
+  Future<void> loadAuctions() async {
+    _loadedAuctions.addAll(await _auctionIterator.current);
   }
 }

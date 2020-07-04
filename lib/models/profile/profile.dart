@@ -33,9 +33,13 @@ class Profile {
   ------------------------------------------------------------------------------------------------------------------------ */
 
   static Future<Profile> getProfile({
+    @required String userUid,
     @required String ofUid,
   }) {
-    return ServerApi.instance().getProfile(ofUid: ofUid);
+    return ServerApi.instance().getProfile(
+      userUid: userUid,
+      ofUid: ofUid,
+    );
   }
 
   /* ------------------------------------------------------------------------------------------------------------------------

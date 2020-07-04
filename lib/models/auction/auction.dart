@@ -3,7 +3,7 @@ import 'package:subbi/apis/server_api.dart';
 import 'bid.dart';
 
 class Auction {
-  String auctionId;
+  int auctionId;
   String ownerUid;
   String title;
   String description;
@@ -37,6 +37,14 @@ class Auction {
     return await ServerApi.instance().getProfileAuctions(
       ofUid: ofUid,
     );
+  }
+
+  /* ------------------------------------------------------------
+    Get the auctions on which the user participates
+  ------------------------------------------------------------ */
+
+  static Future<List<Auction>> getParticipatingAuctions(String userUid) async {
+    return await ServerApi.instance().getParticipatingAuctions();
   }
 
   /* ------------------------------------------------------------

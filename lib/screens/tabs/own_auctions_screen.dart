@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/user.dart';
+import 'package:subbi/widgets/auction_card.dart';
+import 'package:subbi/widgets/cross_shrinked_listview.dart';
 
-import 'package:subbi/screens/unauthenticated_box.dart';
-import 'package:subbi/widgets/auction_list.dart';
+import '../unauthenticated_box.dart';
 
 class OwnAuctionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var user = Provider.of<User>(context);
-    // testing
-    final cantAuct = 1;
-    final cantBids = 1;
 
-    // if (!user.isSignedIn()) return UnauthenticatedBox();
+    if (!user.isSignedIn()) {
+      return UnauthenticatedBox();
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -23,12 +24,23 @@ class OwnAuctionsScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
               child: Text(
-                'Subastas activas',
+                'Subastas en las que participás',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            cantBids == 0
-                ? Container(
+            FutureBuilder<List<Auction>>(
+              future: Auction.getParticipatingAuctions(user.getUID()),
+              builder: (context, snap) {
+                if (snap.connectionState != ConnectionState.done) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                var auctions = snap.data;
+
+                if (auctions.isEmpty) {
+                  return Container(
                     width: 300,
                     child: Card(
                       margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
@@ -60,21 +72,40 @@ class OwnAuctionsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
-                : Container(
-                    child: AuctionList(
-                      type: "null",
-                    ),
-                  ),
+                  );
+                } else {
+                  return CrossShrinkedListView(
+                    alignment: Axis.horizontal,
+                    itemCount: auctions.length,
+                    itemBuilder: (int index) {
+                      return AuctionCard(
+                        auction: auctions[index],
+                      );
+                    },
+                  );
+                }
+              },
+            ),
             Container(
               padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
               child: Text(
-                'Tus subastas',
+                'Subastas creadas por vos',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            cantAuct == 0
-                ? Container(
+            FutureBuilder<List<Auction>>(
+              future: Auction.getProfileAuctions(user.getUID()),
+              builder: (context, snap) {
+                if (snap.connectionState != ConnectionState.done) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                var auctions = snap.data;
+
+                if (auctions.isEmpty) {
+                  return Container(
                     width: 300,
                     child: Card(
                       margin: EdgeInsets.fromLTRB(10, 70, 10, 70),
@@ -106,12 +137,20 @@ class OwnAuctionsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  )
-                : Container(
-                    child: AuctionList(
-                      type: "active",
-                    ),
-                  )
+                  );
+                } else {
+                  return CrossShrinkedListView(
+                    alignment: Axis.horizontal,
+                    itemCount: auctions.length,
+                    itemBuilder: (int index) {
+                      return AuctionCard(
+                        auction: auctions[index],
+                      );
+                    },
+                  );
+                }
+              },
+            )
           ],
         ),
       ),

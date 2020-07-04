@@ -39,9 +39,9 @@ class ServerApi {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: {
+      body: jsonEncode({
         'idToken': userToken,
-      },
+      }),
     );
 
     if (res.statusCode != 200 && res.statusCode != 404)
@@ -50,7 +50,7 @@ class ServerApi {
         error: res.reasonPhrase,
       );
 
-    sessionCookie = res.headers['Cookie'];
+    sessionCookie = res.headers['set-cookie'];
 
     return res.statusCode != signUpStatusCode;
   }
@@ -79,7 +79,7 @@ class ServerApi {
         'Content-Type': 'application/json',
         'Cookie': sessionCookie,
       },
-      body: {
+      body: jsonEncode({
         "name": name,
         "last_name": surname,
         "document_type": docType.toString().split('.')[1].toLowerCase(),
@@ -92,7 +92,7 @@ class ServerApi {
         "zip": zip,
         "street": address,
         "street_number": addressNumber,
-      },
+      }),
     );
 
     if (res.statusCode != 201) {
@@ -135,6 +135,7 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<Profile> getProfile({
+    @required String userUid,
     @required String ofUid,
   }) async {
     var res = await http.get(
@@ -158,9 +159,11 @@ class ServerApi {
       profileUid: json["id"],
       name: json["name"] + " " + json["last_name"],
       location: json["location"],
-      profilePicURL: null,
+      profilePicURL:
+          "https://forum.processmaker.com/download/file.php?avatar=93310_1550846185.png",
       following: await ServerApi.instance().isFollowing(
-        uid: ofUid,
+        followerUid: userUid,
+        followedUid: ofUid,
       ),
       user: null,
     );
@@ -172,9 +175,26 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<bool> isFollowing({
-    @required String uid,
-  }) {
-    throw UnimplementedError();
+    @required String followerUid,
+    @required String followedUid,
+  }) async {
+    var res = await http.get(
+      host +
+          '/user/following?follower_id=$followerUid&followed_id=$followedUid',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting categories',
+        error: res.reasonPhrase,
+      );
+    }
+
+    return jsonDecode(res.body)["following"];
   }
 
   /* ----------------------------------------------------------------------------
@@ -266,18 +286,66 @@ class ServerApi {
       );
     }
 
-    var jsons = jsonDecode(res.body);
+    var jsons = jsonDecode(res.body) as List<dynamic>;
 
-    return jsons.map(
-      (json) => Auction(
-        auctionId: json["lot_id"],
-        title: json["name"],
-        deadLine: json["deadline"],
-        category: json["category"],
-        ownerUid: ofUid,
-        imageURL: null,
-      ),
+    return jsons
+        .map(
+          (json) => Auction(
+            auctionId: json["lot_id"],
+            title: json["name"],
+            description: json["description"],
+            deadLine: DateTime.parse(json["deadline"]),
+            category: json["category"],
+            initialPrice: double.parse(json["initial_price"]),
+            quantity: json["quantity"],
+            ownerUid: ofUid,
+            imageURL: [
+              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
+            ],
+          ),
+        )
+        .toList();
+  }
+
+  /* ----------------------------------------------------------------------------
+   Get the auctions on which a user is participating
+  ---------------------------------------------------------------------------- */
+
+  Future<List<Auction>> getParticipatingAuctions() async {
+    var res = await http.get(
+      host + '/auction/bidding/',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
     );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting user participating auctions',
+        error: res.reasonPhrase,
+      );
+    }
+
+    var jsons = jsonDecode(res.body) as List<dynamic>;
+
+    return jsons
+        .map(
+          (json) => Auction(
+            auctionId: json["lot_id"],
+            title: json["name"],
+            description: json["description"],
+            deadLine: DateTime.parse(json["deadline"]),
+            category: json["category"],
+            initialPrice: double.parse(json["initial_price"]),
+            quantity: json["quantity"],
+            ownerUid: json["owner_id"],
+            imageURL: [
+              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
+            ],
+          ),
+        )
+        .toList();
   }
 
   /* ----------------------------------------------------------------------------
@@ -314,57 +382,25 @@ class ServerApi {
       );
     }
 
-    var jsons = jsonDecode(res.body);
+    var jsons = jsonDecode(res.body) as List<dynamic>;
 
-    return jsons.map(
-      (json) => Auction(
-        auctionId: json["lot_id"],
-        title: json["name"],
-        deadLine: json["deadline"],
-        category: json["category"],
-        ownerUid: json["owner_id"],
-        imageURL: null,
-      ),
-    );
-  }
-
-  /* ----------------------------------------------------------------------------
-   Get the auctions on which a user is participating
-   //TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-  Future<List<Auction>> getParticipatingAuctions({
-    @required String uid,
-    @required limit,
-    @required offset,
-  }) async {
-    var res = await http.get(
-      host + '/auction/list/',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-    );
-
-    if (res.statusCode != 200) {
-      ErrorLogger.log(
-        context: 'Getting user participating auctions',
-        error: res.reasonPhrase,
-      );
-    }
-
-    var jsons = jsonDecode(res.body);
-
-    return jsons.map(
-      (json) => Auction(
-        auctionId: json["lot_id"],
-        title: json["name"],
-        deadLine: json["deadline"],
-        category: json["category"],
-        ownerUid: json["owner_id"],
-        imageURL: null,
-      ),
-    );
+    return jsons
+        .map(
+          (json) => Auction(
+            auctionId: json["lot_id"],
+            title: json["name"],
+            description: json["description"],
+            deadLine: DateTime.parse(json["deadline"]),
+            category: json["category"],
+            initialPrice: double.parse(json["initial_price"]),
+            quantity: json["quantity"],
+            ownerUid: json["owner_id"],
+            imageURL: [
+              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
+            ],
+          ),
+        )
+        .toList();
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -388,13 +424,13 @@ class ServerApi {
         'Content-Type': 'application/json',
         'Cookie': sessionCookie,
       },
-      body: {
+      body: jsonEncode({
         "name": title,
         "category": category,
         "description": description,
-        "initial_price": initialPrice,
+        "initial_price": initialPrice.toString(),
         "quantity": quantity,
-      },
+      }),
     );
 
     if (res.statusCode != 201) {
@@ -414,35 +450,40 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<List<Bid>> getCurrentBids({
-    @required String auctionId,
+    @required int auctionId,
     @required offset,
     @required limit,
   }) async {
     var res = await http.get(
-      host + '/bid/byAuction/' + auctionId + "?limit=$limit&offset=$offset",
+      host +
+          '/bid/byAuction/' +
+          auctionId.toString() +
+          "?limit=$limit&offset=$offset",
       headers: {
         'Content-Type': 'application/json',
         'Cookie': sessionCookie,
       },
     );
 
-    if (res.statusCode != 201) {
+    if (res.statusCode != 200) {
       ErrorLogger.log(
         context: "Getting current bids of an auction",
         error: res.reasonPhrase,
       );
     }
 
-    var jsons = jsonDecode(res.body);
+    var jsons = jsonDecode(res.body) as List<dynamic>;
 
-    return jsons.map(
-      (json) => Bid(
-        auctionId: auctionId,
-        placerUid: json["user_uid"],
-        amount: json["amount"],
-        date: DateTime.parse(json["time"]),
-      ),
-    );
+    return jsons
+        .map(
+          (json) => Bid(
+            auctionId: auctionId,
+            placerUid: json["user_uid"],
+            amount: json["amount"],
+            date: DateTime.parse(json["time"]),
+          ),
+        )
+        .toList();
   }
 
   /* ----------------------------------------------------------------------------
@@ -450,7 +491,7 @@ class ServerApi {
    //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Stream<Bid> getBidsStream({@required String auctionId}) {
+  Stream<Bid> getBidsStream({@required int auctionId}) {
     throw UnimplementedError();
   }
 
@@ -459,19 +500,19 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<void> postBid({
-    @required String auctionId,
+    @required int auctionId,
     @required double amount,
   }) async {
     var res = await http.post(
-      host + '/auction/' + auctionId + '/bid',
+      host + '/auction/' + auctionId.toString() + '/bid',
       headers: {
         'Content-Type': 'application/json',
         'Cookie': sessionCookie,
       },
-      body: {
+      body: jsonEncode({
         "auc_id": auctionId,
         "amount": amount,
-      },
+      }),
     );
 
     if (res.statusCode != 201) {
