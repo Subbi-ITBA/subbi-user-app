@@ -12,7 +12,6 @@ import 'package:subbi/widgets/image_uploader_view.dart';
 class AddAuctionScreen extends StatefulWidget {
   @override
   _State createState() => _State();
-
 }
 
 class _State extends State<AddAuctionScreen> {
@@ -32,8 +31,6 @@ class _State extends State<AddAuctionScreen> {
   static const MAX_IMAGES = 6;
   List<Asset> images = List<Asset>();
   int _availableImages = MAX_IMAGES;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -138,13 +135,12 @@ class _State extends State<AddAuctionScreen> {
                         ),
                         onChanged: (String newValue) {
                           setState(() {
-                            if (newValue != null) {
+                            if (newValue.isNotEmpty) {
                               _quantity = int.parse(newValue);
                             }
                           });
                         },
                         validator: (value) => (value.isEmpty ||
-                                value == null ||
                                 (value.isNotEmpty && int.parse(value) <= 0))
                             ? "Cantidad debe ser un número entero mayor a cero"
                             : null,
@@ -165,13 +161,15 @@ class _State extends State<AddAuctionScreen> {
                         ),
                         onChanged: (String newValue) {
                           setState(() {
-                            _initialPrice = double.parse(newValue);
+                            if (newValue.isNotEmpty) {
+                              _initialPrice = double.parse(newValue);
+                            }
                           });
                         },
                         validator: (value) => (value.isEmpty ||
                                 (value.isNotEmpty && int.parse(value) <= 0))
                             ? "Precio inicial debe ser un numero mayor a cero"
-                            : "ta bien",
+                            : null,
                       ),
                     ),
                     Text(
@@ -208,8 +206,7 @@ class _State extends State<AddAuctionScreen> {
     ].toList();
   }
 
-  Future<void> getImages() async{
-
+  Future<void> getImages() async {
     List<Asset> resultList;
     String error;
 
@@ -235,14 +232,14 @@ class _State extends State<AddAuctionScreen> {
   }
 
   Widget buildGridView() {
-    if(images != null){
+    if (images != null) {
       return GridView.count(
         primary: true,
         crossAxisCount: 3,
         childAspectRatio: 1,
         shrinkWrap: true,
         children: List.generate(MAX_IMAGES, (index) {
-          if((MAX_IMAGES - _availableImages) > index ) {
+          if ((MAX_IMAGES - _availableImages) > index) {
             return Card(
               clipBehavior: Clip.antiAlias,
               child: Stack(
@@ -256,13 +253,13 @@ class _State extends State<AddAuctionScreen> {
                     top: 5,
                     right: 5,
                     child: InkWell(
-                      child: Icon(
-                          Icons.remove_circle, size: 20, color: Colors.red),
+                      child: Icon(Icons.remove_circle,
+                          size: 20, color: Colors.red),
                       onTap: () {
                         setState(() {
                           images.removeAt(index);
                           _availableImages++;
-                          for(Asset image in images){
+                          for (Asset image in images) {
                             print(image.toString());
                           }
                         });
@@ -272,19 +269,19 @@ class _State extends State<AddAuctionScreen> {
                 ],
               ),
             );
-          }
-          else{
+          } else {
             return Card(
               child: IconButton(
                 icon: Icon(Icons.add),
-                onPressed: (){getImages();},
+                onPressed: () {
+                  getImages();
+                },
               ),
             );
           }
         }),
       );
-    }
-    else{
+    } else {
       return Container();
     }
   }
@@ -295,39 +292,39 @@ class _State extends State<AddAuctionScreen> {
         borderRadius: BorderRadius.circular(18.0),
       ),
       onPressed: () {
-          if (_formKey.currentState.validate()) {
-            if(images.length >= 3) {
-              //TODO image assets to byte data
-              print(
-                  "isValid $_name, $_description $_category $_initialPrice $_quantity");
-              //form is valid, proceed further
-              //  _formKey.currentState
-              //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-              ServerApi.instance().postLot(
-                title: _name,
-                category: _category,
-                description: _description,
-                initialPrice: _initialPrice,
-                quantity: _quantity,
-              );
-            }
-            else{
-              final imagesErrorSnackbar = SnackBar(
-                content: Text('Deben incluir al menos 3 fotos, pruebe nuevamente.'),
-                action: SnackBarAction(
-                  label: 'Cerrar',
-                  onPressed: (){Scaffold.of(context).hideCurrentSnackBar();},
-                ),
-              );
-              Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
-            }
+        if (_formKey.currentState.validate()) {
+          if (images.length >= 3) {
+            //TODO image assets to byte data
+            print(
+                "isValid $_name, $_description $_category $_initialPrice $_quantity");
+            //form is valid, proceed further
+            //  _formKey.currentState
+            //    .save(); //save once fields are valid, onSaved method invoked for every form fields
+            ServerApi.instance().postLot(
+              title: _name,
+              category: _category,
+              description: _description,
+              initialPrice: _initialPrice,
+              quantity: _quantity,
+            );
           } else {
-            setState(() {
-              _autovalidate = true; //enable realtime validation
-            });
+            final imagesErrorSnackbar = SnackBar(
+              content:
+                  Text('Deben incluir al menos 3 fotos, pruebe nuevamente.'),
+              action: SnackBarAction(
+                label: 'Cerrar',
+                onPressed: () {
+                  Scaffold.of(context).hideCurrentSnackBar();
+                },
+              ),
+            );
+            Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
           }
-
-
+        } else {
+          setState(() {
+            _autovalidate = true; //enable realtime validation
+          });
+        }
       },
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
