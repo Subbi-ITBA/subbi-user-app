@@ -53,12 +53,10 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
     data = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          data['category'],
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(widget.category),
         ),
-      ),
       body: FutureBuilder<List<Auction>>(
         future: _auctionIterator.current,
         builder: (context, snap) {
@@ -141,17 +139,17 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
     switch (dropDownVal) {
       case "Novedad":
         return Auction.getLatestAuctions(
-          category: data['category'],
+          category: widget.category,
           pageSize: CategoryAuctionsScreen.AUCTION_PAGE_SIZE,
         );
       case "Popular":
         return Auction.getPopularAuctions(
-          category: data['category'],
+          category: widget.category,
           pageSize: CategoryAuctionsScreen.AUCTION_PAGE_SIZE,
         );
       case "Finalizando":
         return Auction.getEndingAuctions(
-          category: data['category'],
+          category: widget.category,
           pageSize: CategoryAuctionsScreen.AUCTION_PAGE_SIZE,
         );
       default:

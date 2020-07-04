@@ -349,7 +349,7 @@ class ServerApi {
   }
 
   /* ----------------------------------------------------------------------------
-   Get a specific set of auctions (LATEST, POPULARITY, DEADLINE)
+   Get a specific set of auctions (CREATION_DATE, POPULARITY, DEADLINE)
   ---------------------------------------------------------------------------- */
 
   Future<List<Auction>> getAuctionsBySort({
