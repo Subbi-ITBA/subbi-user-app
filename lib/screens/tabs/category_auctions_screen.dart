@@ -17,7 +17,7 @@ class CategoryAuctionsScreen extends StatefulWidget {
 class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
   Map data = {};
   ScrollController _scrollController;
-  String dropDownVal = 'Novedad';
+  String dropDownVal = "Novedad";
   static const int FETCH_AMOUNT = 20;
   int amountFetched = 0;
 //  List<Auction> auctions = [
@@ -207,7 +207,7 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(data['category']),
+          title: Text(widget.category),
         ),
         body: ListView(
           controller: _scrollController,

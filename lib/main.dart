@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
             onGenerateRoute: (settings) {
               final Map arg = settings.arguments;
-              if (settings.name == AuctionListBySortScreen.route) {
+          if (settings.name == AuctionListBySortScreen.route) {
                 return MaterialPageRoute(builder: (context) {
                   return AuctionListBySortScreen(
                     sort: arg['sort'],
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
               else if(settings.name == CategoryAuctionsScreen.route){
                 return MaterialPageRoute(builder: (context) {
                   return CategoryAuctionsScreen(
-                      category: arg['category'],
+                    category: arg['category'],
                   );
                 });
               }

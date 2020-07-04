@@ -15,13 +15,17 @@ class Category {
     return new Category(
       name: parsedJson['name'],
       description: parsedJson['description'],
-      iconName: parsedJson['iconName'],
+      iconName: parsedJson['iconid'],
     );
   }
 
   static Future<List<Category>> getCategories() async{
     var jsons = await ServerApi.instance().getCategories();
-    return jsons.map((e) => Category.fromJson(e));
+    List<Category> categories = List<Category>();
+    jsons.forEach((element) {
+      categories.add(Category.fromJson(element));
+    });
+    return categories;
   }
 
   @override
