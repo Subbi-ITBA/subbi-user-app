@@ -13,9 +13,8 @@ class Auction {
   int quantity;
   double initialPrice;
 
-  List<Bid> _bids;
-
   Auction({
+    @required this.auctionId,
     @required this.ownerUid,
     @required this.title,
     @required this.description,
@@ -34,7 +33,7 @@ class Auction {
     Get auctions of a profile
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getAuctions(String ofUid) async {
+  static Future<List<Auction>> getProfileAuctions(String ofUid) async {
     return await ServerApi.instance().getProfileAuctions(
       ofUid: ofUid,
     );
@@ -44,16 +43,14 @@ class Auction {
     Get latest auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getLatestAuctions(
-    String category,
-    int limit,
-    int offset,
-  ) async {
-    return await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getLatestAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.CREATION_DATE,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.CREATION_DATE,
     );
   }
 
@@ -61,16 +58,14 @@ class Auction {
     Get popular auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getPopularAuctions(
-    String category,
-    int limit,
-    int offset,
-  ) async {
-    return await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getPopularAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.POPULARITY,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.POPULARITY,
     );
   }
 
@@ -78,16 +73,14 @@ class Auction {
     Get ending auctions
   ------------------------------------------------------------ */
 
-  static Future<List<Auction>> getEndingAuctions(
-    String category,
-    int limit,
-    int offset,
-  ) async {
-    return await ServerApi.instance().getAuctionsBySort(
+  static AuctionIterator getEndingAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
       category: category,
-      limit: limit,
-      offset: offset,
-      sort: AuctionSort.DEADLINE,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.DEADLINE,
     );
   }
 
@@ -134,5 +127,33 @@ class Auction {
       quantity: quantity,
       initialPrice: initialPrice,
     );
+  }
+}
+
+class AuctionIterator {
+  final AuctionSort sortMethod;
+  final String category;
+  final int pageSize;
+
+  int _offset = 0;
+
+  AuctionIterator({
+    @required this.category,
+    @required this.sortMethod,
+    @required this.pageSize,
+  });
+
+  Future<List<Auction>> get current async {
+    return await ServerApi.instance().getAuctionsBySort(
+      category: category,
+      sort: sortMethod,
+      offset: _offset,
+      limit: pageSize,
+    );
+  }
+
+  Future<bool> moveNext() async {
+    _offset += pageSize;
+    return true;
   }
 }
