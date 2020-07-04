@@ -3,59 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/category.dart';
 
 class CategoryList extends StatelessWidget {
-//  final List<Category> categories = [
-//    Category(
-//      name: 'Musica',
-//      description: 'musica',
-//      iconName: 'e405',
-//    ),
-//    Category(
-//      name: 'Autos',
-//      description: 'auto',
-//      iconName: 'e531',
-//    ),
-//    Category(
-//      name: 'Consolas & Videojuegos',
-//      description: 'consolas',
-//      iconName: 'e338',
-//    ),
-//    Category(
-//      name: 'Juguetes & Juegos',
-//      description: 'juegos',
-//      iconName: 'eb40',
-//    ),
-//    Category(
-//      name: 'Joyas',
-//      description: 'joyas',
-//      iconName: 'e334',
-//    ),
-//    Category(
-//      name: 'Electrodomésticos',
-//      description: 'cosas de la casa',
-//      iconName: 'eb47',
-//    ),
-//    Category(
-//      name: 'Peliculas & Series',
-//      description: 'pelis y series',
-//      iconName: 'e63b',
-//    ),
-//    Category(
-//      name: 'Antigüedades',
-//      description: 'antiguedades',
-//      iconName: 'e40b',
-//    ),
-//    Category(
-//      name: 'Muebles',
-//      description: 'sofas',
-//      iconName: 'e16b',
-//    ),
-//    Category(
-//      name: 'Inmuebles',
-//      description: 'casas',
-//      iconName: 'e88a',
-//    )
-//  ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +61,7 @@ class CategoryList extends StatelessWidget {
                                       snapshot.data[i].name,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),

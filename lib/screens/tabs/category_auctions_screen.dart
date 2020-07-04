@@ -25,7 +25,7 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
   @override
   void initState() {
     super.initState();
-
+    print(widget.category);
     _auctionIterator = getAuctionIterator();
     _scrollController = ScrollController();
 
@@ -67,69 +67,86 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
           }
 
           var auctions = snap.data;
-
-          return ListView(
-            controller: _scrollController,
-            children: <Widget>[
-              Container(
-                height: 25,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.grey[400],
-                      width: 1,
+          if(auctions.isNotEmpty) {
+            return ListView(
+              controller: _scrollController,
+              children: <Widget>[
+                Container(
+                  height: 25,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey[400],
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('${auctions.length} resultados'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              'Ordernar por: ',
+                            ),
+                            DropdownButton<String>(
+                              value: dropDownVal,
+                              onChanged: (String newVal) {
+                                setState(() {
+                                  dropDownVal = newVal;
+                                });
+                              },
+                              items: <String>[
+                                'Novedad',
+                                'Popular',
+                                'Finalizando'
+                              ]
+                                  .map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                },
+                              ).toList(),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('${auctions.length} resultados'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            'Ordernar por: ',
-                          ),
-                          DropdownButton<String>(
-                            value: dropDownVal,
-                            onChanged: (String newVal) {
-                              setState(() {
-                                dropDownVal = newVal;
-                              });
-                            },
-                            items: <String>['Novedad', 'Popular', 'Finalizando']
-                                .map<DropdownMenuItem<String>>(
-                              (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              },
-                            ).toList(),
-                          )
-                        ],
-                      ),
-                    ],
+                GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
                   ),
+                  itemCount: auctions.length,
+                  itemBuilder: (context, i) {
+                    return AuctionCard(auction: auctions.elementAt(i));
+                  },
                 ),
+              ],
+            );
+          }
+          else{
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text('Todavia no hay subastas de esta categoria.',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.deepPurple
+                ),),
               ),
-              GridView.builder(
-                scrollDirection: Axis.vertical,
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemCount: auctions.length,
-                itemBuilder: (context, i) {
-                  return AuctionCard(auction: auctions.elementAt(i));
-                },
-              ),
-            ],
-          );
+            );
+          }
         },
       ),
     );

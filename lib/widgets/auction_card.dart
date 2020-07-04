@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/auction.dart';
-import 'package:subbi/models/auction/bid.dart';
 
 class AuctionCard extends StatelessWidget {
   final Auction auction;
@@ -30,7 +29,7 @@ class AuctionCard extends StatelessWidget {
           elevation: 2,
           margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(2),
             child: FutureBuilder<bool>(
               future: bidIterator.moveNext(),
               builder: (context, snap) {

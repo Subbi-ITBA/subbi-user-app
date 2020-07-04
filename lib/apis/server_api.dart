@@ -366,7 +366,7 @@ class ServerApi {
     String path = category == null
         ? '/auction/list?sort=$sortString&limit=$limit&offset=$offset'
         : '/auction/list?sort=$sortString&limit=$limit&offset=$offset&category=$category';
-
+    print(path);
     var res = await http.get(
       host + path,
       headers: {
