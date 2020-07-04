@@ -17,6 +17,7 @@ class SigninScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(backgroundColor: Theme.of(context).backgroundColor, elevation: 0, iconTheme: IconThemeData(color: Colors.deepPurple),),
       body: Center(
         child: SingleChildScrollView(
           child: Container(

@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   RaisedButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, '/signin');
+                                      Navigator.pushNamed(context, '/signup');
                                     },
                                     child: Text('Crear una cuenta'),
                                   ),
