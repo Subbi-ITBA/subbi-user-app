@@ -34,19 +34,47 @@ class Bid {
     Get current bids of auction
   ------------------------------------------------------------ */
 
-  static Future<List<Bid>> getCurrentBids({@required String auctionId}) async {
-    return await ServerApi.instance().getCurrentBids(
-      auctionId: auctionId,
-    );
+  static BidIterator getBidIterator({
+    @required String auctionId,
+    @required int pageSize,
+  }) {
+    return BidIterator(auctionId: auctionId, size: pageSize);
   }
 
   /* ------------------------------------------------------------
     Get stream of bids of auction
   ------------------------------------------------------------ */
 
-  static Stream<Bid> getBidsStream({@required String auctionId}) {
+  static Stream<Bid> getBidsStream({
+    @required String auctionId,
+  }) {
     return ServerApi.instance().getBidsStream(
       auctionId: auctionId,
     );
+  }
+}
+
+class BidIterator {
+  final String auctionId;
+  final int size;
+  int _offset = 0;
+  List<Bid> _currentPage;
+
+  BidIterator({this.size, this.auctionId});
+
+  List<Bid> get current {
+    return _currentPage;
+  }
+
+  Future<bool> moveNext() async {
+    _offset += size;
+
+    _currentPage = await ServerApi.instance().getCurrentBids(
+      auctionId: auctionId,
+      offset: _offset,
+      limit: size,
+    );
+
+    return _currentPage.isNotEmpty;
   }
 }

@@ -99,13 +99,13 @@ class Auction {
     Get current bids, fetch them if they haven't already
   ------------------------------------------------------------ */
 
-  Future<List<Bid>> getCurrentBids() async {
-    if (_bids == null)
-      _bids = await Bid.getCurrentBids(
-        auctionId: auctionId,
-      );
-
-    return _bids;
+  BidIterator getBidIterator({
+    @required int pageSize,
+  }) {
+    return Bid.getBidIterator(
+      auctionId: auctionId,
+      pageSize: pageSize,
+    );
   }
 
   /* ------------------------------------------------------------

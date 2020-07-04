@@ -414,6 +414,7 @@ class UserInfo extends StatelessWidget {
 }
 
 class AuctionInfo extends StatelessWidget {
+  static const BID_PAGE_SIZE = 20;
   final Auction auction;
 
   AuctionInfo({@required this.auction});
@@ -421,6 +422,8 @@ class AuctionInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    var bidIterator = auction.getBidIterator(pageSize: BID_PAGE_SIZE);
+
     return Container(
       width: size.width * 0.9,
       height: 87,
@@ -456,10 +459,8 @@ class AuctionInfo extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  FutureBuilder<List<Bid>>(
-                    future: Bid.getCurrentBids(
-                      auctionId: auction.auctionId,
-                    ),
+                  FutureBuilder<bool>(
+                    future: bidIterator.moveNext(),
                     builder: (context, snap) {
                       if (snap.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -467,7 +468,7 @@ class AuctionInfo extends StatelessWidget {
                         );
                       }
 
-                      var bids = snap.data;
+                      var bids = bidIterator.current;
                       bids.sort((b1, b2) => b1.amount.compareTo(b2.amount));
 
                       return Padding(
