@@ -29,12 +29,7 @@ dependencies:
   multi_image_picker: ^4.6.7
   mercado_pago_mobile_checkout: ^0.0.2
 
-<<<<<<< HEAD
   http: ^0.12.1
-=======
-
-    http: ^0.12.1
->>>>>>> d26aa51b2d9e8263093caf3fc693c4bece8be019
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
