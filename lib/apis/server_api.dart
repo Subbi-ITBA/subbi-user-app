@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/profile/profile.dart';
@@ -7,6 +8,8 @@ import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'dart:typed_data';
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -411,12 +414,13 @@ class ServerApi {
    Post a new lot
   ---------------------------------------------------------------------------- */
 
-  Future<void> postLot({
+  Future<int> postLot({
     @required String title,
     @required String category,
     @required String description,
     @required double initialPrice,
     @required int quantity,
+    @required List<int> img_ids
   }) async {
     var res = await http.post(
       host + '/lot',
@@ -430,6 +434,7 @@ class ServerApi {
         "description": description,
         "initial_price": initialPrice.toString(),
         "quantity": quantity,
+        "lot_photos": img_ids
       }),
     );
 
@@ -439,6 +444,9 @@ class ServerApi {
         error: res.reasonPhrase,
       );
     }
+    var jsons = jsonDecode(res.body) as List<dynamic>;
+
+    return jsons[0]['id'];
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -518,6 +526,59 @@ class ServerApi {
     if (res.statusCode != 201) {
       ErrorLogger.log(
         context: "Posting a bid",
+        error: res.reasonPhrase,
+      );
+    }
+  }
+
+  Future<int> postPhoto(Asset image) async {
+    // string to uri
+    Uri uri = Uri.parse(host + '/photo');
+
+    // create multipart request
+    http.MultipartRequest request = http.MultipartRequest("POST", uri);
+
+      ByteData byteData = await image.getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+
+      http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+        'photo',
+        imageData,
+        filename: image.name,
+        contentType: MediaType("image", "jpg"),
+      );
+
+      // add file to multipart
+      request.files.add(multipartFile);
+      // send
+      var response = await request.send();
+      if(response.statusCode != 200){
+        ErrorLogger.log(
+          context: "Uploading photo",
+          error: response.reasonPhrase,
+        );
+      }
+      print(response);
+      return 0;
+  }
+
+  Future<void> postPhotoID(int photoId, int lotId) async {
+    //TODO send photo id and lot id to backend
+    var res = await http.post(
+      host + '/lot/photo',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+      body: jsonEncode({
+        "photo_id": photoId,
+        "lot_id": lotId,
+      }),
+    );
+
+    if (res.statusCode != 201) {
+      ErrorLogger.log(
+        context: "Posting photo ID",
         error: res.reasonPhrase,
       );
     }

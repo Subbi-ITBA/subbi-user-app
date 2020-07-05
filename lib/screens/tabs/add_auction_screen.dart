@@ -224,7 +224,8 @@ class _State extends State<AddAuctionScreen> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-
+    resultList.forEach((element) {
+      print(element.name);});
     setState(() {
       images.addAll(resultList);
       _availableImages -= resultList.length;
@@ -290,22 +291,31 @@ class _State extends State<AddAuctionScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18.0),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (_formKey.currentState.validate()) {
           if (images.length >= 3) {
+
             //TODO image assets to byte data
             print(
                 "isValid $_name, $_description $_category $_initialPrice $_quantity");
             //form is valid, proceed further
             //  _formKey.currentState
             //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-            ServerApi.instance().postLot(
+//            List<int> img_ids = List<int>();
+//            images.forEach((image) async {
+//              int id = await ServerApi.instance().postPhoto(image);
+//              img_ids.add(id);
+//            });
+            List<int> img_ids = [1,2,3,4];
+            int lot_id = await ServerApi.instance().postLot(
               title: _name,
               category: _category,
               description: _description,
               initialPrice: _initialPrice,
               quantity: _quantity,
+              img_ids: img_ids
             );
+
           } else {
             final imagesErrorSnackbar = SnackBar(
               content:

@@ -7,8 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:subbi/widgets/auction_card.dart';
 import 'package:subbi/widgets/category_list.dart';
 import 'auction_list_by_sort.dart';
+import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class HomeScreen extends StatelessWidget {
+  static const String MP_PUBLIC_KEY = "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
+  static const String PREFERENCE_ID = "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
   static const AUCTIONS_TO_SHOW = 4;
 
   final AuctionIterator popularAuctionsIterator = Auction.getPopularAuctions(
@@ -35,7 +38,6 @@ class HomeScreen extends StatelessWidget {
           ),
           splashColor: Colors.transparent,
           onPressed: () {
-            mp();
           },
         ),
         title: TextField(
@@ -62,7 +64,10 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
-              onPressed: (){mp();},
+              onPressed: (){
+                mp(context);
+              },
+              child: Text('pagar'),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
@@ -234,6 +239,44 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void mp() async {
+  void mp(BuildContext context) async {
+    PaymentResult result =
+    await MercadoPagoMobileCheckout.startCheckout(
+      MP_PUBLIC_KEY,
+      PREFERENCE_ID,
+    );
+    print(result.toString());
+    showDialog(context: context,
+        builder: (buildContext){
+          if(result.statusDetail == "accredited") {
+            return AlertDialog(
+                title: Text('Payment received'),
+                content: Text('el que lee es gay'),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: (){
+                    Navigator.of(buildContext).pop();
+                  },
+                  child: Text('CLOSE'),
+                )
+              ],
+            );
+          }
+          else{
+            return AlertDialog(
+                title: Text('Payment failed'),
+                content: Text('el que lee es gay'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.of(buildContext).pop();
+                      mp(context);
+                    },
+                    child: Text('TRY AGAIN'),
+                  )
+                ],
+            );
+        }
+    });
   }
 }
