@@ -234,7 +234,6 @@ class _State extends State<AddAuctionScreen> {
   Widget buildGridView() {
     if (images != null) {
       return GridView.count(
-        primary: true,
         crossAxisCount: 3,
         childAspectRatio: 1,
         shrinkWrap: true,
