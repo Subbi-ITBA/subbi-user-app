@@ -6,17 +6,21 @@ import 'package:subbi/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:subbi/widgets/auction_card.dart';
 import 'package:subbi/widgets/category_list.dart';
-
 import 'auction_list_by_sort.dart';
 
 class HomeScreen extends StatelessWidget {
-  static const POPULAR_AUCTIONS_TO_SHOW = 4;
+  static const AUCTIONS_TO_SHOW = 4;
 
   final AuctionIterator popularAuctionsIterator = Auction.getPopularAuctions(
     category: null,
-    pageSize: POPULAR_AUCTIONS_TO_SHOW,
+    pageSize: AUCTIONS_TO_SHOW,
   );
-
+  
+  final AuctionIterator latestAuctionsIterator = Auction.getLatestAuctions(
+    category: null,
+    pageSize: AUCTIONS_TO_SHOW,
+  );
+  
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -30,7 +34,9 @@ class HomeScreen extends StatelessWidget {
             scale: 0.8,
           ),
           splashColor: Colors.transparent,
-          onPressed: () {},
+          onPressed: () {
+            mp();
+          },
         ),
         title: TextField(
           decoration: InputDecoration(
@@ -55,6 +61,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            RaisedButton(
+              onPressed: (){mp();},
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: AdsCarrousel(),
@@ -186,7 +195,33 @@ class HomeScreen extends StatelessWidget {
                             ),
                           )
                         ],
-                      )
+                      ),
+                      FutureBuilder<List<Auction>>(
+                        future: latestAuctionsIterator.current,
+                        builder: (context, snap) {
+                          if (snap.connectionState != ConnectionState.done) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+
+                          var _auctions = snap.data;
+
+                          return GridView.builder(
+                            scrollDirection: Axis.vertical,
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                            ),
+                            itemCount: _auctions.length,
+                            itemBuilder: (context, i) {
+                              return AuctionCard(
+                                auction: _auctions.elementAt(i),
+                              );
+                            },
+                          );
+                        },
+                      ),
                       // TODO new auctions
                     ],
                   ),
@@ -197,5 +232,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void mp() async {
   }
 }
