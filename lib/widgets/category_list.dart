@@ -3,15 +3,14 @@ import 'package:flutter/widgets.dart';
 import 'package:subbi/models/auction/category.dart';
 
 class CategoryList extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 120,
         child: FutureBuilder<List<Category>>(
           future: Category.getCategories(),
-          builder: (BuildContext context,
-              AsyncSnapshot <List<Category>>snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Category>> snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
                   itemCount: snapshot.data.length,
@@ -47,12 +46,12 @@ class CategoryList extends StatelessWidget {
                                 int.parse('0x${snapshot.data[i].iconName}'),
                                 fontFamily: 'MaterialIcons',
                               ),
-                              size: 40,
+                              size: 48,
                               color: Colors.deepPurple,
                             ),
                           ),
                           Container(
-                              width: 60,
+                              width: 75,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -71,8 +70,7 @@ class CategoryList extends StatelessWidget {
                       ),
                     );
                   });
-            }
-            else {
+            } else {
               return Container();
             }
           },

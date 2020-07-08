@@ -53,10 +53,10 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
     data = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(widget.category),
-        ),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(widget.category),
+      ),
       body: FutureBuilder<List<Auction>>(
         future: _auctionIterator.current,
         builder: (context, snap) {
@@ -67,7 +67,7 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
           }
 
           var auctions = snap.data;
-          if(auctions.isNotEmpty) {
+          if (auctions.isNotEmpty) {
             return ListView(
               controller: _scrollController,
               children: <Widget>[
@@ -104,9 +104,8 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
                                 'Novedad',
                                 'Popular',
                                 'Finalizando'
-                              ]
-                                  .map<DropdownMenuItem<String>>(
-                                    (String value) {
+                              ].map<DropdownMenuItem<String>>(
+                                (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -134,16 +133,15 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
                 ),
               ],
             );
-          }
-          else{
+          } else {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text('Todavia no hay subastas de esta categoria.',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.deepPurple
-                ),),
+                child: Text(
+                  'Todavia no hay subastas de esta categoria.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24, color: Colors.deepPurple),
+                ),
               ),
             );
           }
