@@ -533,7 +533,7 @@ class ServerApi {
 
   Future<int> postPhoto(Asset image) async {
     // string to uri
-    Uri uri = Uri.parse(host + '/photo');
+    Uri uri = Uri.parse(host + '/photo?image=');
 
     // create multipart request
     http.MultipartRequest request = http.MultipartRequest("POST", uri);
@@ -552,7 +552,7 @@ class ServerApi {
       request.files.add(multipartFile);
       // send
       var response = await request.send();
-      if(response.statusCode != 200){
+      if(response.statusCode != 201){
         ErrorLogger.log(
           context: "Uploading photo",
           error: response.reasonPhrase,
@@ -585,6 +585,17 @@ class ServerApi {
   }
 }
 
+/* -------------------------------------------------------------------------------------------------------------------------------
+                                                      MERCADOPAGO
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+/* ----------------------------------------------------------------------------
+   Get preference ID
+  ---------------------------------------------------------------------------- */
+
+Future<String> getPreferenceID(){
+
+}
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
