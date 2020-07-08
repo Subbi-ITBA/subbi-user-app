@@ -9,21 +9,28 @@ import 'package:subbi/widgets/category_list.dart';
 import 'auction_list_by_sort.dart';
 import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
-class HomeScreen extends StatelessWidget {
-  static const String MP_PUBLIC_KEY = "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
-  static const String PREFERENCE_ID = "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
+class HomeScreen extends StatefulWidget {
+  static const String MP_PUBLIC_KEY =
+      "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
+  static const String PREFERENCE_ID =
+      "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
   static const AUCTIONS_TO_SHOW = 4;
 
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final AuctionIterator popularAuctionsIterator = Auction.getPopularAuctions(
     category: null,
-    pageSize: AUCTIONS_TO_SHOW,
+    pageSize: HomeScreen.AUCTIONS_TO_SHOW,
   );
-  
+
   final AuctionIterator latestAuctionsIterator = Auction.getLatestAuctions(
     category: null,
-    pageSize: AUCTIONS_TO_SHOW,
+    pageSize: HomeScreen.AUCTIONS_TO_SHOW,
   );
-  
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -37,8 +44,7 @@ class HomeScreen extends StatelessWidget {
             scale: 0.8,
           ),
           splashColor: Colors.transparent,
-          onPressed: () {
-          },
+          onPressed: () {},
         ),
         title: TextField(
           decoration: InputDecoration(
@@ -54,7 +60,10 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<User>(context).signOut();
+              print('Signed out');
+            },
             icon: Icon(Icons.notifications_none),
           )
         ],
@@ -64,7 +73,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
-              onPressed: (){
+              onPressed: () {
                 mp(context);
               },
               child: Text('pagar'),
@@ -73,36 +82,42 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: AdsCarrousel(),
             ),
-            user.isSignedIn() ? Container() : Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Text( 'Create una cuenta para tener una mejor experiencia!',
-                      style: TextStyle(
-                        fontSize: 15,
+            user.isSignedIn()
+                ? Container()
+                : Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'Create una cuenta para tener una mejor experiencia!',
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                          RaisedButton(
+                            onPressed: () async {
+                              await Navigator.pushNamed(context, '/signin');
+                              setState(() {});
+                            },
+                            child: Text('Crear una cuenta'),
+                          ),
+                          FlatButton(
+                            onPressed: () async {
+                              await Navigator.pushNamed(context, '/signin');
+                              setState(() {});
+                            },
+                            child: Text(
+                              'Ya tengo una cuenta',
+                              style: TextStyle(
+                                color: Colors.deepPurpleAccent,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    RaisedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signin');
-                      },
-                      child: Text('Crear una cuenta'),
-                    ),
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/signin');
-                    },
-                    child: Text(
-                      'Ya tengo una cuenta',
-                      style: TextStyle(
-                        color: Colors.deepPurpleAccent,
-                      ),
-                    ),
-                  )],
-                )
-              )
-            ),
+                  ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Column(
@@ -215,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                             physics: ScrollPhysics(),
                             shrinkWrap: true,
                             gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                             ),
                             itemCount: _auctions.length,
@@ -240,43 +255,43 @@ class HomeScreen extends StatelessWidget {
   }
 
   void mp(BuildContext context) async {
-    PaymentResult result =
-    await MercadoPagoMobileCheckout.startCheckout(
-      MP_PUBLIC_KEY,
-      PREFERENCE_ID,
+    PaymentResult result = await MercadoPagoMobileCheckout.startCheckout(
+      HomeScreen.MP_PUBLIC_KEY,
+      HomeScreen.PREFERENCE_ID,
     );
     print(result.toString());
-    showDialog(context: context,
-        builder: (buildContext){
-          if(result.statusDetail == "accredited") {
-            return AlertDialog(
-                title: Text('Payment received'),
-                content: Text('el que lee es gay'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: (){
-                    Navigator.of(buildContext).pop();
-                  },
-                  child: Text('CLOSE'),
-                )
-              ],
-            );
-          }
-          else{
-            return AlertDialog(
-                title: Text('Payment failed'),
-                content: Text('el que lee es gay'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: (){
-                      Navigator.of(buildContext).pop();
-                      mp(context);
-                    },
-                    child: Text('TRY AGAIN'),
-                  )
-                ],
-            );
+    showDialog(
+      context: context,
+      builder: (buildContext) {
+        if (result.statusDetail == "accredited") {
+          return AlertDialog(
+            title: Text('Payment received'),
+            content: Text('el que lee es gay'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(buildContext).pop();
+                },
+                child: Text('CLOSE'),
+              )
+            ],
+          );
+        } else {
+          return AlertDialog(
+            title: Text('Payment failed'),
+            content: Text('el que lee es gay'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(buildContext).pop();
+                  mp(context);
+                },
+                child: Text('TRY AGAIN'),
+              )
+            ],
+          );
         }
-    });
+      },
+    );
   }
 }

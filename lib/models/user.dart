@@ -32,7 +32,7 @@ class User extends ChangeNotifier {
 
   Future<void> loadCurrentUser() async {
     this.fbUser = await FirebaseAuth.instance.currentUser();
-    signIn();
+    await signIn();
   }
 
   /* ----------------------------------------------------------------------------
@@ -40,7 +40,17 @@ class User extends ChangeNotifier {
   ---------------------------------------------------------------------------- */
 
   Future<bool> signIn() async {
-    return await ServerApi.instance().signIn(userToken: await getToken());
+    return await ServerApi.instance().signIn(
+      userToken: await getToken(),
+    );
+  }
+
+  /* ----------------------------------------------------------------------------
+    Sign out Firebase Session
+  ---------------------------------------------------------------------------- */
+
+  Future<void> signOut() async {
+    return await FirebaseAuth.instance.signOut();
   }
 
   /* ----------------------------------------------------------------------------
