@@ -122,6 +122,8 @@ class Body extends StatelessWidget {
       ),
     );
   }
+
+
 }
 
 class AuctionDescription extends StatelessWidget {
@@ -281,9 +283,10 @@ class ProfileInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<User>(context);
     return FutureBuilder<Profile>(
         future: Profile.getProfile(
-          userUid: Provider.of<User>(context).getUID(),
+          userUid: user != null ? user.getUID() : "",
           ofUid: profileId,
         ),
         builder: (context, snapshot) {
