@@ -459,15 +459,7 @@ class ServerApi {
    Post a new lot
   ---------------------------------------------------------------------------- */
 
-<<<<<<< HEAD
-  Future<int> postLot(
-      {@required String title,
-      @required String category,
-      @required String description,
-      @required double initialPrice,
-      @required int quantity,
-      @required List<int> img_ids}) async {
-=======
+
   Future<int> postLot({
     @required String title,
     @required String category,
@@ -476,7 +468,6 @@ class ServerApi {
     @required int quantity,
     @required List<int> imgIds,
   }) async {
->>>>>>> 320980e6b2ee7adfa398e89fd4855a0c1e4c7b99
     var res = await http.post(
       host + '/lot',
       headers: {
@@ -658,10 +649,7 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
 Future<String> getPreferenceID() {}
-<<<<<<< HEAD
-=======
 
->>>>>>> 320980e6b2ee7adfa398e89fd4855a0c1e4c7b99
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
