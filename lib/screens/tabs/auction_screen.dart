@@ -69,7 +69,7 @@ class Body extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ImageSlider(
-            imageUrl: this.auction.imageURL,
+            photoIds: this.auction.photosIds,
           ),
           Flexible(
             fit: FlexFit.loose,
@@ -783,9 +783,9 @@ class DeadlineTimer extends StatelessWidget {
 }
 
 class ImageSlider extends StatelessWidget {
-  final List<String> imageUrl;
+  final List<int> photoIds;
 
-  ImageSlider({@required this.imageUrl});
+  ImageSlider({@required this.photoIds});
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -798,7 +798,7 @@ class ImageSlider extends StatelessWidget {
         enlargeCenterPage: true,
         enableInfiniteScroll: true,
       ),
-      items: this.imageUrl.map(
+      items: this.photoIds.map(
         (i) {
           return Builder(
             builder: (BuildContext context) {
@@ -809,7 +809,7 @@ class ImageSlider extends StatelessWidget {
                     Radius.circular(5.0),
                   ),
                   child: Image.network(
-                    '$i',
+                    'subbi.herokuapp.com/photo/$i.jpg',
                     fit: BoxFit.fill,
                   ),
                 ),

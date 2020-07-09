@@ -8,7 +8,7 @@ class Auction {
   String title;
   String description;
   String category;
-  List<String> imageURL;
+  List<int> photosIds;
   DateTime deadLine;
   int quantity;
   double initialPrice;
@@ -19,7 +19,7 @@ class Auction {
     @required this.title,
     @required this.description,
     @required this.category,
-    @required this.imageURL,
+    @required this.photosIds,
     @required this.deadLine,
     @required this.quantity,
     @required this.initialPrice,

@@ -294,18 +294,15 @@ class ServerApi {
     return jsons
         .map(
           (json) => Auction(
-            auctionId: json["lot_id"],
-            title: json["name"],
-            description: json["description"],
-            deadLine: DateTime.parse(json["deadline"]),
-            category: json["category"],
-            initialPrice: double.parse(json["initial_price"]),
-            quantity: json["quantity"],
-            ownerUid: ofUid,
-            imageURL: [
-              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
-            ],
-          ),
+              auctionId: json["lot_id"],
+              title: json["name"],
+              description: json["description"],
+              deadLine: DateTime.parse(json["deadline"]),
+              category: json["category"],
+              initialPrice: double.parse(json["initial_price"]),
+              quantity: json["quantity"],
+              ownerUid: ofUid,
+              photosIds: json["photos_ids"]),
         )
         .toList();
   }
@@ -335,18 +332,15 @@ class ServerApi {
     return jsons
         .map(
           (json) => Auction(
-            auctionId: json["lot_id"],
-            title: json["name"],
-            description: json["description"],
-            deadLine: DateTime.parse(json["deadline"]),
-            category: json["category"],
-            initialPrice: double.parse(json["initial_price"]),
-            quantity: json["quantity"],
-            ownerUid: json["owner_id"],
-            imageURL: [
-              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
-            ],
-          ),
+              auctionId: json["lot_id"],
+              title: json["name"],
+              description: json["description"],
+              deadLine: DateTime.parse(json["deadline"]),
+              category: json["category"],
+              initialPrice: double.parse(json["initial_price"]),
+              quantity: json["quantity"],
+              ownerUid: json["owner_id"],
+              photosIds: json["photos_ids"]),
         )
         .toList();
   }
@@ -390,18 +384,15 @@ class ServerApi {
     return jsons
         .map(
           (json) => Auction(
-            auctionId: json["lot_id"],
-            title: json["name"],
-            description: json["description"],
-            deadLine: DateTime.parse(json["deadline"]),
-            category: json["category"],
-            initialPrice: double.parse(json["initial_price"]),
-            quantity: json["quantity"],
-            ownerUid: json["owner_id"],
-            imageURL: [
-              "https://astroselling.com/wp-content/uploads/2019/05/que-es-una-subasta-Mercadolibre.jpg"
-            ],
-          ),
+              auctionId: json["lot_id"],
+              title: json["name"],
+              description: json["description"],
+              deadLine: DateTime.parse(json["deadline"]),
+              category: json["category"],
+              initialPrice: double.parse(json["initial_price"]),
+              quantity: json["quantity"],
+              ownerUid: json["owner_id"],
+              photosIds: json["photos_ids"]),
         )
         .toList();
   }
@@ -414,14 +405,13 @@ class ServerApi {
    Post a new lot
   ---------------------------------------------------------------------------- */
 
-  Future<int> postLot({
-    @required String title,
-    @required String category,
-    @required String description,
-    @required double initialPrice,
-    @required int quantity,
-    @required List<int> img_ids
-  }) async {
+  Future<int> postLot(
+      {@required String title,
+      @required String category,
+      @required String description,
+      @required double initialPrice,
+      @required int quantity,
+      @required List<int> img_ids}) async {
     var res = await http.post(
       host + '/lot',
       headers: {
@@ -538,28 +528,28 @@ class ServerApi {
     // create multipart request
     http.MultipartRequest request = http.MultipartRequest("POST", uri);
 
-      ByteData byteData = await image.getByteData();
-      List<int> imageData = byteData.buffer.asUint8List();
+    ByteData byteData = await image.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
 
-      http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
-        'photo',
-        imageData,
-        filename: image.name,
-        contentType: MediaType("image", "jpg"),
+    http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+      'photo',
+      imageData,
+      filename: image.name,
+      contentType: MediaType("image", "jpg"),
+    );
+
+    // add file to multipart
+    request.files.add(multipartFile);
+    // send
+    var response = await request.send();
+    if (response.statusCode != 201) {
+      ErrorLogger.log(
+        context: "Uploading photo",
+        error: response.reasonPhrase,
       );
-
-      // add file to multipart
-      request.files.add(multipartFile);
-      // send
-      var response = await request.send();
-      if(response.statusCode != 201){
-        ErrorLogger.log(
-          context: "Uploading photo",
-          error: response.reasonPhrase,
-        );
-      }
-      print(response);
-      return 0;
+    }
+    print(response);
+    return 0;
   }
 
   Future<void> postPhotoID(int photoId, int lotId) async {
@@ -593,9 +583,7 @@ class ServerApi {
    Get preference ID
   ---------------------------------------------------------------------------- */
 
-Future<String> getPreferenceID(){
-
-}
+Future<String> getPreferenceID() {}
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }
