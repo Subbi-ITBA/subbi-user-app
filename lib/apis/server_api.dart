@@ -433,10 +433,8 @@ class ServerApi {
       );
     }
 
-    var jsons = jsonDecode(res.body) as List<dynamic>;
-    jsons.forEach((element) {
-      element["photos_ids"].map( (e) => e["photo_id"]);
-    });
+    var jsons = jsonDecode(res.body);
+
     return jsons
         .map(
           (json) => (
@@ -462,7 +460,6 @@ class ServerApi {
   /* ----------------------------------------------------------------------------
    Post a new lot
   ---------------------------------------------------------------------------- */
-
 
   Future<int> postLot({
     @required String title,
@@ -494,7 +491,7 @@ class ServerApi {
         error: res.reasonPhrase,
       );
     }
-    var jsons = jsonDecode(res.body) as List<dynamic>;
+    var jsons = jsonDecode(res.body);
 
     return jsons[0]['id'];
   }
@@ -653,7 +650,6 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
 Future<String> getPreferenceID() {}
-
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }

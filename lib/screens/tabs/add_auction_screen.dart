@@ -225,7 +225,8 @@ class _State extends State<AddAuctionScreen> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
     resultList.forEach((element) {
-      print(element.name);});
+      print(element.name);
+    });
     setState(() {
       images.addAll(resultList);
       _availableImages -= resultList.length;
@@ -294,7 +295,6 @@ class _State extends State<AddAuctionScreen> {
       onPressed: () async {
         if (_formKey.currentState.validate()) {
           if (images.length >= 3) {
-
             //TODO image assets to byte data
             print(
                 "isValid $_name, $_description $_category $_initialPrice $_quantity");
@@ -309,15 +309,15 @@ class _State extends State<AddAuctionScreen> {
               img_ids.add(id);
             });
 
-//            int lot_id = await ServerApi.instance().postLot(
-//              title: _name,
-//              category: _category,
-//              description: _description,
-//              initialPrice: _initialPrice,
-//              quantity: _quantity,
-//              img_ids: img_ids
-//            );
-
+            print("POSTEANDO LOTE");
+            print("img-ids" + img_ids.toString());
+            int lot_id = await ServerApi.instance().postLot(
+                title: _name,
+                category: _category,
+                description: _description,
+                initialPrice: _initialPrice,
+                quantity: _quantity,
+                imgIds: img_ids);
           } else {
             final imagesErrorSnackbar = SnackBar(
               content:
