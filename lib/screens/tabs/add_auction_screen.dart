@@ -224,11 +224,9 @@ class _State extends State<AddAuctionScreen> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-    resultList.forEach((element) {
-      print(element.name);
-    });
+    
     setState(() {
-      images = resultList;
+      images.addAll(resultList);
       print("images:" + images.toString());
       _availableImages -= resultList.length;
     });
