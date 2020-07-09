@@ -6,62 +6,44 @@ import 'package:subbi/screens/tabs/home_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
 import 'package:subbi/screens/tabs/profile_screen.dart';
 
-class MainScreen extends StatelessWidget{
-  
+class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Scaffold(
-        
         bottomNavigationBar: BottomAppBar(
           child: TabBar(
             tabs: [
-
               Tab(
-                icon: Icon(Icons.home)
+                icon: Icon(Icons.home),
               ),
-
               Tab(
-                icon: Icon(Icons.gavel)
+                icon: Icon(Icons.gavel),
               ),
-
               Tab(
-                icon: Icon(Icons.add)
+                icon: Icon(Icons.add),
               ),
-
               Tab(
                 icon: Icon(Icons.chat),
               ),
-
-              Tab(
-                icon: Icon(Icons.person),
-              )
-
+              // Tab(
+              //   icon: Icon(Icons.person),
+              // )
             ],
             labelColor: Theme.of(context).accentColor,
             unselectedLabelColor: Colors.grey,
-          )
+          ),
         ),
-
         body: TabBarView(
-          children:[
-
+          children: [
             HomeScreen(),
-
             OwnAuctionsScreen(),
-
             AddAuctionScreen(),
-
             ChatScreen(),
-
-            ProfileScreen()
-
           ],
-        ) 
+        ),
       ),
     );
   }
-
 }

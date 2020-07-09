@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         },
         routes: {
           "/home": (context) => HomeScreen(),
-          "/profile": (context) => ProfileScreen(),
+          //"/profile": (context) => ProfileScreen(),
           "/add_auction": (context) => AddAuctionScreen(),
           "/own_auctions": (context) => OwnAuctionsScreen(),
           "/chat": (context) => ChatScreen(),

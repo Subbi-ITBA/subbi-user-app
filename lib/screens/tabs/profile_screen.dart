@@ -10,18 +10,25 @@ import 'package:subbi/screens/unauthenticated_box.dart';
 import 'package:subbi/widgets/cross_shrinked_listview.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final Profile profile;
+
+  const ProfileScreen({
+    Key key,
+    @required this.profile,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Profile profile;
-    profile = Profile(
-      name: 'Fulano Mengano',
-      location: 'Buenos Aires, Argentina',
-      profilePicURL:
-          'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/04/fulano.jpg',
-      profileUid: "1",
-      user: Provider.of<User>(context),
-      following: true,
-    );
+    // Profile profile;
+    // profile = Profile(
+    //   name: 'Fulano Mengano',
+    //   location: 'Buenos Aires, Argentina',
+    //   profilePicURL:
+    //       'https://cdn.cienradios.com/wp-content/uploads/sites/4/2020/04/fulano.jpg',
+    //   profileUid: "1",
+    //   user: Provider.of<User>(context),
+    //   following: true,
+    // );
 
     var user = Provider.of<User>(context);
 
@@ -38,34 +45,33 @@ class ProfileScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundImage:
-                                NetworkImage(profile.profilePicURL),
-                          ),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage(profile.profilePicURL),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            profile.name,
-                            style:
-                                Theme.of(context).textTheme.bodyText2.copyWith(
-                                      color: Colors.white,
-                                    ),
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          profile.name,
+                          style: Theme.of(context).textTheme.bodyText2.copyWith(
+                                color: Colors.white,
+                              ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FollowButton(
-                            following: profile.following,
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FollowButton(
+                          following: profile.following,
                         ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
                   flex: 3,
@@ -153,7 +159,8 @@ class ProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: <Widget>[
-                              buildOpinionsResume(context, snapshot.data),
+                              buildOpinionsResume(
+                                  context, snapshot.data, profile),
                               snapshot.data.length > 0
                                   ? buildOpinionDetail(
                                       context, snapshot.data[0], true)
@@ -195,72 +202,87 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget buildOpinionsResume(
-      BuildContext context, List<ProfileRating> ratings) {
-    var averageRating =
-        ratings.map((r) => r.rate).reduce((r1, r2) => r1 + r2) / ratings.length;
-    var freq = Map.fromIterable(ratings.map((r) => r.rate),
-        value: (rate) => ratings.where((r) => r.rate == rate).length);
+      BuildContext context, List<ProfileRating> ratings, Profile profile) {
+    if (ratings.isNotEmpty) {
+      var averageRating =
+          ratings.map((r) => r.rate).reduce((r1, r2) => r1 + r2) /
+              ratings.length;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                "${averageRating.toStringAsPrecision(3)}",
-                style: Theme.of(context).textTheme.headline2,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: SmoothStarRating(
-                starCount: 5,
-                rating: averageRating,
-                size: 30.0,
-                color: Colors.orangeAccent,
-                borderColor: Colors.orangeAccent,
-                spacing: 0.0,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '${ratings.length} en total',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
-          ],
-        ),
-        CrossShrinkedListView(
-          alignment: Axis.vertical,
-          itemCount: 5,
-          itemBuilder: (rate) => Row(
-            children: <Widget>[
+      var freq = Map.fromIterable(ratings.map((r) => r.rate),
+          value: (rate) => ratings.where((r) => r.rate == rate).length);
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Column(
+            children: [
               Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: Icon(Icons.star),
+                child: Text(
+                  "${averageRating.toStringAsPrecision(3)}",
+                  style: Theme.of(context).textTheme.headline2,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: Text("${rate + 1}"),
+                child: SmoothStarRating(
+                  starCount: 5,
+                  rating: averageRating,
+                  size: 30.0,
+                  color: Colors.orangeAccent,
+                  borderColor: Colors.orangeAccent,
+                  spacing: 0.0,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  width: 100,
-                  child: LinearProgressIndicator(
-                    value: (freq[rate + 1] ?? 0) / ratings.length,
-                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
-                  ),
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '${ratings.length} en total',
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
             ],
           ),
+          CrossShrinkedListView(
+            alignment: Axis.vertical,
+            itemCount: 5,
+            itemBuilder: (rate) => Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(Icons.star),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text("${rate + 1}"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    width: 100,
+                    child: LinearProgressIndicator(
+                      value: (freq[rate + 1] ?? 0) / ratings.length,
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.green),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            '${profile.name} aún no tiene calificaciones',
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
         ),
-      ],
-    );
+      );
+    }
   }
 
   Widget buildOpinionDetail(
