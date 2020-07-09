@@ -11,7 +11,7 @@ import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String MP_PUBLIC_KEY = "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
-  static const String PREFERENCE_ID = "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
+  static const String PREFERENCE_ID = "293458878-cc130422-1199-4358-93f2-58751d4ec511";
   static const AUCTIONS_TO_SHOW = 4;
 
   final AuctionIterator popularAuctionsIterator = Auction.getPopularAuctions(
@@ -69,6 +69,7 @@ class HomeScreen extends StatelessWidget {
               },
               child: Text('pagar'),
             ),
+            FlatButton(child: Text('show winner dialog'), onPressed: (){showWinnerDialog(context);},),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: AdsCarrousel(),
@@ -278,5 +279,52 @@ class HomeScreen extends StatelessWidget {
             );
         }
     });
+  }
+
+  void showWinnerDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Center(child: Text('Finalizó la subasta de Auto volador')),
+            contentPadding: EdgeInsets.all(10),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text('Fuiste el mayor postor con una puja de \$400'),
+                Text('Contactate con el vendedor'),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage('https://www.google.com/url?sa=i&url=https%3A%2F%2Fhappytravel.viajes%2Fhappytravel-opiniones%2Fattachment%2F146-1468479_my-profile-icon-blank-profile-picture-circle-hd%2F&psig=AOvVaw0reWr7NuYshsqiL6xdoPV7&ust=1594069920312000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiRq7uDt-oCFQAAAAAdAAAAABAe'),
+                      ),
+                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      InkWell(onTap: (){}, child: Text('Javier James Joliwood', style: TextStyle(decoration: TextDecoration.underline,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).accentColor),)),
+                      InkWell(onTap: (){}, child: Icon(Icons.message),)
+                    ],
+                  ),
+                ],)
+              ],),
+            actions: <Widget>[
+              RaisedButton(
+                onPressed: (){},
+                child: Text('Pagar con MercadoPago', style: TextStyle(color: Colors.white),),
+                color: Colors.lightBlueAccent,
+              )
+            ],
+          );
+        }
+    );
   }
 }
