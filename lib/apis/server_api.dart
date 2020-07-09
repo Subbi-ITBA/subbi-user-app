@@ -434,10 +434,13 @@ class ServerApi {
     }
 
     var jsons = jsonDecode(res.body) as List<dynamic>;
-
+    jsons.forEach((element) {
+      element["photos_ids"].map( (e) => e["photo_id"]);
+    });
     return jsons
         .map(
-          (json) => Auction(
+          (json) => (
+              Auction(
               auctionId: json["lot_id"],
               title: json["name"],
               description: json["description"],
@@ -446,8 +449,9 @@ class ServerApi {
               initialPrice: double.parse(json["initial_price"]),
               quantity: json["quantity"],
               ownerUid: json["owner_id"],
-              photosIds: json["photos_ids"]),
-        )
+              photosIds: json["photos_ids"] as List<int>
+          )
+        ))
         .toList();
   }
 
