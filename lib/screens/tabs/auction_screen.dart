@@ -819,7 +819,7 @@ class ImageSlider extends StatelessWidget {
                     Radius.circular(5.0),
                   ),
                   child: Image.network(
-                    'https://www.subbi.herokuapp.com/photo/$i.jpg',
+                    'https://subbi.herokuapp.com/photo/$i.jpg',
                     fit: BoxFit.fill,
                   ),
                 ),
