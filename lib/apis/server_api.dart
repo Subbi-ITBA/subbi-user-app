@@ -417,7 +417,7 @@ class ServerApi {
     String path = category == null
         ? '/auction/list?sort=$sortString&limit=$limit&offset=$offset'
         : '/auction/list?sort=$sortString&limit=$limit&offset=$offset&category=$category';
-    print(path);
+
     var res = await http.get(
       host + path,
       headers: {
@@ -433,22 +433,23 @@ class ServerApi {
       );
     }
 
-    var jsons = jsonDecode(res.body);
+    var jsons = jsonDecode(res.body) as List<dynamic>;
 
-    return jsons
-        .map(
-          (json) => Auction(
-              auctionId: json["lot_id"],
-              title: json["name"],
-              description: json["description"],
-              deadLine: DateTime.parse(json["deadline"]),
-              category: json["category"],
-              initialPrice: double.parse(json["initial_price"]),
-              quantity: json["quantity"],
-              ownerUid: json["owner_id"],
-              photosIds: json["photos_ids"]),
-        )
-        .toList();
+    return jsons.map(
+      (json) {
+        return Auction(
+          auctionId: json["lot_id"],
+          title: json["name"],
+          description: json["description"],
+          deadLine: DateTime.parse(json["deadline"]),
+          category: json["category"],
+          initialPrice: double.parse(json["initial_price"]),
+          quantity: json["quantity"],
+          ownerUid: json["owner_id"],
+          photosIds: (json["photos_ids"]).cast<int>(),
+        );
+      },
+    ).toList();
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
