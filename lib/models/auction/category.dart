@@ -20,12 +20,7 @@ class Category {
   }
 
   static Future<List<Category>> getCategories() async {
-    var jsons = await ServerApi.instance().getCategories();
-    List<Category> categories = List<Category>();
-    jsons.forEach((element) {
-      categories.add(Category.fromJson(element));
-    });
-    return categories;
+    return await ServerApi.instance().getCategories();
   }
 
   @override

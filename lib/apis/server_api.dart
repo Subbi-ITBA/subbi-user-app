@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
+import 'package:subbi/models/auction/category.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/others/error_logger.dart';
@@ -138,7 +139,6 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<Profile> getProfile({
-    @required String userUid,
     @required String ofUid,
   }) async {
     var res = await http.get(
@@ -164,17 +164,12 @@ class ServerApi {
       location: json["location"],
       profilePicURL:
           "https://forum.processmaker.com/download/file.php?avatar=93310_1550846185.png",
-      following: await ServerApi.instance().isFollowing(
-        followerUid: userUid,
-        followedUid: ofUid,
-      ),
       user: null,
     );
   }
 
   /* ----------------------------------------------------------------------------
    Check wether this user is following a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<bool> isFollowing({
@@ -192,7 +187,7 @@ class ServerApi {
 
     if (res.statusCode != 200) {
       ErrorLogger.log(
-        context: 'Getting categories',
+        context: 'Checking following relation',
         error: res.reasonPhrase,
       );
     }
@@ -202,38 +197,87 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Follow a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<void> followProfile({
     @required String uid,
-    @required String followUid,
-    @required bool follow,
-  }) {
-    throw UnimplementedError();
+    @required String followerUid,
+    @required bool followedUid,
+  }) async {
+    var res = await http.post(
+      host +
+          '/user/following?follower_id=$followerUid&followed_id=$followedUid',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Following a user',
+        error: res.reasonPhrase,
+      );
+    }
   }
 
   /* ----------------------------------------------------------------------------
    Rate a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<void> rateProfile({
-    @required String rateUid,
+    @required String ratedUid,
     @required int rate,
-  }) {
-    throw UnimplementedError();
+    @required String comment,
+  }) async {
+    var res = await http.post(
+      host + '/user/$ratedUid/rating',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+      body: {
+        "comment": comment,
+        "rating": rate.toString(),
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: 'Getting categories',
+        error: res.reasonPhrase,
+      );
+    }
   }
 
   /* ----------------------------------------------------------------------------
    Get the ratings of a profile
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
   Future<List<ProfileRating>> getRatings({
     @required String ofUid,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    var res = await http.get(
+      host + '/user/$ofUid/rating',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    var jsons = jsonDecode(res.body) as List<dynamic>;
+
+    return jsons.map(
+      (json) {
+        return ProfileRating(
+          raterUid: json["from_id"],
+          ratedUid: json["to_id"],
+          rate: json["rating"],
+          comment: json["comment"],
+          date: DateTime.parse(json["date"]),
+        );
+      },
+    ).toList();
   }
 
 /* -------------------------------------------------------------------------------------------------------------------------------
@@ -242,10 +286,9 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get all categories
-   //TODO: Implement
   ---------------------------------------------------------------------------- */
 
-  Future<List<Map<String, dynamic>>> getCategories() async {
+  Future<List<Category>> getCategories() async {
     var res = await http.get(
       host + '/lot/categories',
       headers: {
@@ -253,14 +296,25 @@ class ServerApi {
         'Cookie': sessionCookie,
       },
     );
+
     if (res.statusCode != 200) {
       ErrorLogger.log(
         context: 'Getting categories',
         error: res.reasonPhrase,
       );
     }
-    print(res.body);
-    return List<Map<String, dynamic>>.from(jsonDecode(res.body));
+
+    var jsons = jsonDecode(res.body) as List<dynamic>;
+
+    return jsons.map(
+      (json) {
+        return Category(
+          name: json['name'],
+          description: json['description'],
+          iconName: json['iconid'],
+        );
+      },
+    ).toList();
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -405,6 +459,7 @@ class ServerApi {
    Post a new lot
   ---------------------------------------------------------------------------- */
 
+<<<<<<< HEAD
   Future<int> postLot(
       {@required String title,
       @required String category,
@@ -412,6 +467,16 @@ class ServerApi {
       @required double initialPrice,
       @required int quantity,
       @required List<int> img_ids}) async {
+=======
+  Future<int> postLot({
+    @required String title,
+    @required String category,
+    @required String description,
+    @required double initialPrice,
+    @required int quantity,
+    @required List<int> imgIds,
+  }) async {
+>>>>>>> 320980e6b2ee7adfa398e89fd4855a0c1e4c7b99
     var res = await http.post(
       host + '/lot',
       headers: {
@@ -424,7 +489,7 @@ class ServerApi {
         "description": description,
         "initial_price": initialPrice.toString(),
         "quantity": quantity,
-        "lot_photos": img_ids
+        "lot_photos": imgIds
       }),
     );
 
@@ -521,6 +586,10 @@ class ServerApi {
     }
   }
 
+  /* ----------------------------------------------------------------------------
+   Post a new picture
+  ---------------------------------------------------------------------------- */
+
   Future<int> postPhoto(Asset image) async {
     // string to uri
     Uri uri = Uri.parse(host + '/photo?image=');
@@ -552,6 +621,10 @@ class ServerApi {
     return 0;
   }
 
+  /* ----------------------------------------------------------------------------
+   Post a new picture ID
+  ---------------------------------------------------------------------------- */
+
   Future<void> postPhotoID(int photoId, int lotId) async {
     //TODO send photo id and lot id to backend
     var res = await http.post(
@@ -581,9 +654,14 @@ class ServerApi {
 
 /* ----------------------------------------------------------------------------
    Get preference ID
+   // TODO: Implement
   ---------------------------------------------------------------------------- */
 
 Future<String> getPreferenceID() {}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 320980e6b2ee7adfa398e89fd4855a0c1e4c7b99
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }

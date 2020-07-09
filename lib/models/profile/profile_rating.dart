@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:subbi/apis/server_api.dart';
 
 class ProfileRating {
+  String raterUid;
   String ratedUid;
 
   int rate;
@@ -9,6 +10,7 @@ class ProfileRating {
   DateTime date;
 
   ProfileRating({
+    @required this.raterUid,
     @required this.ratedUid,
     @required this.rate,
     @required this.comment,
@@ -17,7 +19,8 @@ class ProfileRating {
 
   Future<void> post() async {
     await ServerApi.instance().rateProfile(
-      rateUid: ratedUid,
+      ratedUid: ratedUid,
+      comment: comment,
       rate: rate,
     );
   }

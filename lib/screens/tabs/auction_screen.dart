@@ -283,7 +283,6 @@ class ProfileInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
         future: Profile.getProfile(
-          userUid: Provider.of<User>(context).getUID(),
           ofUid: profileId,
         ),
         builder: (context, snapshot) {
@@ -306,51 +305,62 @@ class ProfileInfo extends StatelessWidget {
                     children: <Widget>[
                       Column(
                         children: <Widget>[
-                          Text("Vendedor",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              ))
+                          Text(
+                            "Vendedor",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       )
                     ],
                   ),
-                  Row(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundImage: NetworkImage(
-                                profile.profilePicURL,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        '/profile',
+                        arguments: profile,
+                      );
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                              child: CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                  profile.profilePicURL,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () {},
-                              child: Text(
-                                profile.name,
-                                style: TextStyle(
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: () {},
+                                child: Text(
+                                  profile.name,
+                                  style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).accentColor),
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

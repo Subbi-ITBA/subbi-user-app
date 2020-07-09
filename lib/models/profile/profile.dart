@@ -22,7 +22,6 @@ class Profile {
     @required this.name,
     @required this.profilePicURL,
     @required this.location,
-    @required this.following,
     List<ProfileRating> ratings,
   }) {
     this._ratings = ratings;
@@ -33,11 +32,9 @@ class Profile {
   ------------------------------------------------------------------------------------------------------------------------ */
 
   static Future<Profile> getProfile({
-    @required String userUid,
     @required String ofUid,
   }) {
     return ServerApi.instance().getProfile(
-      userUid: userUid,
       ofUid: ofUid,
     );
   }
@@ -53,8 +50,8 @@ class Profile {
   Future<void> follow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: profileUid,
-      follow: true,
+      followerUid: profileUid,
+      followedUid: true,
     );
   }
 
@@ -65,8 +62,8 @@ class Profile {
   Future<void> unfollow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: profileUid,
-      follow: false,
+      followerUid: profileUid,
+      followedUid: false,
     );
   }
 
