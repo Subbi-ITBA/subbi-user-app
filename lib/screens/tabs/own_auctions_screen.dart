@@ -61,7 +61,9 @@ class OwnAuctionsScreen extends StatelessWidget {
                         subtitle: Padding(
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/home');
+                            },
                             child: const Text(
                               'Ver subastas',
                               style: TextStyle(
@@ -126,7 +128,9 @@ class OwnAuctionsScreen extends StatelessWidget {
                         subtitle: Padding(
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/add_auction');
+                            },
                             child: const Text(
                               'Enviar lote',
                               style: TextStyle(

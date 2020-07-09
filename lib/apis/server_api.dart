@@ -19,8 +19,7 @@ class ServerApi {
   ServerApi._internal();
 
   factory ServerApi.instance() {
-    //host = host ?? RemoteConfigApi.instance().serverURL;
-    host = host ?? "http://10.0.2.2:3000";
+    host = host ?? RemoteConfigApi.instance().serverURL;
     return _singleton;
   }
 
@@ -638,6 +637,7 @@ class ServerApi {
       );
     }
     print("response:" + response.statusCode.toString());
+    print(response);
     return 0;
   }
 
