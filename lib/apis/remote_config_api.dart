@@ -25,5 +25,5 @@ class RemoteConfigApi {
 
   String get serverURL => rc.getString('server_url');
 
-  int get serverPort => rc.getInt('server_port');
+  int get serverPort => 3000;
 }

@@ -228,7 +228,8 @@ class _State extends State<AddAuctionScreen> {
       print(element.name);
     });
     setState(() {
-      images.addAll(resultList);
+      images = resultList;
+      print("images:" + images.toString());
       _availableImages -= resultList.length;
     });
   }

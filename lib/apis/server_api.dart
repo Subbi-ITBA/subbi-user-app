@@ -11,6 +11,7 @@ import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -18,7 +19,8 @@ class ServerApi {
   ServerApi._internal();
 
   factory ServerApi.instance() {
-    host = host ?? RemoteConfigApi.instance().serverURL;
+    //host = host ?? RemoteConfigApi.instance().serverURL;
+    host = host ?? "http://10.0.2.2:3000";
     return _singleton;
   }
 
@@ -26,6 +28,8 @@ class ServerApi {
   static int signUpStatusCode = 404;
 
   String sessionCookie;
+
+  Dio dio = new Dio();
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT
@@ -582,37 +586,58 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<int> postPhoto(Asset image) async {
+    ByteData byteData = await image.getByteData();
+    // FormData formData = new FormData.fromMap({
+    //   "image": http.MultipartFile.fromBytes(
+    //     'image',
+    //     byteData.buffer.asUint8List(),
+    //     filename: image.name,
+    //     contentType: MediaType("image", "jpg"),
+    //   )
+    // });
+
+    // try {
+    //   Response response = await dio.post(host + '/photo',
+    //       data: formData,
+    //       options: Options(headers: {
+    //         "Content-Type": "multipart/form-data",
+    //         "accept": "*/*",
+    //         'Cookie': sessionCookie,
+    //       }));
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
     // string to uri
     Uri uri = Uri.parse(host + '/photo');
 
-    print(" print 1");
     // create multipart request
     http.MultipartRequest request = http.MultipartRequest("POST", uri);
-    print(" print 2");
-    ByteData byteData = await image.getByteData();
-    print(" print 3");
+
     List<int> imageData = byteData.buffer.asUint8List();
-    print(" print 4");
+
     http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
-      'photo',
+      'image',
       imageData,
       filename: image.name,
       contentType: MediaType("image", "jpg"),
     );
-    print(" print 5");
+
     // add file to multipart
+    request.headers['Cookie'] = sessionCookie;
     request.files.add(multipartFile);
+
     // send  print(" print 1");
-    print(" print 6");
+
     var response = await request.send();
-    print(" print 7");
+
     if (response.statusCode != 201) {
       ErrorLogger.log(
         context: "Uploading photo",
         error: response.reasonPhrase,
       );
     }
-    print(response);
+    print("response:" + response.statusCode.toString());
     return 0;
   }
 
