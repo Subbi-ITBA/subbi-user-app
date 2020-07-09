@@ -433,7 +433,7 @@ class ServerApi {
       );
     }
 
-    var jsons = jsonDecode(res.body) as List<dynamic>;
+    var jsons = jsonDecode(res.body);
 
     return jsons
         .map(
@@ -489,7 +489,7 @@ class ServerApi {
         error: res.reasonPhrase,
       );
     }
-    var jsons = jsonDecode(res.body) as List<dynamic>;
+    var jsons = jsonDecode(res.body);
 
     return jsons[0]['id'];
   }

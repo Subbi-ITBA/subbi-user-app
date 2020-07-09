@@ -309,6 +309,8 @@ class _State extends State<AddAuctionScreen> {
               img_ids.add(id);
             });
 
+            print("POSTEANDO LOTE");
+            print("img-ids" + img_ids.toString());
             int lot_id = await ServerApi.instance().postLot(
                 title: _name,
                 category: _category,
