@@ -303,21 +303,22 @@ class _State extends State<AddAuctionScreen> {
             //    .save(); //save once fields are valid, onSaved method invoked for every form fields
             print('enviando lote');
             List<int> img_ids = List<int>();
-            images.forEach((image) async {
+
+            for (Asset image in images) {
               print('sending image' + image.name);
               int id = await ServerApi.instance().postPhoto(image);
               img_ids.add(id);
-            });
+            }
 
             print("POSTEANDO LOTE");
             print("img-ids" + img_ids.toString());
-            int lot_id = await ServerApi.instance().postLot(
-                title: _name,
-                category: _category,
-                description: _description,
-                initialPrice: _initialPrice,
-                quantity: _quantity,
-                imgIds: img_ids);
+            // int lot_id = await ServerApi.instance().postLot(
+            //     title: _name,
+            //     category: _category,
+            //     description: _description,
+            //     initialPrice: _initialPrice,
+            //     quantity: _quantity,
+            //     imgIds: img_ids);
           } else {
             final imagesErrorSnackbar = SnackBar(
               content:

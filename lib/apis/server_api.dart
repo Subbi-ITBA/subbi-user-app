@@ -582,25 +582,29 @@ class ServerApi {
 
   Future<int> postPhoto(Asset image) async {
     // string to uri
-    Uri uri = Uri.parse(host + '/photo?image=');
+    Uri uri = Uri.parse(host + '/photo');
 
+    print(" print 1");
     // create multipart request
     http.MultipartRequest request = http.MultipartRequest("POST", uri);
-
+    print(" print 2");
     ByteData byteData = await image.getByteData();
+    print(" print 3");
     List<int> imageData = byteData.buffer.asUint8List();
-
+    print(" print 4");
     http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
       'photo',
       imageData,
       filename: image.name,
       contentType: MediaType("image", "jpg"),
     );
-
+    print(" print 5");
     // add file to multipart
     request.files.add(multipartFile);
-    // send
+    // send  print(" print 1");
+    print(" print 6");
     var response = await request.send();
+    print(" print 7");
     if (response.statusCode != 201) {
       ErrorLogger.log(
         context: "Uploading photo",
