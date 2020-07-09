@@ -47,7 +47,7 @@ class AuctionCard extends StatelessWidget {
                             children: <Widget>[
                               Expanded(
                                   child: Image.network(
-                                'subbi.herokuapp.com/photo/' +
+                                'https://www.subbi.herokuapp.com/photo/' +
                                     this.auction.photosIds[0].toString() +
                                     '.jpg',
                                 height: 147,
