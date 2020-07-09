@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/models/user.dart';
-import 'package:subbi/screens/unauthenticated_box.dart';
 import 'package:subbi/widgets/cross_shrinked_listview.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final Profile profile;
-
   const ProfileScreen({
     Key key,
-    @required this.profile,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Profile profile;
+    Profile profile = ModalRoute.of(context).settings.arguments;
+
     // profile = Profile(
     //   name: 'Fulano Mengano',
     //   location: 'Buenos Aires, Argentina',
@@ -31,8 +29,6 @@ class ProfileScreen extends StatelessWidget {
     // );
 
     var user = Provider.of<User>(context);
-
-    if (!user.isSignedIn()) return UnauthenticatedBox();
 
     return Column(
       children: <Widget>[
@@ -66,9 +62,40 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: FollowButton(
-                          following: profile.following,
-                        ),
+                        child: user.isSignedIn()
+                            ? FutureBuilder<bool>(
+                                future: ServerApi.instance().isFollowing(
+                                  followerUid: user.getUID(),
+                                  followedUid: profile.profileUid,
+                                ),
+                                builder: (context, snap) {
+                                  if (snap.connectionState !=
+                                      ConnectionState.done) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+
+                                  return FollowButton(
+                                    following: snap.data,
+                                  );
+                                },
+                              )
+                            : RaisedButton.icon(
+                                onPressed: () {
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Debes iniciar sesión para esto',
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.remove),
+                                label: Text('Follow'),
+                                textColor: Colors.white,
+                                color: Colors.deepPurple[300],
+                              ),
                       ),
                     ],
                   ),

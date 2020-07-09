@@ -139,7 +139,6 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<Profile> getProfile({
-    @required String userUid,
     @required String ofUid,
   }) async {
     var res = await http.get(
@@ -165,10 +164,6 @@ class ServerApi {
       location: json["location"],
       profilePicURL:
           "https://forum.processmaker.com/download/file.php?avatar=93310_1550846185.png",
-      following: await ServerApi.instance().isFollowing(
-        followerUid: userUid,
-        followedUid: ofUid,
-      ),
       user: null,
     );
   }
