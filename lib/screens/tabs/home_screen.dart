@@ -169,23 +169,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          var _auctions = snap.data;
+                          if(snap.hasData && snap.data.isNotEmpty) {
+                            var _auctions = snap.data;
 
-                          return GridView.builder(
-                            scrollDirection: Axis.vertical,
-                            physics: ScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                            ),
-                            itemCount: _auctions.length,
-                            itemBuilder: (context, i) {
-                              return AuctionCard(
-                                auction: _auctions.elementAt(i),
-                              );
-                            },
-                          );
+                            return GridView.builder(
+                              scrollDirection: Axis.vertical,
+                              physics: ScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                              ),
+                              itemCount: _auctions.length,
+                              itemBuilder: (context, i) {
+                                return AuctionCard(
+                                  auction: _auctions.elementAt(i),
+                                );
+                              },
+                            );
+                          }
+                          else{
+                            return Center(child: Text('Todavía no hay subastas activas'),);
+                          }
                         },
                       ),
                       Row(
@@ -224,23 +229,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          var _auctions = snap.data;
+                          if(snap.hasData && snap.data.isNotEmpty) {
+                            var _auctions = snap.data;
 
-                          return GridView.builder(
-                            scrollDirection: Axis.vertical,
-                            physics: ScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                            ),
-                            itemCount: _auctions.length,
-                            itemBuilder: (context, i) {
-                              return AuctionCard(
-                                auction: _auctions.elementAt(i),
-                              );
-                            },
-                          );
+                            return GridView.builder(
+                              scrollDirection: Axis.vertical,
+                              physics: ScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                              ),
+                              itemCount: _auctions.length,
+                              itemBuilder: (context, i) {
+                                return AuctionCard(
+                                  auction: _auctions.elementAt(i),
+                                );
+                              },
+                            );
+                          }
+                          else{
+                            return Center(child: Text('Todavía no hay subastas activas'),);
+                          }
                         },
                       ),
                       // TODO new auctions
