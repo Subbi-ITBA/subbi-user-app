@@ -359,7 +359,7 @@ class ServerApi {
               initialPrice: double.parse(json["initial_price"]),
               quantity: json["quantity"],
               ownerUid: ofUid,
-              photosIds: json["photos_ids"]),
+              photosIds: (json["photos_ids"]).cast<int>()),
         )
         .toList();
   }
@@ -397,7 +397,7 @@ class ServerApi {
               initialPrice: double.parse(json["initial_price"]),
               quantity: json["quantity"],
               ownerUid: json["owner_id"],
-              photosIds: json["photos_ids"]),
+              photosIds: (json["photos_ids"]).cast<int>()),
         )
         .toList();
   }
@@ -495,7 +495,8 @@ class ServerApi {
     }
     var jsons = jsonDecode(res.body);
 
-    return jsons[0]['id'];
+    print(jsons);
+    return jsons['id'];
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
@@ -586,26 +587,6 @@ class ServerApi {
 
   Future<int> postPhoto(Asset image) async {
     ByteData byteData = await image.getByteData();
-    // FormData formData = new FormData.fromMap({
-    //   "image": http.MultipartFile.fromBytes(
-    //     'image',
-    //     byteData.buffer.asUint8List(),
-    //     filename: image.name,
-    //     contentType: MediaType("image", "jpg"),
-    //   )
-    // });
-
-    // try {
-    //   Response response = await dio.post(host + '/photo',
-    //       data: formData,
-    //       options: Options(headers: {
-    //         "Content-Type": "multipart/form-data",
-    //         "accept": "*/*",
-    //         'Cookie': sessionCookie,
-    //       }));
-    // } catch (e) {
-    //   print(e.toString());
-    // }
 
     // string to uri
     Uri uri = Uri.parse(host + '/photo');
@@ -629,16 +610,16 @@ class ServerApi {
     // send  print(" print 1");
 
     var response = await request.send();
-
     if (response.statusCode != 201) {
       ErrorLogger.log(
         context: "Uploading photo",
         error: response.reasonPhrase,
       );
     }
-    print("response:" + response.statusCode.toString());
-    print(response);
-    return 0;
+    var resp = await http.Response.fromStream(response);
+
+    print("resp body:" + resp.body);
+    return jsonDecode(resp.body)["id"];
   }
 
   /* ----------------------------------------------------------------------------

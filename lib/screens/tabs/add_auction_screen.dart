@@ -194,13 +194,13 @@ class _State extends State<AddAuctionScreen> {
 
   static List<String> getCategories() {
     return <String>[
-      'Musica',
-      'Autos',
-      'Consolas & Videojuegos',
-      'Juguetes & Juegos',
-      'Joyas y Relojes',
+      'Música',
+      'Vehículos clásicos',
+      'Consolas y Videojuegos',
+      'Juguetes y modelos a escala',
+      'Joyería y Relojes',
       'Electrodomésticos',
-      'Peliculas & Series',
+      'Peliculas y Series',
       'Antigüedades',
       'Muebles'
     ].toList();
@@ -308,18 +308,19 @@ class _State extends State<AddAuctionScreen> {
             for (Asset image in images) {
               print('sending image' + image.name);
               int id = await ServerApi.instance().postPhoto(image);
+              print(" - - -- - ID: " + id.toString() + " -  - - - - - ");
               img_ids.add(id);
             }
 
             print("POSTEANDO LOTE");
             print("img-ids" + img_ids.toString());
-            // int lot_id = await ServerApi.instance().postLot(
-            //     title: _name,
-            //     category: _category,
-            //     description: _description,
-            //     initialPrice: _initialPrice,
-            //     quantity: _quantity,
-            //     imgIds: img_ids);
+            int lot_id = await ServerApi.instance().postLot(
+                title: _name,
+                category: _category,
+                description: _description,
+                initialPrice: _initialPrice,
+                quantity: _quantity,
+                imgIds: img_ids);
           } else {
             final imagesErrorSnackbar = SnackBar(
               content:
