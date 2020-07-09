@@ -53,8 +53,8 @@ class Profile {
   Future<void> follow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: profileUid,
-      follow: true,
+      followerUid: profileUid,
+      followedUid: true,
     );
   }
 
@@ -65,8 +65,8 @@ class Profile {
   Future<void> unfollow() async {
     return ServerApi.instance().followProfile(
       uid: user.fbUser.uid,
-      followUid: profileUid,
-      follow: false,
+      followerUid: profileUid,
+      followedUid: false,
     );
   }
 
