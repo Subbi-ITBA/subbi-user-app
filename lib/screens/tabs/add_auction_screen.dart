@@ -27,6 +27,7 @@ class _State extends State<AddAuctionScreen> {
   bool _autovalidate = false;
   final int _descLength = 350;
   final int _nameLength = 80;
+  int _state = 0;
 
   static const MAX_IMAGES = 6;
   List<Asset> images = List<Asset>();
@@ -35,7 +36,13 @@ class _State extends State<AddAuctionScreen> {
   @override
   Widget build(BuildContext context) {
     _user = Provider.of<User>(context);
-
+    _category = null;
+    _name = null;
+    _description = null;
+    _quantity = null;
+    _initialPrice = null;
+    _state = 0;
+    images = List<Asset>();
     // if (!_user.isSignedIn()) return UnauthenticatedBox();
     return Scaffold(
         appBar: AppBar(
@@ -224,7 +231,7 @@ class _State extends State<AddAuctionScreen> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-    
+
     setState(() {
       images.addAll(resultList);
       print("images:" + images.toString());
@@ -287,66 +294,96 @@ class _State extends State<AddAuctionScreen> {
   }
 
   Widget _buildSendLotButton() {
-    return new RaisedButton.icon(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18.0),
-      ),
-      onPressed: () async {
-        if (_formKey.currentState.validate()) {
-          if (images.length >= 3) {
-            //TODO image assets to byte data
-            print(
-                "isValid $_name, $_description $_category $_initialPrice $_quantity");
-            //form is valid, proceed further
-            //  _formKey.currentState
-            //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-            print('enviando lote');
-            List<int> img_ids = List<int>();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        //Wrap with Material
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.0)),
+        elevation: 8.0,
+        color: Colors.deepPurple,
+        clipBehavior: Clip.antiAlias, // Add This
+        child: MaterialButton(
+          minWidth: 200.0,
+          height: 35,
+          color: Colors.deepPurple,
+          child: setUpButtonChild(),
+          onPressed: () async {
+            if (_formKey.currentState.validate()) {
+              if (images.length >= 3) {
+                setState(() {
+                  if (_state == 0) {
+                    _changeState(1);
+                  }
+                });
 
-            for (Asset image in images) {
-              print('sending image' + image.name);
-              int id = await ServerApi.instance().postPhoto(image);
-              print(" - - -- - ID: " + id.toString() + " -  - - - - - ");
-              img_ids.add(id);
+                //TODO image assets to byte data
+
+                //form is valid, proceed further
+                //  _formKey.currentState
+                //    .save(); //save once fields are valid, onSaved method invoked for every form fields
+
+                List<int> img_ids = List<int>();
+
+                for (Asset image in images) {
+                  int id = await ServerApi.instance().postPhoto(image);
+
+                  img_ids.add(id);
+                }
+
+                int lot_id = await ServerApi.instance().postLot(
+                    title: _name,
+                    category: _category,
+                    description: _description,
+                    initialPrice: _initialPrice,
+                    quantity: _quantity,
+                    imgIds: img_ids);
+
+                _changeState(2);
+              } else {
+                final imagesErrorSnackbar = SnackBar(
+                  content: Text(
+                      'Deben incluir al menos 3 fotos, pruebe nuevamente.'),
+                  action: SnackBarAction(
+                    label: 'Cerrar',
+                    onPressed: () {
+                      Scaffold.of(context).hideCurrentSnackBar();
+                    },
+                  ),
+                );
+                Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
+              }
+            } else {
+              setState(() {
+                _autovalidate = true; //enable realtime validation
+              });
             }
+          },
+        ),
+      ),
+    );
+  }
 
-            print("POSTEANDO LOTE");
-            print("img-ids" + img_ids.toString());
-            int lot_id = await ServerApi.instance().postLot(
-                title: _name,
-                category: _category,
-                description: _description,
-                initialPrice: _initialPrice,
-                quantity: _quantity,
-                imgIds: img_ids);
-          } else {
-            final imagesErrorSnackbar = SnackBar(
-              content:
-                  Text('Deben incluir al menos 3 fotos, pruebe nuevamente.'),
-              action: SnackBarAction(
-                label: 'Cerrar',
-                onPressed: () {
-                  Scaffold.of(context).hideCurrentSnackBar();
-                },
-              ),
-            );
-            Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
-          }
-        } else {
-          setState(() {
-            _autovalidate = true; //enable realtime validation
-          });
-        }
-      },
-      color: Theme.of(context).primaryColor,
-      textColor: Colors.white,
-      icon: Icon(Icons.send),
-      label: Text(
+  void _changeState(state) {
+    setState(() {
+      _state = state;
+    });
+  }
+
+  Widget setUpButtonChild() {
+    if (_state == 0) {
+      return Text(
         "Enviar lote".toUpperCase(),
         style: TextStyle(
           fontSize: 12,
         ),
-      ),
-    );
+      );
+    } else if (_state == 1) {
+      return CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      );
+    } else {
+      return Icon(Icons.check, color: Colors.white);
+    }
   }
 }

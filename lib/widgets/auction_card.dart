@@ -57,6 +57,7 @@ class AuctionCard extends StatelessWidget {
                                 child: Text(
                                   this.auction.title,
                                   overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Theme.of(context).accentColor,
                                     fontSize: 16,
