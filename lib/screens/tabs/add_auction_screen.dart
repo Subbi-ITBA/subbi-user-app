@@ -313,12 +313,6 @@ class _State extends State<AddAuctionScreen> {
                         }
                       });
 
-                      //TODO image assets to byte data
-
-                      //form is valid, proceed further
-                      //  _formKey.currentState
-                      //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-
                       List<int> img_ids = List<int>();
 
                       for (Asset image in images) {
