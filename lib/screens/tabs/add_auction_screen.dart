@@ -302,57 +302,59 @@ class _State extends State<AddAuctionScreen> {
           height: 35,
           color: Colors.deepPurple,
           child: setUpButtonChild(),
-          onPressed: () async {
-            if (_formKey.currentState.validate()) {
-              if (images.length >= 3) {
-                setState(() {
-                  if (_state == 0) {
-                    _changeState(1);
+          onPressed: _state != 0
+              ? null
+              : () async {
+                  if (_formKey.currentState.validate()) {
+                    if (images.length >= 3) {
+                      setState(() {
+                        if (_state == 0) {
+                          _changeState(1);
+                        }
+                      });
+
+                      //TODO image assets to byte data
+
+                      //form is valid, proceed further
+                      //  _formKey.currentState
+                      //    .save(); //save once fields are valid, onSaved method invoked for every form fields
+
+                      List<int> img_ids = List<int>();
+
+                      for (Asset image in images) {
+                        int id = await ServerApi.instance().postPhoto(image);
+
+                        img_ids.add(id);
+                      }
+
+                      int lot_id = await ServerApi.instance().postLot(
+                          title: _name,
+                          category: _category,
+                          description: _description,
+                          initialPrice: _initialPrice,
+                          quantity: _quantity,
+                          imgIds: img_ids);
+
+                      _changeState(2);
+                    } else {
+                      final imagesErrorSnackbar = SnackBar(
+                        content: Text(
+                            'Deben incluir al menos 3 fotos, pruebe nuevamente.'),
+                        action: SnackBarAction(
+                          label: 'Cerrar',
+                          onPressed: () {
+                            Scaffold.of(context).hideCurrentSnackBar();
+                          },
+                        ),
+                      );
+                      Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
+                    }
+                  } else {
+                    setState(() {
+                      _autovalidate = true; //enable realtime validation
+                    });
                   }
-                });
-
-                //TODO image assets to byte data
-
-                //form is valid, proceed further
-                //  _formKey.currentState
-                //    .save(); //save once fields are valid, onSaved method invoked for every form fields
-
-                List<int> img_ids = List<int>();
-
-                for (Asset image in images) {
-                  int id = await ServerApi.instance().postPhoto(image);
-
-                  img_ids.add(id);
-                }
-
-                int lot_id = await ServerApi.instance().postLot(
-                    title: _name,
-                    category: _category,
-                    description: _description,
-                    initialPrice: _initialPrice,
-                    quantity: _quantity,
-                    imgIds: img_ids);
-
-                _changeState(2);
-              } else {
-                final imagesErrorSnackbar = SnackBar(
-                  content: Text(
-                      'Deben incluir al menos 3 fotos, pruebe nuevamente.'),
-                  action: SnackBarAction(
-                    label: 'Cerrar',
-                    onPressed: () {
-                      Scaffold.of(context).hideCurrentSnackBar();
-                    },
-                  ),
-                );
-                Scaffold.of(context).showSnackBar(imagesErrorSnackbar);
-              }
-            } else {
-              setState(() {
-                _autovalidate = true; //enable realtime validation
-              });
-            }
-          },
+                },
         ),
       ),
     );
