@@ -91,7 +91,7 @@ class OwnAuctionsScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
               child: Text(
-                'Subastas creadas por vos',
+                'Tus subastas',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),

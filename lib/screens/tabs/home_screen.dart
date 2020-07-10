@@ -189,7 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                           else{
-                            return Center(child: Text('Todavía no hay subastas activas'),);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                            );
                           }
                         },
                       ),
@@ -249,7 +252,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                           else{
-                            return Center(child: Text('Todavía no hay subastas activas'),);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                            );
                           }
                         },
                       ),

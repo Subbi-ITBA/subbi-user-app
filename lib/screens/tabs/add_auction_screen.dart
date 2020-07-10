@@ -183,7 +183,7 @@ class _State extends State<AddAuctionScreen> {
                     buildGridView(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[_buildSendLotButton()],
+                      children: <Widget>[_buildSendLotButton(context)],
                     )
                   ],
                 ),
@@ -287,7 +287,7 @@ class _State extends State<AddAuctionScreen> {
     }
   }
 
-  Widget _buildSendLotButton() {
+  Widget _buildSendLotButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -330,6 +330,31 @@ class _State extends State<AddAuctionScreen> {
                           imgIds: img_ids);
 
                       _changeState(2);
+                      showDialog(context: context,
+            builder: (BuildContext context){
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.check_circle, size: 50,color: Colors.green,),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0,0,0,5),
+                      child: Text('Su lote fue enviado con exito!', style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
+                    ),
+                    Center(child: Text('En breve será revisado por nuestros expertos.',style: TextStyle(fontSize: 15, color: Colors.deepPurple))),
+                ],),
+                actions: <Widget>[
+                  RaisedButton(
+                    onPressed: (){
+                      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                    },
+                    child: Text('ENTENDIDO'),
+                  )
+                ],
+              );
+            }
+            );
                     } else {
                       final imagesErrorSnackbar = SnackBar(
                         content: Text(
