@@ -36,13 +36,7 @@ class _State extends State<AddAuctionScreen> {
   @override
   Widget build(BuildContext context) {
     _user = Provider.of<User>(context);
-    _category = null;
-    _name = null;
-    _description = null;
-    _quantity = null;
-    _initialPrice = null;
-    _state = 0;
-    images = List<Asset>();
+
     // if (!_user.isSignedIn()) return UnauthenticatedBox();
     return Scaffold(
         appBar: AppBar(
