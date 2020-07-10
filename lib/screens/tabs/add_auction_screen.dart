@@ -182,7 +182,7 @@ class _State extends State<AddAuctionScreen> {
                     buildGridView(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[_buildSendLotButton()],
+                      children: <Widget>[_buildSendLotButton(context)],
                     )
                   ],
                 ),
@@ -286,7 +286,7 @@ class _State extends State<AddAuctionScreen> {
     }
   }
 
-  Widget _buildSendLotButton() {
+  Widget _buildSendLotButton(BuildContext context) {
     return new RaisedButton.icon(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18.0),
@@ -303,22 +303,47 @@ class _State extends State<AddAuctionScreen> {
             print('enviando lote');
             List<int> img_ids = List<int>();
 
-            for (Asset image in images) {
-              print('sending image' + image.name);
-              int id = await ServerApi.instance().postPhoto(image);
-              print(" - - -- - ID: " + id.toString() + " -  - - - - - ");
-              img_ids.add(id);
+//            for (Asset image in images) {
+//              print('sending image' + image.name);
+//              int id = await ServerApi.instance().postPhoto(image);
+//              print(" - - -- - ID: " + id.toString() + " -  - - - - - ");
+//              img_ids.add(id);
+//            }
+//
+//            print("POSTEANDO LOTE");
+//            print("img-ids" + img_ids.toString());
+//            int lot_id = await ServerApi.instance().postLot(
+//                title: _name,
+//                category: _category,
+//                description: _description,
+//                initialPrice: _initialPrice,
+//                quantity: _quantity,
+//                imgIds: img_ids);
+            showDialog(context: context,
+            builder: (BuildContext context){
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.check_circle, size: 50,color: Colors.green,),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0,0,0,5),
+                      child: Text('Su lote fue enviado con exito!', style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
+                    ),
+                    Center(child: Text('En breve será revisado por nuestros expertos.',style: TextStyle(fontSize: 15, color: Colors.deepPurple))),
+                ],),
+                actions: <Widget>[
+                  RaisedButton(
+                    onPressed: (){
+                      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                    },
+                    child: Text('ENTENDIDO'),
+                  )
+                ],
+              );
             }
-
-            print("POSTEANDO LOTE");
-            print("img-ids" + img_ids.toString());
-            int lot_id = await ServerApi.instance().postLot(
-                title: _name,
-                category: _category,
-                description: _description,
-                initialPrice: _initialPrice,
-                quantity: _quantity,
-                imgIds: img_ids);
+            );
           } else {
             final imagesErrorSnackbar = SnackBar(
               content:
