@@ -493,10 +493,8 @@ class ServerApi {
         error: res.reasonPhrase,
       );
     }
-    var jsons = jsonDecode(res.body);
 
-    print(jsons);
-    return jsons['id'];
+    return 0;
   }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
