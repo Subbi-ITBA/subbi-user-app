@@ -98,6 +98,7 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
                               onChanged: (String newVal) {
                                 setState(() {
                                   dropDownVal = newVal;
+                                  _auctionIterator = getAuctionIterator();
                                 });
                               },
                               items: <String>[
