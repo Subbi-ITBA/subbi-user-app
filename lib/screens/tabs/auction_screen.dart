@@ -203,7 +203,12 @@ class _BidListState extends State<BidList> {
       print('connected');
     });
     socket.on('bidPublished', (data) {
-      setState(() {});
+      if (this.mounted) {
+        setState(() {
+          //Your state change code goes here
+        });
+      }
+
       var json = jsonDecode(data) as Map<String, dynamic>;
       print(json);
       highestBid = Bid(
@@ -704,11 +709,7 @@ class BidDialog extends StatefulWidget {
 
 class _BidDialogState extends State<BidDialog> {
   final Auction auction;
-  Bid highestBid = new Bid(
-      amount: 20,
-      auctionId: 50,
-      date: DateTime.now(),
-      placerUid: 'x0KcL7oixqaJXKMq6c9DTX4XBio2');
+
   double bidAmount;
   int _state = 0;
   final _formKey = GlobalKey<FormState>();
