@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/user.dart';
+import 'package:subbi/screens/unauthenticated_box.dart';
 
 Map data;
 
@@ -15,6 +17,7 @@ class AuctionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     data = ModalRoute.of(context).settings.arguments;
     Auction auction = data['auction'];
+
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -479,7 +482,7 @@ class AuctionInfo extends StatelessWidget {
                     builder: (context, snap) {
                       if (snap.connectionState == ConnectionState.waiting) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: null,
                         );
                       }
 
@@ -513,24 +516,26 @@ class AuctionInfo extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20.0)), //this right here
-                            child: StreamBuilder<Bid>(
-                              stream: Bid.getBidsStream(
-                                  auctionId: this.auction.auctionId),
-                              builder: (context, snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                  case ConnectionState.none:
-                                    return LinearProgressIndicator();
-                                  case ConnectionState.active:
-                                  case ConnectionState.done:
-                                    return BidDialog(highestBid: snapshot.data);
-                                }
-                                return null;
-                              },
-                            ));
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20.0)), //this right here
+                          child: _buildBidDialog(context, auction),
+                          // StreamBuilder<Bid>(
+                          //   stream: Bid.getBidsStream(
+                          //       auctionId: this.auction.auctionId),
+                          //   builder: (context, snapshot) {
+                          //     switch (snapshot.connectionState) {
+                          //       case ConnectionState.waiting:
+                          //       case ConnectionState.none:
+                          //         return LinearProgressIndicator();
+                          //       case ConnectionState.active:
+                          //       case ConnectionState.done:
+                          //         return BidDialog(highestBid: snapshot.data);
+                          //     }
+                          //     return null;
+                          //   },
+                          // )
+                        );
                       });
                 },
                 color: Theme.of(context).primaryColor,
@@ -570,11 +575,35 @@ class AuctionInfo extends StatelessWidget {
   }
 }
 
-class BidDialog extends StatelessWidget {
-  final Bid highestBid;
-  double bid;
+Widget _buildBidDialog(context, auction) {
+  var user = Provider.of<User>(context);
+  if (!user.isSignedIn()) {
+    return UnauthenticatedBox();
+  } else {
+    return BidDialog(auction: auction);
+  }
+}
+
+class BidDialog extends StatefulWidget {
+  Auction auction;
+
+  BidDialog({@required this.auction});
+  @override
+  _BidDialogState createState() => _BidDialogState(auction: this.auction);
+}
+
+class _BidDialogState extends State<BidDialog> {
+  final Auction auction;
+  Bid highestBid = new Bid(
+      amount: 20,
+      auctionId: 50,
+      date: DateTime.now(),
+      placerUid: 'x0KcL7oixqaJXKMq6c9DTX4XBio2');
+  double bidAmount;
+  int _state = 0;
   final _formKey = GlobalKey<FormState>();
-  BidDialog({@required this.highestBid});
+
+  _BidDialogState({@required this.auction});
 
   @override
   Widget build(BuildContext context) {
@@ -583,28 +612,75 @@ class BidDialog extends StatelessWidget {
         key: _formKey,
         autovalidate: true,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8.0),
               child: TextFormField(
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                decoration: InputDecoration(
-                  // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
-                  hintText: "Puja mínima: \$20",
-                  labelText: "Puja",
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  decoration: InputDecoration(
+                    // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
+                    hintText: "Mayor puja:${highestBid.amount}",
+                    labelText: "Puja",
+                  ),
+                  onChanged: (String newValue) {
+                    this.bidAmount = double.parse(newValue);
+                  },
+                  validator: (value) => value.isEmpty
+                      ? "La puja no puede ser vacía"
+                      : double.parse(value) <= highestBid.amount
+                          ? "La puja debe ser mayor a ${highestBid.amount}"
+                          : null),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Material(
+                //Wrap with Material
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22.0)),
+                elevation: 8.0,
+                color: Colors.deepPurple,
+                clipBehavior: Clip.antiAlias, // Add This
+                child: MaterialButton(
+                  minWidth: 200.0,
+                  height: 35,
+                  color: Colors.deepPurple,
+                  child: setUpButtonChild(),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      setState(() {
+                        _state = 1;
+                      });
+                      ServerApi.instance()
+                          .postBid(
+                              auctionId: this.auction.auctionId,
+                              amount: bidAmount)
+                          .then((value) => {Navigator.pop(context)});
+                    }
+                  },
                 ),
-                onChanged: (String newValue) {
-                  this.bid = double.parse(newValue);
-                },
-                validator: (value) =>
-                    value.isEmpty ? "Nombre no puede ser vacío" : null,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget setUpButtonChild() {
+    if (_state == 0) {
+      return Text(
+        "Enviar puja".toUpperCase(),
+        style: TextStyle(
+          fontSize: 12,
+        ),
+      );
+    } else if (_state == 1) {
+      return CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      );
+    }
   }
 }
 
