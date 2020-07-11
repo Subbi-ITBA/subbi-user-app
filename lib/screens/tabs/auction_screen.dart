@@ -190,11 +190,16 @@ class _BidListState extends State<BidList> {
   }
 
   void initializeSocket() {
-    IO.Socket socket = IO.io('http://subbi.herokuapp.com/auction');
+    print('initializing socket IO');
+    IO.Socket socket = IO.io('subbi.herokuapp.com/auction');
     socket.emit('subscribe', widget.auctionID);
+    socket.on('connect',(_){
+      print('connected');
+    });
     socket.on('bidPublished', (data) {
       print('socket data: ' + data.toString());
     });
+    print('end init');
   }
 
   @override

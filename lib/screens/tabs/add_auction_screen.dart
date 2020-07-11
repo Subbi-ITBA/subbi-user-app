@@ -329,6 +329,49 @@ class _State extends State<AddAuctionScreen> {
                           quantity: _quantity,
                           imgIds: img_ids);
 
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.check_circle,
+                                    size: 50,
+                                    color: Colors.green,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    child: Text(
+                                      'Su lote fue enviado con exito!',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.deepPurple),
+                                    ),
+                                  ),
+                                  Center(
+                                      child: Text(
+                                          'En breve será revisado por nuestros expertos.',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.deepPurple))),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                RaisedButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            '/home', (route) => false);
+                                  },
+                                  child: Text('ENTENDIDO'),
+                                )
+                              ],
+                            );
+                          });
                       _changeState(2);
                     } else {
                       final imagesErrorSnackbar = SnackBar(
