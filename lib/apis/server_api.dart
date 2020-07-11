@@ -19,7 +19,7 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-
+    // host = "http://10.0.2.2:3000";
     return _singleton;
   }
 
@@ -27,7 +27,6 @@ class ServerApi {
   static int signUpStatusCode = 404;
 
   String sessionCookie;
-
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT

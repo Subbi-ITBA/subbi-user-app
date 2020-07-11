@@ -30,8 +30,7 @@ class Auction {
   }
 
   Future<List<Bid>> getLatestBids(offset, limit) async {
-    print("getlatestbids");
-
+    print("get latest bids se llamo");
     return await ServerApi.instance().getCurrentBids(
         auctionId: this.auctionId, offset: offset, limit: limit);
   }
