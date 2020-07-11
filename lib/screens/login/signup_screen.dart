@@ -31,55 +31,62 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(backgroundColor: Theme.of(context).backgroundColor, elevation: 0, iconTheme: IconThemeData(color: Colors.deepPurple),),
+      appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        body: SingleChildScrollView(
-            child: Center(
-                child: Form(
-                    key: formKey,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              width: 300,
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                    child: Text(
-                                      'Bienvenido',
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.deepPurple),
+      ),
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 50,
+                    width: 300,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            'Bienvenido',
+                            style: Theme.of(context).textTheme.headline6,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: buildFormBody(context),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 50,
-                              width: 300,
-                              child: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  textColor: Colors.white,
-                                  child: Text('Finalizar'),
-                                  onPressed: () {
-                                    if (formKey.currentState
-                                        .validate()) // TODO: Remove develop condition
-                                      signUp(formKey, context);
-                                  }),
-                            ),
-                          ),
-                        ])))));
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: buildFormBody(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 50,
+                    width: 300,
+                    child: RaisedButton(
+                        color: Theme.of(context).accentColor,
+                        textColor: Colors.white,
+                        child: Text('Finalizar'),
+                        onPressed: () {
+                          if (formKey.currentState.validate())
+                            signUp(formKey, context);
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   /* ----------------------------------------------------------------------------

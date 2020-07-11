@@ -3,11 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:subbi/apis/server_api.dart';
-import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
-import 'dart:convert';
-import 'package:subbi/widgets/image_uploader_view.dart';
 
 class AddAuctionScreen extends StatefulWidget {
   @override
@@ -37,7 +34,8 @@ class _State extends State<AddAuctionScreen> {
   Widget build(BuildContext context) {
     _user = Provider.of<User>(context);
 
-    // if (!_user.isSignedIn()) return UnauthenticatedBox();
+    if (!_user.isSignedIn()) return UnauthenticatedBox();
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Enviar lote'),
@@ -313,21 +311,21 @@ class _State extends State<AddAuctionScreen> {
                         }
                       });
 
-                      List<int> img_ids = List<int>();
+                      List<int> imgIds = List<int>();
 
                       for (Asset image in images) {
                         int id = await ServerApi.instance().postPhoto(image);
 
-                        img_ids.add(id);
+                        imgIds.add(id);
                       }
 
-                      int lot_id = await ServerApi.instance().postLot(
+                      int lotId = await ServerApi.instance().postLot(
                           title: _name,
                           category: _category,
                           description: _description,
                           initialPrice: _initialPrice,
                           quantity: _quantity,
-                          imgIds: img_ids);
+                          imgIds: imgIds);
 
                       _changeState(2);
                     } else {

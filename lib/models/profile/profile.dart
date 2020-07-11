@@ -92,6 +92,7 @@ class Profile {
     int rate,
   ) {
     var newRating = ProfileRating(
+      raterUid: user.getUID(),
       comment: comment,
       rate: rate,
       date: DateTime.now(),

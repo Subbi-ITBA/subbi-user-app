@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'login/signin_screen.dart';
 
 class UnauthenticatedBox extends StatelessWidget {
   @override

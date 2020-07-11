@@ -10,9 +10,6 @@ class AuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bidIterator =
-        auction.getBidIterator(pageSize: 1); // Only get the highest bid
-
     return Container(
         height: 265,
         width: 195,

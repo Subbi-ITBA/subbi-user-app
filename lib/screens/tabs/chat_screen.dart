@@ -11,6 +11,8 @@ class ChatScreen extends StatelessWidget {
 
     if (!user.isSignedIn()) return UnauthenticatedBox();
 
+    //return DashChat();
+
     return Container();
   }
 }

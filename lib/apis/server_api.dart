@@ -659,7 +659,10 @@ class ServerApi {
    // TODO: Implement
   ---------------------------------------------------------------------------- */
 
-Future<String> getPreferenceID() {}
+Future<String> getPreferenceID() {
+  throw UnimplementedError();
+}
+
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }

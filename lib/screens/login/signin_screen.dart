@@ -17,7 +17,11 @@ class SigninScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(backgroundColor: Theme.of(context).backgroundColor, elevation: 0, iconTheme: IconThemeData(color: Colors.deepPurple),),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).backgroundColor,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.deepPurple),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -41,7 +45,7 @@ class SigninScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Bienvenido',
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
                       Padding(

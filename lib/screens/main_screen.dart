@@ -4,7 +4,6 @@ import 'package:subbi/screens/tabs/add_auction_screen.dart';
 import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/home_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
-import 'package:subbi/screens/tabs/profile_screen.dart';
 
 class MainScreen extends StatelessWidget {
   @override

@@ -19,8 +19,6 @@ class AuctionScreen extends StatelessWidget {
     data = ModalRoute.of(context).settings.arguments;
     Auction auction = data['auction'];
 
-    Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.grey[300],
       extendBodyBehindAppBar: false,
@@ -133,7 +131,6 @@ class AuctionDescription extends StatelessWidget {
   AuctionDescription({@required this.auction});
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
         child: Column(children: <Widget>[
       Row(
@@ -605,7 +602,7 @@ Widget _buildBidDialog(context, auction) {
 }
 
 class BidDialog extends StatefulWidget {
-  Auction auction;
+  final Auction auction;
 
   BidDialog({@required this.auction});
   @override
@@ -676,7 +673,7 @@ class _BidDialogState extends State<BidDialog> {
                           .postBid(
                               auctionId: this.auction.auctionId,
                               amount: bidAmount)
-                          .then((value) => {Navigator.pop(context)});
+                          .then((value) => Navigator.pop(context));
                     }
                   },
                 ),
@@ -700,6 +697,8 @@ class _BidDialogState extends State<BidDialog> {
       return CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
+    } else {
+      return Container();
     }
   }
 }
