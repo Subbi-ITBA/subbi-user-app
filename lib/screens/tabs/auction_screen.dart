@@ -733,7 +733,7 @@ class _BidDialogState extends State<BidDialog> {
                   maxLength: 6,
                   decoration: InputDecoration(
                     // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
-                    hintText: "Mayor puja:${highestBid.amount}",
+                    hintText: highestBid == null ? "" : "Mayor puja: ${highestBid.amount}",
                     labelText: "Puja",
                   ),
                   onChanged: (String newValue) {
@@ -741,9 +741,9 @@ class _BidDialogState extends State<BidDialog> {
                   },
                   validator: (value) => value.isEmpty
                       ? "La puja no puede ser vacía"
-                      : double.parse(value) <= highestBid.amount
+                      : highestBid != null ? double.parse(value) <= highestBid.amount
                           ? "La puja debe ser mayor a ${highestBid.amount}"
-                          : null),
+                          : null : null),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
