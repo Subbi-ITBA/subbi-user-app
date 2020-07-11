@@ -20,6 +20,7 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
+
     return _singleton;
   }
 
@@ -529,13 +530,15 @@ class ServerApi {
     }
 
     var jsons = jsonDecode(res.body) as List<dynamic>;
+    print("devolvio bien la vid bro");
+    print(jsons);
 
     return jsons
         .map(
           (json) => Bid(
             auctionId: auctionId,
-            placerUid: json["user_uid"],
-            amount: json["amount"],
+            placerUid: json["user_id"],
+            amount: double.parse(json["amount"]),
             date: DateTime.parse(json["time"]),
           ),
         )

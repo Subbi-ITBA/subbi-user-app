@@ -9,6 +9,7 @@ import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 Map data;
 
@@ -116,7 +117,7 @@ class Body extends StatelessWidget {
                   Divider(
                     color: Colors.grey,
                   ),
-                  BidList()
+                  BidList(auctionID: auction.getAuctionId())
                 ],
               ),
             ),
@@ -171,12 +172,31 @@ class AuctionDescription extends StatelessWidget {
 }
 
 class BidList extends StatefulWidget {
+  final int auctionID;
+
+  BidList({@required this.auctionID});
+
   @override
   _BidListState createState() => _BidListState();
 }
 
 class _BidListState extends State<BidList> {
   List<Bid> bidList;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeSocket();
+  }
+
+  void initializeSocket() {
+    IO.Socket socket = IO.io('http://subbi.herokuapp.com/auction');
+    socket.emit('subscribe', widget.auctionID);
+    socket.on('bidPublished', (data) {
+      print('socket data: ' + data.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

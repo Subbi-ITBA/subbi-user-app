@@ -25,6 +25,17 @@ class Auction {
     @required this.initialPrice,
   });
 
+  int getAuctionId() {
+    return auctionId;
+  }
+
+  Future<List<Bid>> getLatestBids(offset, limit) async {
+    print("getlatestbids");
+
+    return await ServerApi.instance().getCurrentBids(
+        auctionId: this.auctionId, offset: offset, limit: limit);
+  }
+
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  RETRIEVING AUCTIONS
   ------------------------------------------------------------------------------------------------------------------------ */
