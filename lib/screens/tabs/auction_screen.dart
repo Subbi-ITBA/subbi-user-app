@@ -136,40 +136,37 @@ class AuctionDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-        child: Column(children: <Widget>[
-      Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Descripción",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).accentColor,
-              ),
-            ),
+    return ExpansionTile(
+      title: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          "Descripción",
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).accentColor,
           ),
-        ],
+        ),
       ),
-      Row(children: <Widget>[
-        Flexible(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  this.auction.description,
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                )))
-      ])
-    ]));
+      children: <Widget>[
+        Row(children: <Widget>[
+          Flexible(
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    this.auction.description,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                  )))
+        ])
+      ],
+    );
   }
 }
 
@@ -207,7 +204,7 @@ class _BidListState extends State<BidList> {
     });
     socket.on('bidPublished', (data) {
       setState(() {});
-      var json = jsonDecode(data);
+      var json = jsonDecode(data) as Map<String, dynamic>;
       print(json);
       highestBid = Bid(
         auctionId: json["auc_id"],
