@@ -29,6 +29,7 @@ dependencies:
   multi_image_picker: ^4.6.7
   mercado_pago_mobile_checkout: ^0.0.2
   dio: ^3.0.9
+  socket_io_client: ^0.9.10
 
   http: ^0.12.1
 
