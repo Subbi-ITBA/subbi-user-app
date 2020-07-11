@@ -50,7 +50,6 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: AppBar(
