@@ -183,11 +183,22 @@ class BidList extends StatefulWidget {
   final StreamController<Bid> streamController;
   BidList({@required this.streamController, @required this.auction});
 
+
   @override
   _BidListState createState() => _BidListState();
 }
 
 class _BidListState extends State<BidList> {
+  IO.Socket socket;
+
+  @override
+  void dispose(){
+    super.dispose();
+    if(socket != null && socket.connected) {
+      socket.disconnect();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -197,7 +208,7 @@ class _BidListState extends State<BidList> {
   void initializeSocket() {
     print('initializing socket IO');
 
-    IO.Socket socket =
+    socket =
         IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
