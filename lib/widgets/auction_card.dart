@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,7 +12,6 @@ class AuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
         height: 265,
         width: 195,
@@ -66,7 +64,9 @@ class AuctionCard extends StatelessWidget {
                                 Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                                    child: HighestBidText(bids.isEmpty ? -1 : bids.last.amount,auction.auctionId)),
+                                    child: HighestBidText(
+                                        bids.isEmpty ? -1 : bids.last.amount,
+                                        auction.auctionId)),
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -107,7 +107,6 @@ class AuctionCard extends StatelessWidget {
                           }
                         })))));
   }
-
 }
 
 class HighestBidText extends StatefulWidget {
@@ -123,9 +122,9 @@ class _HighestBidTextState extends State<HighestBidText> {
   IO.Socket socket;
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
-    if(socket != null && socket.connected) {
+    if (socket != null && socket.connected) {
       socket.disconnect();
     }
   }
@@ -139,11 +138,10 @@ class _HighestBidTextState extends State<HighestBidText> {
   void initializeSocket() {
     print('initializing socket IO');
 
-    socket =
-        IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
-          'transports': ['websocket'],
-          'autoConnect': false,
-        });
+    socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
 
     socket.connect();
     socket.emit('subscribe', widget.aucID);
@@ -152,22 +150,19 @@ class _HighestBidTextState extends State<HighestBidText> {
     });
     socket.on('bidPublished', (data) {
       if (this.mounted) {
-        print(data.runtimeType);
-        var json = jsonDecode(data) as Map<String,dynamic>;
-        print(json);
         setState(() {
-          widget.currHighestBid = double.parse(data);
+          widget.currHighestBid = double.parse(data["amount"]);
         });
       }
     });
 
     print('end init');
   }
+
   @override
   Widget build(BuildContext context) {
-    return Text(
-      widget.currHighestBid == -1 ? "Sin pujas" : widget.currHighestBid
-    );
+    return Text(widget.currHighestBid == -1
+        ? "Sin pujas"
+        : "Puja actual: " + widget.currHighestBid.toString());
   }
-
 }
