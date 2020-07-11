@@ -11,7 +11,6 @@ import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -29,7 +28,6 @@ class ServerApi {
 
   String sessionCookie;
 
-  Dio dio = new Dio();
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT
