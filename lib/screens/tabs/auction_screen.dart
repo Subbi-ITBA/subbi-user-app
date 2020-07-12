@@ -183,7 +183,6 @@ class BidList extends StatefulWidget {
   final StreamController<Bid> streamController;
   BidList({@required this.streamController, @required this.auction});
 
-
   @override
   _BidListState createState() => _BidListState();
 }
@@ -192,9 +191,9 @@ class _BidListState extends State<BidList> {
   IO.Socket socket;
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
-    if(socket != null && socket.connected) {
+    if (socket != null && socket.connected) {
       socket.disconnect();
     }
   }
@@ -208,8 +207,7 @@ class _BidListState extends State<BidList> {
   void initializeSocket() {
     print('initializing socket IO');
 
-    socket =
-        IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
+    socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
@@ -556,6 +554,7 @@ class ProfileInfo extends StatelessWidget {
 class HighestBidInfo extends StatefulWidget {
   final Auction auction;
   StreamController<Bid> streamController;
+  User user;
   HighestBidInfo({@required this.streamController, @required this.auction});
   @override
   _HighestBidInfoState createState() => _HighestBidInfoState();
@@ -599,38 +598,60 @@ class _HighestBidInfoState extends State<HighestBidInfo> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            )
+            ),
           ],
         ),
-        RaisedButton.icon(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: Theme.of(context).primaryColor),
-          ),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(20.0)), //this right here
-                    child: _buildBidDialog(context, widget.auction),
-                  );
-                });
-          },
-          color: Theme.of(context).primaryColor,
-          textColor: Colors.white,
-          icon: Icon(Icons.gavel),
-          label: Text(
-            "Pujar".toUpperCase(),
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          ),
-        ),
+        _buildBidButton()
       ],
     );
+  }
+
+  Widget _buildBidButton() {
+    var user = Provider.of<User>(context);
+    if (user == null ||
+        (user != null && user.getUID() != widget.auction.ownerUid)) {
+      return RaisedButton.icon(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+          side: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(20.0)), //this right here
+                  child: _buildBidDialog(context, widget.auction),
+                );
+              });
+        },
+        color: Theme.of(context).primaryColor,
+        textColor: Colors.white,
+        icon: Icon(Icons.gavel),
+        label: Text(
+          "Pujar".toUpperCase(),
+          style: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+      );
+    } else {
+      return RaisedButton.icon(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        ),
+        onPressed: null,
+        icon: Icon(Icons.gavel),
+        label: Text(
+          "Pujar".toUpperCase(),
+          style: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+      );
+    }
   }
 }
 
@@ -733,7 +754,9 @@ class _BidDialogState extends State<BidDialog> {
                   maxLength: 6,
                   decoration: InputDecoration(
                     // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
-                    hintText: highestBid == null ? "" : "Mayor puja: ${highestBid.amount}",
+                    hintText: highestBid == null
+                        ? ""
+                        : "Mayor puja: ${highestBid.amount}",
                     labelText: "Puja",
                   ),
                   onChanged: (String newValue) {
@@ -741,9 +764,11 @@ class _BidDialogState extends State<BidDialog> {
                   },
                   validator: (value) => value.isEmpty
                       ? "La puja no puede ser vacía"
-                      : highestBid != null ? double.parse(value) <= highestBid.amount
-                          ? "La puja debe ser mayor a ${highestBid.amount}"
-                          : null : null),
+                      : highestBid != null
+                          ? double.parse(value) <= highestBid.amount
+                              ? "La puja debe ser mayor a ${highestBid.amount}"
+                              : null
+                          : null),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
