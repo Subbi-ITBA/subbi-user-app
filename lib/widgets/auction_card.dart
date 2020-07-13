@@ -36,7 +36,10 @@ class AuctionCard extends StatelessWidget {
                         future: auction.getLatestBids(0, 1),
                         builder: (context, snap) {
                           if (snap.hasData) {
-                            var bid = snap.data.last;
+                            var bid;
+                            if (snap.data.isNotEmpty) {
+                              bid = snap.data.last;
+                            }
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,7 +125,8 @@ class HighestBidText extends StatefulWidget {
   HighestBidText(this.initialBid, this.auction);
 
   @override
-  _HighestBidTextState createState() => _HighestBidTextState(initialBid.amount);
+  _HighestBidTextState createState() =>
+      _HighestBidTextState(initialBid == null ? -1 : initialBid.amount);
 }
 
 class _HighestBidTextState extends State<HighestBidText> {
