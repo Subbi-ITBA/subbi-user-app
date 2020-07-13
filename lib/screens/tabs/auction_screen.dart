@@ -216,10 +216,14 @@ class _BidListState extends State<BidList> {
       (data) {
         if (data['auc_id'] == auction.auctionId) {
           var user = Provider.of<User>(context);
-          if (user.isSignedIn() && user.getUID() == data['user']) {
+          if (user.isSignedIn() && user.getUID() == data['winner_id']) {
             auction.state = "CLOSED";
+
             MercadoPagoDialog.showWinnerDialog(
-                context, highestBid.amount, auction, data['preference_id']);
+                context,
+                double.parse(data['highestBid']),
+                auction,
+                data['preference_id']);
           }
         }
       },
