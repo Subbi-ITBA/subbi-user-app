@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 class MockClient extends Mock implements HttpClient {}
@@ -12,6 +13,10 @@ class MockResponse extends Mock implements HttpClientResponse {}
 class MockCookie extends Mock implements Cookie {}
 
 main() {
+  test('Mock test', () {
+    expect(1, 1);
+  });
+
   // var mockClient = MockClient();
 
   // ServerApi.host = 'test';
