@@ -1,69 +1,166 @@
-import 'package:flutter/material.dart';
-import 'package:subbi/apis/server_api.dart';
-import 'package:subbi/models/profile/profile.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+import 'package:subbi/apis/server_api.dart';
 import 'bid.dart';
 
 class Auction {
-
+  int auctionId;
   String ownerUid;
   String title;
   String description;
   String category;
-  String imageURL;
+  List<int> photosIds;
   DateTime deadLine;
   int quantity;
   double initialPrice;
+  String state;
+  Auction(
+      {@required this.auctionId,
+      @required this.ownerUid,
+      @required this.title,
+      @required this.description,
+      @required this.category,
+      @required this.photosIds,
+      @required this.deadLine,
+      @required this.quantity,
+      @required this.initialPrice,
+      @required this.state});
 
-  List<Bid> _bids;
+  int getAuctionId() {
+    return auctionId;
+  }
 
-  Auction({
-    @required this.ownerUid,
-    @required this.title,
-    @required this.description,
-    @required this.category,
-    @required this.imageURL,
-    @required this.deadLine,
-    @required this.quantity,
-    @required this.initialPrice
-  });
+  Future<List<Bid>> getLatestBids(offset, limit) async {
+    return await ServerApi.instance().getCurrentBids(
+        auctionId: this.auctionId, offset: offset, limit: limit);
+  }
 
-  Bid getHighestBid() => this._bids.last;
-  List<Bid> getBids() => this._bids;
-
-  Future<void> post() => throw UnimplementedError();
-
-  Future<void> delete() => throw UnimplementedError();
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 RETRIEVING AUCTIONS
+  ------------------------------------------------------------------------------------------------------------------------ */
 
   /* ------------------------------------------------------------
-    Fetches bids if they haven't been fetched already
+    Get auctions of a profile
   ------------------------------------------------------------ */
 
-  Future<List<Bid>> get bids async {
-    if (_bids == null) ;
-    // Fetch bids from server
-
-    return _bids;
+  static Future<List<Auction>> getProfileAuctions(String ofUid) async {
+    return await ServerApi.instance().getProfileAuctions(
+      ofUid: ofUid,
+    );
   }
 
-  Stream<Bid> subscribeToBids() => throw UnimplementedError();
+  /* ------------------------------------------------------------
+    Get the auctions on which the user participates
+  ------------------------------------------------------------ */
 
-  Future<Profile> get owner => throw UnimplementedError();
-
-
-  
-  static Future<List<Auction>> getAuctions(String ofUid) async{
-
-    var jsons = await ServerApi.instance().getAuctions(ofUid: ofUid);
-
-    return jsons.map((json) => fromJson(json));
-
+  static Future<List<Auction>> getParticipatingAuctions(String userUid) async {
+    return await ServerApi.instance().getParticipatingAuctions();
   }
 
+  /* ------------------------------------------------------------
+    Get latest auctions
+  ------------------------------------------------------------ */
 
-  static Auction fromJson(Map<String, dynamic> json){
-
+  static AuctionIterator getLatestAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
+      category: category,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.CREATION_DATE,
+    );
   }
 
+  /* ------------------------------------------------------------
+    Get popular auctions
+  ------------------------------------------------------------ */
 
+  static AuctionIterator getPopularAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
+      category: category,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.POPULARITY,
+    );
+  }
+
+  /* ------------------------------------------------------------
+    Get ending auctions
+  ------------------------------------------------------------ */
+
+  static AuctionIterator getEndingAuctions({
+    @required String category,
+    @required int pageSize,
+  }) {
+    return AuctionIterator(
+      category: category,
+      pageSize: pageSize,
+      sortMethod: AuctionSort.DEADLINE,
+    );
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 RETRIEVING BIDS
+  ------------------------------------------------------------------------------------------------------------------------ */
+
+  /* ------------------------------------------------------------
+    Get current bids, fetch them if they haven't already
+  ------------------------------------------------------------ */
+
+  BidIterator getBidIterator({
+    @required int pageSize,
+  }) {
+    return Bid.getBidIterator(
+      auctionId: auctionId,
+      pageSize: pageSize,
+    );
+  }
+
+  /* ------------------------------------------------------------
+    Get a stream of bids
+  ------------------------------------------------------------ */
+
+  Socket getBidsSocket() {
+    return Bid.getBidsSocket(
+      auctionId: auctionId,
+    );
+  }
+
+  /* ------------------------------------------------------------------------------------------------------------------------
+                                                 MANAGING AUCTION
+  ------------------------------------------------------------------------------------------------------------------------ */
+
+}
+
+class AuctionIterator {
+  final AuctionSort sortMethod;
+  final String category;
+  final int pageSize;
+
+  int _offset = 0;
+
+  AuctionIterator({
+    @required this.category,
+    @required this.sortMethod,
+    @required this.pageSize,
+  });
+
+  Future<List<Auction>> get current async {
+    return await ServerApi.instance().getAuctionsBySort(
+      category: category,
+      sort: sortMethod,
+      offset: _offset,
+      limit: pageSize,
+    );
+  }
+
+  Future<bool> moveNext() async {
+    _offset += pageSize;
+    return true;
+  }
 }
