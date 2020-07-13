@@ -30,25 +30,24 @@ class User extends ChangeNotifier {
 
   bool isSignedIn() => fbUser != null;
 
-  Future<void> loadCurrentUser() async {
-    this.fbUser = await FirebaseAuth.instance.currentUser();
-    if (fbUser != null) {
-      await signIn();
-    }
-
-    this.profile = await Profile.getProfile(
-      ofUid: getUID(),
-    );
-  }
-
   /* ----------------------------------------------------------------------------
-    Send auth token and check if user exists
+    Send auth token and return whether user exists. If so, also load profile data
   ---------------------------------------------------------------------------- */
 
   Future<bool> signIn() async {
-    return await ServerApi.instance().signIn(
+    this.fbUser = await FirebaseAuth.instance.currentUser();
+
+    bool exists = await ServerApi.instance().signIn(
       userToken: await getToken(),
     );
+
+    if (exists) {
+      this.profile = await Profile.getProfile(
+        ofUid: getUID(),
+      );
+    }
+
+    return exists;
   }
 
   /* ----------------------------------------------------------------------------
