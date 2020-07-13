@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -38,7 +39,6 @@ class _State extends State<AddAuctionScreen> {
     _user = Provider.of<User>(context);
 
     if (!_user.isSignedIn()) return UnauthenticatedBox();
-
     return Scaffold(
         appBar: AppBar(
           title: Text('Enviar lote'),
@@ -201,7 +201,6 @@ class _State extends State<AddAuctionScreen> {
       'Consolas y Videojuegos',
       'Juguetes y modelos a escala',
       'Joyería y Relojes',
-      'Electrodomésticos',
       'Peliculas y Series',
       'Antigüedades',
       'Muebles'
@@ -319,13 +318,14 @@ class _State extends State<AddAuctionScreen> {
                         imgIds.add(id);
                       }
 
-                      int lotId = await ServerApi.instance().postLot(
-                          title: _name,
-                          category: _category,
-                          description: _description,
-                          initialPrice: _initialPrice,
-                          quantity: _quantity,
-                          imgIds: imgIds);
+                      await ServerApi.instance().postLot(
+                        title: _name,
+                        category: _category,
+                        description: _description,
+                        initialPrice: _initialPrice,
+                        quantity: _quantity,
+                        imgIds: imgIds,
+                      );
 
                       showDialog(
                           context: context,

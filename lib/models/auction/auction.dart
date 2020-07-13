@@ -15,18 +15,18 @@ class Auction {
   DateTime deadLine;
   int quantity;
   double initialPrice;
-
-  Auction({
-    @required this.auctionId,
-    @required this.ownerUid,
-    @required this.title,
-    @required this.description,
-    @required this.category,
-    @required this.photosIds,
-    @required this.deadLine,
-    @required this.quantity,
-    @required this.initialPrice,
-  });
+  String state;
+  Auction(
+      {@required this.auctionId,
+      @required this.ownerUid,
+      @required this.title,
+      @required this.description,
+      @required this.category,
+      @required this.photosIds,
+      @required this.deadLine,
+      @required this.quantity,
+      @required this.initialPrice,
+      @required this.state});
 
   int getAuctionId() {
     return auctionId;
@@ -135,19 +135,6 @@ class Auction {
                                                  MANAGING AUCTION
   ------------------------------------------------------------------------------------------------------------------------ */
 
-  /* ------------------------------------------------------------
-    Post an auction
-  ------------------------------------------------------------ */
-
-  Future<void> post() {
-    return ServerApi.instance().postLot(
-      title: title,
-      description: description,
-      category: category,
-      quantity: quantity,
-      initialPrice: initialPrice,
-    );
-  }
 }
 
 class AuctionIterator {
