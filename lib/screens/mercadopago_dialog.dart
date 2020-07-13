@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:subbi/models/auction/auction.dart';
 
 class MercadoPagoDialog {
   static void showWinnerDialog(

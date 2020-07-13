@@ -7,8 +7,6 @@ import 'package:subbi/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:subbi/widgets/mercadopago_dialog.dart';
 
-Auction globalAuction;
-
 class AuctionCard extends StatelessWidget {
   final Auction auction;
 
@@ -16,7 +14,6 @@ class AuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    globalAuction = this.auction;
     return Container(
         height: 265,
         width: 195,
@@ -26,7 +23,7 @@ class AuctionCard extends StatelessWidget {
                 context,
                 '/auction',
                 arguments: {
-                  'auction': globalAuction,
+                  'auction': auction,
                 },
               );
             },
@@ -36,7 +33,7 @@ class AuctionCard extends StatelessWidget {
                 child: Padding(
                     padding: const EdgeInsets.all(2),
                     child: FutureBuilder<List<Bid>>(
-                        future: globalAuction.getLatestBids(0, 1),
+                        future: auction.getLatestBids(0, 1),
                         builder: (context, snap) {
                           if (snap.hasData) {
                             var bid = snap.data.last;
@@ -47,7 +44,7 @@ class AuctionCard extends StatelessWidget {
                                 Expanded(
                                     child: Image.network(
                                   'https://subbi.herokuapp.com/photo/' +
-                                      globalAuction.photosIds[0].toString() +
+                                      auction.photosIds[0].toString() +
                                       '.jpg',
                                   height: 147,
                                 )),
@@ -55,7 +52,7 @@ class AuctionCard extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 7, 0, 3),
                                   child: Text(
-                                    globalAuction.title,
+                                    auction.title,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -68,8 +65,7 @@ class AuctionCard extends StatelessWidget {
                                 Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                                    child: HighestBidText(
-                                        bid, globalAuction.auctionId)),
+                                    child: HighestBidText(bid, auction)),
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -83,8 +79,7 @@ class AuctionCard extends StatelessWidget {
                                       BuildContext context,
                                       AsyncSnapshot<int> snapshot,
                                     ) {
-                                      Duration leftingTime = globalAuction
-                                          .deadLine
+                                      Duration leftingTime = auction.deadLine
                                           .difference(DateTime.now());
                                       return _buildTimer(leftingTime);
                                     },
@@ -122,8 +117,9 @@ class AuctionCard extends StatelessWidget {
 // ignore: must_be_immutable
 class HighestBidText extends StatefulWidget {
   final Bid initialBid;
-  final int aucID;
-  HighestBidText(this.initialBid, this.aucID);
+  final Auction auction;
+
+  HighestBidText(this.initialBid, this.auction);
 
   @override
   _HighestBidTextState createState() => _HighestBidTextState(initialBid.amount);
@@ -140,13 +136,13 @@ class _HighestBidTextState extends State<HighestBidText> {
   }
 
   void initializeSocket() {
-    ServerApi.instance().emitSocketEvent('subscribe', widget.aucID);
+    ServerApi.instance().emitSocketEvent('subscribe', widget.auction.auctionId);
 
     ServerApi.instance().onSocketEvent(
       'bidPublished',
       (data) {
         if (this.mounted) {
-          if (data['auc_id'] == widget.aucID) {
+          if (data['auc_id'] == widget.auction.auctionId) {
             setState(() {
               currHighestBid = double.parse(data["amount"]);
             });
@@ -157,12 +153,14 @@ class _HighestBidTextState extends State<HighestBidText> {
     ServerApi.instance().onSocketEvent(
       'auctionClosed',
       (data) {
-        if (data['auc_id'] == globalAuction.auctionId) {
+        if (data['auc_id'] == widget.auction.auctionId) {
           var user = Provider.of<User>(context);
-          if (user.isSignedIn() && user.getUID() == data['user']) {
-            globalAuction.state = "CLOSED";
+          if (user.isSignedIn() && user.getUID() == data['winner_id']) {
             MercadoPagoDialog.showWinnerDialog(
-                context, currHighestBid, globalAuction, data['preference_id']);
+                context,
+                double.parse(data['highestBid']),
+                widget.auction,
+                data['preference_id']);
           }
         }
       },
