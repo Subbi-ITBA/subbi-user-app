@@ -6,7 +6,6 @@ import 'package:subbi/screens/tabs/home_screen.dart';
 import 'package:subbi/screens/login/signin_screen.dart';
 import 'package:subbi/screens/login/signup_screen.dart';
 import 'package:subbi/screens/tabs/add_auction_screen.dart';
-import 'package:subbi/screens/tabs/chat_screen.dart';
 import 'package:subbi/screens/tabs/own_auctions_screen.dart';
 import 'package:subbi/screens/tabs/auction_screen.dart';
 import 'package:subbi/screens/tabs/category_auctions_screen.dart';
@@ -55,7 +54,6 @@ class MyApp extends StatelessWidget {
           //"/profile": (context) => ProfileScreen(),
           "/add_auction": (context) => AddAuctionScreen(),
           "/own_auctions": (context) => OwnAuctionsScreen(),
-          "/chat": (context) => ChatScreen(),
           "/auction": (context) => AuctionScreen(),
           "/signin": (context) => SigninScreen(),
           "/signup": (context) => SignupScreen(),

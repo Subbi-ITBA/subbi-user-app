@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'package:subbi/apis/server_api.dart';
 import 'bid.dart';
 
@@ -30,8 +33,6 @@ class Auction {
   }
 
   Future<List<Bid>> getLatestBids(offset, limit) async {
-    print("getlatestbids");
-
     return await ServerApi.instance().getCurrentBids(
         auctionId: this.auctionId, offset: offset, limit: limit);
   }
@@ -124,8 +125,8 @@ class Auction {
     Get a stream of bids
   ------------------------------------------------------------ */
 
-  Stream<Bid> subscribeToBids() {
-    return Bid.getBidsStream(
+  Socket getBidsSocket() {
+    return Bid.getBidsSocket(
       auctionId: auctionId,
     );
   }

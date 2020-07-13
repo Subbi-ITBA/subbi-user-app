@@ -1,17 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'package:subbi/apis/remote_config_api.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/auction/category.dart';
+import 'package:subbi/models/profile/chat.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/profile/profile_rating.dart';
 import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
@@ -20,7 +23,7 @@ class ServerApi {
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-
+    // host = "http://10.0.2.2:3000";
     return _singleton;
   }
 
@@ -28,8 +31,6 @@ class ServerApi {
   static int signUpStatusCode = 404;
 
   String sessionCookie;
-
-  Dio dio = new Dio();
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT
@@ -181,8 +182,7 @@ class ServerApi {
     @required String followedUid,
   }) async {
     var res = await http.get(
-      host +
-          '/user/following?follower_id=$followerUid&followed_id=$followedUid',
+      host + '/user/following?followed_id=$followedUid',
       headers: {
         'Content-Type': 'application/json',
         'Cookie': sessionCookie,
@@ -204,18 +204,28 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<void> followProfile({
-    @required String uid,
-    @required String followerUid,
-    @required bool followedUid,
+    @required String followedUid,
+    @required bool follow,
   }) async {
-    var res = await http.post(
-      host +
-          '/user/following?follower_id=$followerUid&followed_id=$followedUid',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': sessionCookie,
-      },
-    );
+    var res;
+
+    if (follow) {
+      res = await http.post(
+        host + '/user/following?followed_id=$followedUid',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': sessionCookie,
+        },
+      );
+    } else {
+      res = await http.delete(
+        host + '/user/following?followed_id=$followedUid',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': sessionCookie,
+        },
+      );
+    }
 
     if (res.statusCode != 200) {
       ErrorLogger.log(
@@ -231,13 +241,12 @@ class ServerApi {
 
   Future<void> rateProfile({
     @required String ratedUid,
-    @required int rate,
+    @required double rate,
     @required String comment,
   }) async {
     var res = await http.post(
       host + '/user/$ratedUid/rating',
       headers: {
-        'Content-Type': 'application/json',
         'Cookie': sessionCookie,
       },
       body: {
@@ -248,7 +257,7 @@ class ServerApi {
 
     if (res.statusCode != 200) {
       ErrorLogger.log(
-        context: 'Getting categories',
+        context: 'Rating a profile',
         error: res.reasonPhrase,
       );
     }
@@ -276,7 +285,7 @@ class ServerApi {
         return ProfileRating(
           raterUid: json["from_id"],
           ratedUid: json["to_id"],
-          rate: json["rating"],
+          rate: double.parse(json["rating"]),
           comment: json["comment"],
           date: DateTime.parse(json["date"]),
         );
@@ -530,8 +539,6 @@ class ServerApi {
     }
 
     var jsons = jsonDecode(res.body) as List<dynamic>;
-    print("devolvio bien la vid bro");
-    print(jsons);
 
     return jsons
         .map(
@@ -546,12 +553,112 @@ class ServerApi {
   }
 
   /* ----------------------------------------------------------------------------
-   Get a stream of bids of an auction
-   //TODO: Implement
+   Get a socket for bids stream
   ---------------------------------------------------------------------------- */
 
-  Stream<Bid> getBidsStream({@required int auctionId}) {
-    throw UnimplementedError();
+  Socket getBidsSocket({@required int auctionId}) {
+    var socket = IO.io(
+      'http://subbi.herokuapp.com/auction',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+      },
+    );
+
+    socket.connect();
+    socket.emit('subscribe', auctionId);
+
+    return socket;
+  }
+
+  /* -------------------------------------------------------------------------------------------------------------------------------
+                                                      MESSAGES
+  ------------------------------------------------------------------------------------------------------------------------------- */
+
+  /* ----------------------------------------------------------------------------
+   Get the current bids of an auction
+  ---------------------------------------------------------------------------- */
+
+  Future<List<Message>> getCurrentMessages({
+    @required String withUid,
+  }) async {
+    var res = await http.get(
+      host + '/chat/' + withUid + '?limit=10',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+    );
+
+    if (res.statusCode != 200) {
+      ErrorLogger.log(
+        context: "Getting current messages with a profile",
+        error: res.reasonPhrase,
+      );
+    }
+
+    var jsons = jsonDecode(res.body) as List<dynamic>;
+
+    return jsons
+        .map(
+          (json) => Message(
+            fromUid: json["from_id"],
+            toUid: json["to_id"],
+            text: json["msg"],
+            date: DateTime.parse(json["date"]),
+          ),
+        )
+        .toList();
+  }
+
+  /* ----------------------------------------------------------------------------
+   Get a socket for messages stream
+  ---------------------------------------------------------------------------- */
+
+  Socket getMessageSocket() {
+    var session = sessionCookie.split('session=')[1].split(';')[0];
+
+    var _messageSocket = IO.io(
+      'http://subbi.herokuapp.com/chat',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+        'query': {
+          'cookie': session,
+        },
+      },
+    );
+
+    _messageSocket.connect();
+
+    return _messageSocket;
+  }
+
+  /* ----------------------------------------------------------------------------
+   Send a new message
+  ---------------------------------------------------------------------------- */
+
+  Future<void> sendMessage({
+    @required String message,
+    @required String toUid,
+  }) async {
+    var res = await http.post(
+      host + '/chat/' + toUid,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': sessionCookie,
+      },
+      body: jsonEncode({
+        "msg": message,
+      }),
+    );
+
+    if (res.statusCode != 201) {
+      ErrorLogger.log(
+        context: "Sending message",
+        error: res.reasonPhrase,
+      );
+    }
   }
 
   /* ----------------------------------------------------------------------------
@@ -608,8 +715,6 @@ class ServerApi {
     request.headers['Cookie'] = sessionCookie;
     request.files.add(multipartFile);
 
-    // send  print(" print 1");
-
     var response = await request.send();
     if (response.statusCode != 201) {
       ErrorLogger.log(
@@ -619,7 +724,6 @@ class ServerApi {
     }
     var resp = await http.Response.fromStream(response);
 
-    print("resp body:" + resp.body);
     return jsonDecode(resp.body)["id"];
   }
 

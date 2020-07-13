@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:subbi/models/auction/auction.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/widgets/auction_card.dart';
+import 'package:subbi/screens/main_screen.dart';
 import 'package:subbi/widgets/cross_shrinked_listview.dart';
 
 import '../unauthenticated_box.dart';
@@ -18,6 +19,9 @@ class OwnAuctionsScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Mis Subastas'),
+      ),
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -62,7 +66,8 @@ class OwnAuctionsScreen extends StatelessWidget {
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/home');
+                              DefaultTabController.of(context)
+                                  .animateTo(MainScreen.HOME_TAB);
                             },
                             child: const Text(
                               'Ver subastas',
@@ -91,7 +96,7 @@ class OwnAuctionsScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.fromLTRB(10, 7, 0, 7),
               child: Text(
-                'Tus subastas',
+                'Subastas que creaste',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
@@ -129,7 +134,8 @@ class OwnAuctionsScreen extends StatelessWidget {
                           padding: EdgeInsets.fromLTRB(5, 10, 10, 5),
                           child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/add_auction');
+                              DefaultTabController.of(context)
+                                  .animateTo(MainScreen.ADD_AUCTION);
                             },
                             child: const Text(
                               'Enviar lote',

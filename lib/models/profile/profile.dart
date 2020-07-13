@@ -49,9 +49,8 @@ class Profile {
 
   Future<void> follow() async {
     return ServerApi.instance().followProfile(
-      uid: user.fbUser.uid,
-      followerUid: profileUid,
-      followedUid: true,
+      followedUid: profileUid,
+      follow: true,
     );
   }
 
@@ -61,9 +60,8 @@ class Profile {
 
   Future<void> unfollow() async {
     return ServerApi.instance().followProfile(
-      uid: user.fbUser.uid,
-      followerUid: profileUid,
-      followedUid: false,
+      followedUid: profileUid,
+      follow: false,
     );
   }
 
@@ -87,12 +85,13 @@ class Profile {
     Rate this user
   ------------------------------------------------------------ */
 
-  void rate(
-    String comment,
-    int rate,
-  ) {
+  Future<void> rate({
+    @required String comment,
+    @required double rate,
+    @required String raterUid,
+  }) async {
     var newRating = ProfileRating(
-      raterUid: user.getUID(),
+      raterUid: raterUid,
       comment: comment,
       rate: rate,
       date: DateTime.now(),
@@ -101,7 +100,7 @@ class Profile {
 
     _ratings.add(newRating);
 
-    newRating.post();
+    await newRating.post();
   }
 
   /* ------------------------------------------------------------------------------------------------------------------------

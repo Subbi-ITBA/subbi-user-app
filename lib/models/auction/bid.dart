@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'package:subbi/apis/server_api.dart';
 
 class Bid {
@@ -15,6 +18,10 @@ class Bid {
     @required this.date,
   });
 
+  @override
+  String toString() {
+    return "Bid{auc_id:$auctionId,amount:$amount,placerUid:$placerUid,date:$date}\n";
+  }
   /* ------------------------------------------------------------------------------------------------------------------------
                                                  MANAGING BID
   ------------------------------------------------------------------------------------------------------------------------ */
@@ -45,10 +52,10 @@ class Bid {
     Get stream of bids of auction
   ------------------------------------------------------------ */
 
-  static Stream<Bid> getBidsStream({
+  static Socket getBidsSocket({
     @required int auctionId,
   }) {
-    return ServerApi.instance().getBidsStream(
+    return ServerApi.instance().getBidsSocket(
       auctionId: auctionId,
     );
   }

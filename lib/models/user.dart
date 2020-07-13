@@ -32,9 +32,13 @@ class User extends ChangeNotifier {
 
   Future<void> loadCurrentUser() async {
     this.fbUser = await FirebaseAuth.instance.currentUser();
-    if(fbUser != null){
+    if (fbUser != null) {
       await signIn();
     }
+
+    this.profile = await Profile.getProfile(
+      ofUid: getUID(),
+    );
   }
 
   /* ----------------------------------------------------------------------------

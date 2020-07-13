@@ -5,7 +5,7 @@ class ProfileRating {
   String raterUid;
   String ratedUid;
 
-  int rate;
+  double rate;
   String comment;
   DateTime date;
 

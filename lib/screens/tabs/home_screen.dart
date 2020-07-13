@@ -62,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: () {
               Provider.of<User>(context).signOut();
-              print('Signed out');
             },
             icon: Icon(Icons.notifications_none),
           )
@@ -78,7 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text('pagar'),
             ),
-            FlatButton(child: Text('show winner dialog'), onPressed: (){showWinnerDialog(context);},),
+            FlatButton(
+              child: Text('show winner dialog'),
+              onPressed: () {
+                showWinnerDialog(context);
+              },
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: AdsCarrousel(),
@@ -131,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Categorias',
                         style: TextStyle(fontSize: 20),
                       ),
-
                       CategoryList(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          if(snap.hasData && snap.data.isNotEmpty) {
+                          if (snap.hasData && snap.data.isNotEmpty) {
                             var _auctions = snap.data;
 
                             return GridView.builder(
@@ -177,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               physics: ScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                               ),
                               itemCount: _auctions.length,
@@ -187,11 +190,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             );
-                          }
-                          else{
+                          } else {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 0),
+                              child: Center(
+                                  child: Text('Todavía no hay subastas activas',
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.deepPurple))),
                             );
                           }
                         },
@@ -232,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          if(snap.hasData && snap.data.isNotEmpty) {
+                          if (snap.hasData && snap.data.isNotEmpty) {
                             var _auctions = snap.data;
 
                             return GridView.builder(
@@ -240,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               physics: ScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                               ),
                               itemCount: _auctions.length,
@@ -250,16 +257,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             );
-                          }
-                          else{
+                          } else {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 0),
+                              child: Center(
+                                  child: Text('Todavía no hay subastas activas',
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.deepPurple))),
                             );
                           }
                         },
                       ),
-                      // TODO new auctions
                     ],
                   ),
                 ],
@@ -276,7 +286,6 @@ class _HomeScreenState extends State<HomeScreen> {
       HomeScreen.MP_PUBLIC_KEY,
       HomeScreen.PREFERENCE_ID,
     );
-    print(result.toString());
     showDialog(
       context: context,
       builder: (buildContext) {
@@ -315,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void showWinnerDialog(BuildContext context) {
     showDialog(
         context: context,
-        builder: (context){
+        builder: (context) {
           return AlertDialog(
             title: Center(child: Text('Finalizó la subasta de Auto volador')),
             contentPadding: EdgeInsets.all(10),
@@ -331,31 +340,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: CircleAvatar(
                         radius: 25,
-                        backgroundImage: NetworkImage('https://www.google.com/url?sa=i&url=https%3A%2F%2Fhappytravel.viajes%2Fhappytravel-opiniones%2Fattachment%2F146-1468479_my-profile-icon-blank-profile-picture-circle-hd%2F&psig=AOvVaw0reWr7NuYshsqiL6xdoPV7&ust=1594069920312000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiRq7uDt-oCFQAAAAAdAAAAABAe'),
+                        backgroundImage: NetworkImage(
+                            'https://www.google.com/url?sa=i&url=https%3A%2F%2Fhappytravel.viajes%2Fhappytravel-opiniones%2Fattachment%2F146-1468479_my-profile-icon-blank-profile-picture-circle-hd%2F&psig=AOvVaw0reWr7NuYshsqiL6xdoPV7&ust=1594069920312000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiRq7uDt-oCFQAAAAAdAAAAABAe'),
                       ),
                     ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(onTap: (){}, child: Text('Javier James Joliwood', style: TextStyle(decoration: TextDecoration.underline,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).accentColor),)),
-                      InkWell(onTap: (){}, child: Icon(Icons.message),)
-                    ],
-                  ),
-                ],)
-              ],),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        InkWell(
+                            onTap: () {},
+                            child: Text(
+                              'Javier James Joliwood',
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).accentColor),
+                            )),
+                        InkWell(
+                          onTap: () {},
+                          child: Icon(Icons.message),
+                        )
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
             actions: <Widget>[
               RaisedButton(
-                onPressed: (){},
-                child: Text('Pagar con MercadoPago', style: TextStyle(color: Colors.white),),
+                onPressed: () {},
+                child: Text(
+                  'Pagar con MercadoPago',
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Colors.lightBlueAccent,
               )
             ],
           );
-        }
-    );
+        });
   }
 }

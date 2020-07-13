@@ -8,12 +8,17 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:subbi/models/auction/bid.dart';
 import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/user.dart';
+import 'package:subbi/screens/tabs/profile_screen.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'dart:async';
 
 Map data;
+Bid highestBid;
 
 class AuctionScreen extends StatelessWidget {
+  final StreamController<Bid> streamController = StreamController.broadcast();
+
   @override
   Widget build(BuildContext context) {
     data = ModalRoute.of(context).settings.arguments;
@@ -50,9 +55,11 @@ class AuctionScreen extends StatelessWidget {
         ],
       ),
       body: Body(
+        streamController: streamController,
         auction: auction,
       ),
       bottomNavigationBar: AuctionInfo(
+        streamController: streamController,
         auction: auction,
       ),
     );
@@ -61,7 +68,8 @@ class AuctionScreen extends StatelessWidget {
 
 class Body extends StatelessWidget {
   final Auction auction;
-  Body({@required this.auction});
+  final StreamController<Bid> streamController;
+  Body({@required this.streamController, @required this.auction});
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +123,8 @@ class Body extends StatelessWidget {
                   Divider(
                     color: Colors.grey,
                   ),
-                  BidList(auctionID: auction.getAuctionId())
+                  BidList(
+                      streamController: streamController, auction: this.auction)
                 ],
               ),
             ),
@@ -131,54 +140,60 @@ class AuctionDescription extends StatelessWidget {
   AuctionDescription({@required this.auction});
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(children: <Widget>[
-      Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Descripción",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).accentColor,
-              ),
-            ),
+    return ExpansionTile(
+      initiallyExpanded: true,
+      title: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          "Descripción",
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).accentColor,
           ),
-        ],
+        ),
       ),
-      Row(children: <Widget>[
-        Flexible(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  this.auction.description,
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                )))
-      ])
-    ]));
+      children: <Widget>[
+        Row(children: <Widget>[
+          Flexible(
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    this.auction.description,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                  )))
+        ])
+      ],
+    );
   }
 }
 
 class BidList extends StatefulWidget {
-  final int auctionID;
-
-  BidList({@required this.auctionID});
+  final Auction auction;
+  final StreamController<Bid> streamController;
+  BidList({@required this.streamController, @required this.auction});
 
   @override
   _BidListState createState() => _BidListState();
 }
 
 class _BidListState extends State<BidList> {
-  List<Bid> bidList;
+  IO.Socket socket;
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (socket != null && socket.connected) {
+      socket.disconnect();
+    }
+  }
 
   @override
   void initState() {
@@ -187,11 +202,27 @@ class _BidListState extends State<BidList> {
   }
 
   void initializeSocket() {
-    IO.Socket socket = IO.io('http://subbi.herokuapp.com/auction');
-    socket.emit('subscribe', widget.auctionID);
-    socket.on('bidPublished', (data) {
-      print('socket data: ' + data.toString());
+    print('initializing socket IO');
+
+    socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
     });
+
+    socket.connect();
+    socket.emit('subscribe', widget.auction.auctionId);
+    socket.on('connect', (_) {
+      print('connected');
+    });
+    socket.on('bidPublished', (data) {
+      if (this.mounted) {
+        setState(() {
+          widget.streamController.add(highestBid);
+        });
+      }
+    });
+
+    print('end init');
   }
 
   @override
@@ -212,27 +243,67 @@ class _BidListState extends State<BidList> {
             ),
           ),
         ),
-        Card(
-          child: Column(
-            children: <Widget>[
-              BidderInfo(
-                bid: null,
-              ),
-              BidderInfo(
-                bid: null,
-              ),
-              BidderInfo(
-                bid: null,
-              ),
-              BidderInfo(
-                bid: null,
-              ),
-              BidderInfo(
-                bid: null,
-              )
-            ],
-          ),
+        FutureBuilder<List<Bid>>(
+          future: widget.auction.getLatestBids(0, 5),
+          builder: (context, snap) {
+            if (snap.hasData) {
+              List<Bid> bids = snap.data;
+              highestBid = bids.isEmpty ? null : bids.first;
+              widget.streamController.add(highestBid);
+              return Center(
+                child: Card(
+                    child: bids.length == 0
+                        ? Padding(
+                            padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                            child: Text(
+                              "Todavia no hay pujas",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Theme.of(context).accentColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListView.builder(
+                                  itemCount: bids.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return BidderInfo(bid: bids[index]);
+                                  }),
+                            ],
+                          )),
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
+        // Card(
+        //   child: Column(
+        //     children: <Widget>[
+        //       BidderInfo(
+        //         bid: null,
+        //       ),
+        //       BidderInfo(
+        //         bid: null,
+        //       ),
+        //       BidderInfo(
+        //         bid: null,
+        //       ),
+        //       BidderInfo(
+        //         bid: null,
+        //       ),
+        //       BidderInfo(
+        //         bid: null,
+        //       )
+        //     ],
+        //   ),
+        // ),
       ],
     ));
   }
@@ -244,50 +315,79 @@ class BidderInfo extends StatelessWidget {
   BidderInfo({@required this.bid});
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(
-                    "https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png",
-                  ),
+    return FutureBuilder<Profile>(
+        future: Profile.getProfile(
+          ofUid: bid.placerUid,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          Profile profile = snapshot.data;
+
+          return Container(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                              profile.profilePicURL,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text(
+                          profile.name,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        Text(
+                          bid.date.toIso8601String(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          "\$" + bid.amount.toString(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                "Susana Horia",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                "25-07-2020 18:65:65",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                "\$35",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ));
+              ));
+        });
   }
 }
 
@@ -340,44 +440,36 @@ class ProfileInfo extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(
-                        '/profile',
-                        arguments: profile,
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            profile: profile,
+                          ),
+                        ),
                       );
                     },
                     child: Row(
                       children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(
-                                  profile.profilePicURL,
-                                ),
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                              profile.profilePicURL,
                             ),
-                          ],
+                          ),
                         ),
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {},
-                                child: Text(
-                                  profile.name,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).accentColor,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            profile.name,
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -448,16 +540,94 @@ class ProfileInfo extends StatelessWidget {
   }
 }
 
-class AuctionInfo extends StatelessWidget {
-  static const BID_PAGE_SIZE = 20;
+class HighestBidInfo extends StatefulWidget {
   final Auction auction;
+  final StreamController<Bid> streamController;
+  HighestBidInfo({@required this.streamController, @required this.auction});
+  @override
+  _HighestBidInfoState createState() => _HighestBidInfoState();
+}
 
-  AuctionInfo({@required this.auction});
+class _HighestBidInfoState extends State<HighestBidInfo> {
+  @override
+  void initState() {
+    widget.streamController.stream.listen((event) {
+      setState(() {
+        highestBid = event;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Text(
+              "Puja actual:",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
+              child: Text(
+                highestBid != null ? highestBid.amount.toString() : "Ninguna",
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
+        RaisedButton.icon(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            side: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20.0)), //this right here
+                    child: _buildBidDialog(context, widget.auction),
+                  );
+                });
+          },
+          color: Theme.of(context).primaryColor,
+          textColor: Colors.white,
+          icon: Icon(Icons.gavel),
+          label: Text(
+            "Pujar".toUpperCase(),
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AuctionInfo extends StatelessWidget {
+  final Auction auction;
+  final StreamController<Bid> streamController;
+  AuctionInfo({@required this.streamController, @required this.auction});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    var bidIterator = auction.getBidIterator(pageSize: BID_PAGE_SIZE);
 
     return Container(
       width: size.width * 0.9,
@@ -480,93 +650,8 @@ class AuctionInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    "Puja actual:",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  FutureBuilder<bool>(
-                    future: bidIterator.moveNext(),
-                    builder: (context, snap) {
-                      if (snap.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: null,
-                        );
-                      }
-
-                      var bids = bidIterator.current;
-                      bids.sort((b1, b2) => b1.amount.compareTo(b2.amount));
-
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
-                        child: Text(
-                          bids.isNotEmpty
-                              ? bids.last.amount.toString()
-                              : "Ninguna",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              RaisedButton.icon(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide(color: Theme.of(context).primaryColor),
-                ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Dialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20.0)), //this right here
-                          child: _buildBidDialog(context, auction),
-                          // StreamBuilder<Bid>(
-                          //   stream: Bid.getBidsStream(
-                          //       auctionId: this.auction.auctionId),
-                          //   builder: (context, snapshot) {
-                          //     switch (snapshot.connectionState) {
-                          //       case ConnectionState.waiting:
-                          //       case ConnectionState.none:
-                          //         return LinearProgressIndicator();
-                          //       case ConnectionState.active:
-                          //       case ConnectionState.done:
-                          //         return BidDialog(highestBid: snapshot.data);
-                          //     }
-                          //     return null;
-                          //   },
-                          // )
-                        );
-                      });
-                },
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                icon: Icon(Icons.gavel),
-                label: Text(
-                  "Pujar".toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          HighestBidInfo(
+              streamController: streamController, auction: this.auction),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -611,11 +696,7 @@ class BidDialog extends StatefulWidget {
 
 class _BidDialogState extends State<BidDialog> {
   final Auction auction;
-  Bid highestBid = new Bid(
-      amount: 20,
-      auctionId: 50,
-      date: DateTime.now(),
-      placerUid: 'x0KcL7oixqaJXKMq6c9DTX4XBio2');
+
   double bidAmount;
   int _state = 0;
   final _formKey = GlobalKey<FormState>();
@@ -638,7 +719,9 @@ class _BidDialogState extends State<BidDialog> {
                   maxLength: 6,
                   decoration: InputDecoration(
                     // hintText: "Puja mínima: \$"+highestBid.amount.toString(),
-                    hintText: "Mayor puja:${highestBid.amount}",
+                    hintText: highestBid == null
+                        ? ""
+                        : "Mayor puja: ${highestBid.amount}",
                     labelText: "Puja",
                   ),
                   onChanged: (String newValue) {
@@ -646,8 +729,10 @@ class _BidDialogState extends State<BidDialog> {
                   },
                   validator: (value) => value.isEmpty
                       ? "La puja no puede ser vacía"
-                      : double.parse(value) <= highestBid.amount
-                          ? "La puja debe ser mayor a ${highestBid.amount}"
+                      : highestBid != null
+                          ? double.parse(value) <= highestBid.amount
+                              ? "La puja debe ser mayor a ${highestBid.amount}"
+                              : null
                           : null),
             ),
             Padding(
@@ -898,7 +983,7 @@ class ImageSlider extends StatelessWidget {
       options: CarouselOptions(
         height: size.height * 0.35,
         aspectRatio: 16 / 9,
-        viewportFraction: 0.5,
+        viewportFraction: 0.70,
         initialPage: 0,
         enlargeCenterPage: true,
         enableInfiniteScroll: true,

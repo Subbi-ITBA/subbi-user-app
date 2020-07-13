@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:subbi/others/error_logger.dart';
 
 class ImageUploaderView extends StatefulWidget {
   @override
@@ -25,7 +26,6 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
 
   Future<void> getImages() async {
     List<Asset> resultList;
-    String error;
 
     try {
       resultList = await MultiImagePicker.pickImages(
@@ -33,8 +33,10 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
         enableCamera: true,
       );
     } on Exception catch (e) {
-      error = e.toString();
-      print('error: ' + error);
+      ErrorLogger.log(
+        error: e.toString(),
+        context: 'Picking image',
+      );
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -46,10 +48,6 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
       images.addAll(resultList);
       availableImages -= resultList.length;
     });
-    print('available images: ' + availableImages.toString());
-    for (Asset image in images) {
-      print(image.toString());
-    }
   }
 
   @override
@@ -58,10 +56,7 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
   }
 
   Widget buildGridView() {
-    print(availableImages);
-    print(images.length);
     if (images != null) {
-      print('entre1');
       return GridView.count(
         crossAxisCount: 3,
         childAspectRatio: 1,
@@ -87,9 +82,6 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
                         setState(() {
                           images.removeAt(index);
                           availableImages++;
-                          for (Asset image in images) {
-                            print(image.toString());
-                          }
                         });
                       },
                     ),
@@ -98,7 +90,6 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
               ),
             );
           } else {
-            print('entre');
             return Card(
               child: IconButton(
                 icon: Icon(Icons.add),

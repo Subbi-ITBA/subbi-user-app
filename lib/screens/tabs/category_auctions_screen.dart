@@ -25,7 +25,6 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.category);
     _auctionIterator = getAuctionIterator();
     _scrollController = ScrollController();
 
@@ -50,7 +49,6 @@ class _CategoryAuctionsScreenState extends State<CategoryAuctionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

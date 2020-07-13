@@ -4,7 +4,10 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:subbi/apis/server_api.dart';
 import 'package:subbi/models/user.dart';
+import 'package:subbi/others/error_logger.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
+
+import '../main_screen.dart';
 
 class AddAuctionScreen extends StatefulWidget {
   @override
@@ -207,7 +210,6 @@ class _State extends State<AddAuctionScreen> {
 
   Future<void> getImages() async {
     List<Asset> resultList;
-    String error;
 
     try {
       resultList = await MultiImagePicker.pickImages(
@@ -215,8 +217,10 @@ class _State extends State<AddAuctionScreen> {
         enableCamera: true,
       );
     } on Exception catch (e) {
-      error = e.toString();
-      print('error: ' + error);
+      ErrorLogger.log(
+        error: e.toString(),
+        context: "Selecting images at add auction screen",
+      );
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -226,7 +230,6 @@ class _State extends State<AddAuctionScreen> {
 
     setState(() {
       images.addAll(resultList);
-      print("images:" + images.toString());
       _availableImages -= resultList.length;
     });
   }
@@ -258,9 +261,6 @@ class _State extends State<AddAuctionScreen> {
                         setState(() {
                           images.removeAt(index);
                           _availableImages++;
-                          for (Asset image in images) {
-                            print(image.toString());
-                          }
                         });
                       },
                     ),
@@ -327,6 +327,50 @@ class _State extends State<AddAuctionScreen> {
                           quantity: _quantity,
                           imgIds: imgIds);
 
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.check_circle,
+                                    size: 50,
+                                    color: Colors.green,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    child: Text(
+                                      'Su lote fue enviado con exito!',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.deepPurple),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'En breve será revisado por nuestros expertos.',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.deepPurple),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                RaisedButton(
+                                  onPressed: () {
+                                    DefaultTabController.of(context)
+                                        .animateTo(MainScreen.HOME_TAB);
+                                  },
+                                  child: Text('ENTENDIDO'),
+                                )
+                              ],
+                            );
+                          });
                       _changeState(2);
                     } else {
                       final imagesErrorSnackbar = SnackBar(
