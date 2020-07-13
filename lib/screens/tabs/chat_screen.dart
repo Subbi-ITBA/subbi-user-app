@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
           }
 
           return DashChat(
-            inverted: true,
+            inverted: false,
             user: ChatUser(
               name: "Jhon Doe",
               uid: "123456789",
