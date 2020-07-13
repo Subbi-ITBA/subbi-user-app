@@ -203,6 +203,7 @@ class _BidListState extends State<BidList> {
     ServerApi.instance().onSocketEvent(
       'bidPublished',
       (data) {
+        print("bidpublished");
         if (this.mounted) {
           if (data['auc_id'] == auction.auctionId) {
             setState(() {
@@ -215,9 +216,11 @@ class _BidListState extends State<BidList> {
     ServerApi.instance().onSocketEvent(
       'auctionClosed',
       (data) {
+        print("auctionClosed");
         if (data['auc_id'] == auction.auctionId) {
           var user = Provider.of<User>(context);
           if (user.isSignedIn() && user.getUID() == data['winner_id']) {
+            print("auctionClosed: sos el winner ;(");
             auction.state = "CLOSED";
 
             MercadoPagoDialog.showWinnerDialog(

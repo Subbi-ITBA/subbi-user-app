@@ -9,8 +9,6 @@ class MercadoPagoDialog {
   static const String MP_PUBLIC_KEY =
       "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
 
-  static const String PREFERENCE_ID =
-      "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
   static void showWinnerDialog(
       BuildContext context, double highestBid, Auction auction, String prefID) {
     showDialog(
@@ -72,7 +70,7 @@ class MercadoPagoDialog {
                             fontSize: 14)),
                     RaisedButton(
                       onPressed: () {
-                        mp(context, PREFERENCE_ID);
+                        mp(context, prefID);
                       },
                       child: Text(
                         'Pagar con MercadoPago',
