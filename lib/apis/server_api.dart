@@ -11,15 +11,18 @@ import 'package:subbi/models/auction/bid.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ServerApi {
   static ServerApi _singleton = new ServerApi._internal();
 
   ServerApi._internal();
+  static IO.Socket socket;
 
   factory ServerApi.instance() {
     host = host ?? RemoteConfigApi.instance().serverURL;
-    // host = "http://10.0.2.2:3000";
+
+    //host = "http://10.0.2.2:3000";
     return _singleton;
   }
 
@@ -27,6 +30,31 @@ class ServerApi {
   static int signUpStatusCode = 404;
 
   String sessionCookie;
+
+  void onSocketEvent(String event, dynamic Function(dynamic) handler) {
+    if (socket == null) {
+      socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+      });
+
+      socket.connect();
+    }
+
+    socket.on(event, handler);
+  }
+
+  void emitSocketEvent(String event, [dynamic data]) {
+    if (socket == null) {
+      socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+      });
+
+      socket.connect();
+    }
+    socket.emit(event, data);
+  }
 
   /* -------------------------------------------------------------------------------------------------------------------------------
                                                          ACCOUNT MANAGEMENT
@@ -357,6 +385,7 @@ class ServerApi {
               initialPrice: double.parse(json["initial_price"]),
               quantity: json["quantity"],
               ownerUid: ofUid,
+              state: json["state"],
               photosIds: (json["photos_ids"]).cast<int>()),
         )
         .toList();
@@ -395,6 +424,7 @@ class ServerApi {
               initialPrice: double.parse(json["initial_price"]),
               quantity: json["quantity"],
               ownerUid: json["owner_id"],
+              state: json["state"],
               photosIds: (json["photos_ids"]).cast<int>()),
         )
         .toList();
@@ -447,6 +477,7 @@ class ServerApi {
           initialPrice: double.parse(json["initial_price"]),
           quantity: json["quantity"],
           ownerUid: json["owner_id"],
+          state: json["state"],
           photosIds: (json["photos_ids"]).cast<int>(),
         );
       },
@@ -544,7 +575,7 @@ class ServerApi {
 
   /* ----------------------------------------------------------------------------
    Get a stream of bids of an auction
-   //TODO: Implement
+  
   ---------------------------------------------------------------------------- */
 
   Stream<Bid> getBidsStream({@required int auctionId}) {
@@ -625,7 +656,6 @@ class ServerApi {
   ---------------------------------------------------------------------------- */
 
   Future<void> postPhotoID(int photoId, int lotId) async {
-    //TODO send photo id and lot id to backend
     var res = await http.post(
       host + '/lot/photo',
       headers: {
@@ -651,12 +681,6 @@ class ServerApi {
                                                       MERCADOPAGO
   ------------------------------------------------------------------------------------------------------------------------------- */
 
-/* ----------------------------------------------------------------------------
-   Get preference ID
-   // TODO: Implement
-  ---------------------------------------------------------------------------- */
-
-Future<String> getPreferenceID() {}
 enum DocType { DNI, CI, PASSPORT }
 
 enum PhoneType { MOBILE, LANDLINE }

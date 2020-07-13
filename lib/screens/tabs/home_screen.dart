@@ -7,13 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:subbi/widgets/auction_card.dart';
 import 'package:subbi/widgets/category_list.dart';
 import 'auction_list_by_sort.dart';
-import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String MP_PUBLIC_KEY =
-      "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
-  static const String PREFERENCE_ID =
-      "293458878-e967c4cf-0a9b-4294-9d12-e53b1dcc5198";
   static const AUCTIONS_TO_SHOW = 4;
 
   @override
@@ -72,13 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              onPressed: () {
-                mp(context);
-              },
-              child: Text('pagar'),
-            ),
-            FlatButton(child: Text('show winner dialog'), onPressed: (){showWinnerDialog(context);},),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: AdsCarrousel(),
@@ -128,10 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Categorias',
+                        'Categorías',
                         style: TextStyle(fontSize: 20),
                       ),
-
                       CategoryList(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          if(snap.hasData && snap.data.isNotEmpty) {
+                          if (snap.hasData && snap.data.isNotEmpty) {
                             var _auctions = snap.data;
 
                             return GridView.builder(
@@ -177,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               physics: ScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                               ),
                               itemCount: _auctions.length,
@@ -187,11 +174,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             );
-                          }
-                          else{
+                          } else {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 0),
+                              child: Center(
+                                  child: Text('Todavía no hay subastas activas',
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.deepPurple))),
                             );
                           }
                         },
@@ -232,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(child: CircularProgressIndicator());
                           }
 
-                          if(snap.hasData && snap.data.isNotEmpty) {
+                          if (snap.hasData && snap.data.isNotEmpty) {
                             var _auctions = snap.data;
 
                             return GridView.builder(
@@ -240,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               physics: ScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                               ),
                               itemCount: _auctions.length,
@@ -250,16 +241,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             );
-                          }
-                          else{
+                          } else {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                              child: Center(child: Text('Todavía no hay subastas activas',style: TextStyle( fontSize: 24, color: Colors.deepPurple))),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 0),
+                              child: Center(
+                                  child: Text('Todavía no hay subastas activas',
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.deepPurple))),
                             );
                           }
                         },
                       ),
-                      // TODO new auctions
                     ],
                   ),
                 ],
@@ -268,94 +262,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  void mp(BuildContext context) async {
-    PaymentResult result = await MercadoPagoMobileCheckout.startCheckout(
-      HomeScreen.MP_PUBLIC_KEY,
-      HomeScreen.PREFERENCE_ID,
-    );
-    print(result.toString());
-    showDialog(
-      context: context,
-      builder: (buildContext) {
-        if (result.statusDetail == "accredited") {
-          return AlertDialog(
-            title: Text('Payment received'),
-            content: Text('el que lee es gay'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(buildContext).pop();
-                },
-                child: Text('CLOSE'),
-              )
-            ],
-          );
-        } else {
-          return AlertDialog(
-            title: Text('Payment failed'),
-            content: Text('el que lee es gay'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(buildContext).pop();
-                  mp(context);
-                },
-                child: Text('TRY AGAIN'),
-              )
-            ],
-          );
-        }
-      },
-    );
-  }
-
-  void showWinnerDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context){
-          return AlertDialog(
-            title: Center(child: Text('Finalizó la subasta de Auto volador')),
-            contentPadding: EdgeInsets.all(10),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text('Fuiste el mayor postor con una puja de \$400'),
-                Text('Contactate con el vendedor'),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CircleAvatar(
-                        radius: 25,
-                        backgroundImage: NetworkImage('https://www.google.com/url?sa=i&url=https%3A%2F%2Fhappytravel.viajes%2Fhappytravel-opiniones%2Fattachment%2F146-1468479_my-profile-icon-blank-profile-picture-circle-hd%2F&psig=AOvVaw0reWr7NuYshsqiL6xdoPV7&ust=1594069920312000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiRq7uDt-oCFQAAAAAdAAAAABAe'),
-                      ),
-                    ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(onTap: (){}, child: Text('Javier James Joliwood', style: TextStyle(decoration: TextDecoration.underline,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).accentColor),)),
-                      InkWell(onTap: (){}, child: Icon(Icons.message),)
-                    ],
-                  ),
-                ],)
-              ],),
-            actions: <Widget>[
-              RaisedButton(
-                onPressed: (){},
-                child: Text('Pagar con MercadoPago', style: TextStyle(color: Colors.white),),
-                color: Colors.lightBlueAccent,
-              )
-            ],
-          );
-        }
     );
   }
 }

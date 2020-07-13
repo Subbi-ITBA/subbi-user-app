@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-
 
 class ImageUploaderView extends StatefulWidget {
   @override
@@ -12,7 +10,7 @@ class ImageUploaderView extends StatefulWidget {
 class _ImageUploaderViewState extends State<ImageUploaderView> {
   static const MAX_IMAGES = 6;
   List<Asset> images = List<Asset>();
-  int available_images = MAX_IMAGES;
+  int availableImages = MAX_IMAGES;
 //  final _picker = ImagePicker();
 
 //  Future getImages() async{
@@ -21,19 +19,17 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
 //  }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
 
-
-  Future<void> getImages() async{
-
+  Future<void> getImages() async {
     List<Asset> resultList;
     String error;
 
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: available_images,
+        maxImages: availableImages,
         enableCamera: true,
       );
     } on Exception catch (e) {
@@ -48,12 +44,8 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
 
     setState(() {
       images.addAll(resultList);
-      available_images -= resultList.length;
+      availableImages -= resultList.length;
     });
-    print('available images: ' + available_images.toString());
-    for(Asset image in images){
-      print(image.toString());
-    }
   }
 
   @override
@@ -62,62 +54,56 @@ class _ImageUploaderViewState extends State<ImageUploaderView> {
   }
 
   Widget buildGridView() {
-    print(available_images);
-    print(images.length);
-    if(images != null){
-      print('entre1');
+    if (images != null) {
       return GridView.count(
-          crossAxisCount: 3,
-          childAspectRatio: 1,
-          shrinkWrap: true,
-          children: List.generate(MAX_IMAGES, (index) {
-            if((MAX_IMAGES - available_images) > index ) {
-              return Card(
-                clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  children: <Widget>[
-                    AssetThumb(
-                      asset: images[index],
-                      height: 300,
-                      width: 300,
-                    ),
-                    Positioned(
-                      top: 5,
-                      right: 5,
-                      child: InkWell(
-                        child: Icon(
-                            Icons.remove_circle, size: 20, color: Colors.red),
-                        onTap: () {
-                          setState(() {
-                            images.removeAt(index);
-                            available_images++;
-                            for(Asset image in images){
-                              print(image.toString());
-                            }
-                          });
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
-            else{
-              print('entre');
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+        shrinkWrap: true,
+        children: List.generate(MAX_IMAGES, (index) {
+          if ((MAX_IMAGES - availableImages) > index) {
             return Card(
-                child: IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: (){getImages();},
-                ),
-              );
-            }
-          }),
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                children: <Widget>[
+                  AssetThumb(
+                    asset: images[index],
+                    height: 300,
+                    width: 300,
+                  ),
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: InkWell(
+                      child: Icon(Icons.remove_circle,
+                          size: 20, color: Colors.red),
+                      onTap: () {
+                        setState(() {
+                          images.removeAt(index);
+                          availableImages++;
+                          for (Asset image in images) {
+                            print(image.toString());
+                          }
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return Card(
+              child: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  getImages();
+                },
+              ),
+            );
+          }
+        }),
       );
-    }
-    else{
+    } else {
       return Container();
     }
   }
 }
-
-

@@ -10,21 +10,22 @@ import 'package:subbi/models/profile/profile.dart';
 import 'package:subbi/models/user.dart';
 import 'package:subbi/screens/unauthenticated_box.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'dart:convert';
+import 'package:subbi/widgets/mercadopago_dialog.dart';
 import 'dart:async';
 
-Map data;
+import 'package:subbi/widgets/profile_info.dart';
+
 Bid highestBid;
+Auction auction;
 
 class AuctionScreen extends StatelessWidget {
-  StreamController<Bid> streamController = StreamController.broadcast();
+  // ignore: close_sinks
+  final StreamController<Bid> streamController = StreamController.broadcast();
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
-    Auction auction = data['auction'];
-
-    Size size = MediaQuery.of(context).size;
+    Map data = ModalRoute.of(context).settings.arguments;
+    auction = data['auction'];
 
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -52,26 +53,24 @@ class AuctionScreen extends StatelessWidget {
               Icons.notifications,
               color: Colors.white,
             ),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => MercadoPagoDialog.showWinnerDialog(
+                context, highestBid.amount, auction, "2"),
           ),
         ],
       ),
       body: Body(
         streamController: streamController,
-        auction: auction,
       ),
       bottomNavigationBar: AuctionInfo(
         streamController: streamController,
-        auction: auction,
       ),
     );
   }
 }
 
 class Body extends StatelessWidget {
-  final Auction auction;
-  StreamController<Bid> streamController;
-  Body({@required this.streamController, @required this.auction});
+  final StreamController<Bid> streamController;
+  Body({@required this.streamController});
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +80,7 @@ class Body extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ImageSlider(
-            photoIds: this.auction.photosIds,
+            photoIds: auction.photosIds,
           ),
           Flexible(
             fit: FlexFit.loose,
@@ -101,7 +100,7 @@ class Body extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
-                      this.auction.title,
+                      auction.title,
                       softWrap: true,
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
@@ -113,20 +112,17 @@ class Body extends StatelessWidget {
                   Divider(
                     color: Colors.grey,
                   ),
-                  ProfileInfo(
+                  OwnerInfo(
                     profileId: auction.ownerUid,
                   ),
                   Divider(
                     color: Colors.grey,
                   ),
-                  AuctionDescription(
-                    auction: this.auction,
-                  ),
+                  AuctionDescription(),
                   Divider(
                     color: Colors.grey,
                   ),
-                  BidList(
-                      streamController: streamController, auction: this.auction)
+                  BidList(streamController: streamController)
                 ],
               ),
             ),
@@ -138,12 +134,9 @@ class Body extends StatelessWidget {
 }
 
 class AuctionDescription extends StatelessWidget {
-  final Auction auction;
-  AuctionDescription({@required this.auction});
+  AuctionDescription();
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return ExpansionTile(
       title: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -163,7 +156,7 @@ class AuctionDescription extends StatelessWidget {
               child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    this.auction.description,
+                    auction.description,
                     overflow: TextOverflow.visible,
                     textAlign: TextAlign.start,
                     style: TextStyle(
@@ -179,9 +172,9 @@ class AuctionDescription extends StatelessWidget {
 }
 
 class BidList extends StatefulWidget {
-  final Auction auction;
   final StreamController<Bid> streamController;
-  BidList({@required this.streamController, @required this.auction});
+
+  BidList({@required this.streamController});
 
   @override
   _BidListState createState() => _BidListState();
@@ -205,27 +198,32 @@ class _BidListState extends State<BidList> {
   }
 
   void initializeSocket() {
-    print('initializing socket IO');
-
-    socket = IO.io('http://subbi.herokuapp.com/auction', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-
-    socket.connect();
-    socket.emit('subscribe', widget.auction.auctionId);
-    socket.on('connect', (_) {
-      print('connected');
-    });
-    socket.on('bidPublished', (data) {
-      if (this.mounted) {
-        setState(() {
-          widget.streamController.add(highestBid);
-        });
-      }
-    });
-
-    print('end init');
+    ServerApi.instance().emitSocketEvent('subscribe', auction.auctionId);
+    ServerApi.instance().onSocketEvent(
+      'bidPublished',
+      (data) {
+        if (this.mounted) {
+          if (data['auc_id'] == auction.auctionId) {
+            setState(() {
+              widget.streamController.add(highestBid);
+            });
+          }
+        }
+      },
+    );
+    ServerApi.instance().onSocketEvent(
+      'auctionClosed',
+      (data) {
+        if (data['auc_id'] == auction.auctionId) {
+          var user = Provider.of<User>(context);
+          if (user.isSignedIn() && user.getUID() == data['user']) {
+            auction.state = "CLOSED";
+            MercadoPagoDialog.showWinnerDialog(
+                context, highestBid.amount, auction, data['preference_id']);
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -247,7 +245,7 @@ class _BidListState extends State<BidList> {
           ),
         ),
         FutureBuilder<List<Bid>>(
-          future: widget.auction.getLatestBids(0, 5),
+          future: auction.getLatestBids(0, 5),
           builder: (context, snap) {
             if (snap.hasData) {
               List<Bid> bids = snap.data;
@@ -394,10 +392,10 @@ class BidderInfo extends StatelessWidget {
   }
 }
 
-class ProfileInfo extends StatelessWidget {
+class OwnerInfo extends StatelessWidget {
   final String profileId;
 
-  const ProfileInfo({
+  const OwnerInfo({
     Key key,
     @required this.profileId,
   }) : super(key: key);
@@ -441,50 +439,7 @@ class ProfileInfo extends StatelessWidget {
                       )
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        '/profile',
-                        arguments: profile,
-                      );
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(
-                                  profile.profilePicURL,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {},
-                                child: Text(
-                                  profile.name,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).accentColor,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  ProfileInfo(profileId: auction.ownerUid)
                 ],
               ),
               Column(
@@ -552,10 +507,9 @@ class ProfileInfo extends StatelessWidget {
 }
 
 class HighestBidInfo extends StatefulWidget {
-  final Auction auction;
-  StreamController<Bid> streamController;
-  User user;
-  HighestBidInfo({@required this.streamController, @required this.auction});
+  final StreamController<Bid> streamController;
+
+  HighestBidInfo({@required this.streamController});
   @override
   _HighestBidInfoState createState() => _HighestBidInfoState();
 }
@@ -563,7 +517,6 @@ class HighestBidInfo extends StatefulWidget {
 class _HighestBidInfoState extends State<HighestBidInfo> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.streamController.stream.listen((event) {
       setState(() {
@@ -574,6 +527,7 @@ class _HighestBidInfoState extends State<HighestBidInfo> {
 
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<User>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -601,32 +555,34 @@ class _HighestBidInfoState extends State<HighestBidInfo> {
             ),
           ],
         ),
-        _buildBidButton()
+        _buildBidButton(user, context)
       ],
     );
   }
 
-  Widget _buildBidButton() {
-    var user = Provider.of<User>(context);
-    if (user == null ||
-        (user != null && user.getUID() != widget.auction.ownerUid)) {
+  Widget _buildBidButton(User user, BuildContext context) {
+    print("signed in = " + user.isSignedIn().toString());
+    if (!user.isSignedIn() ||
+        (user.isSignedIn() && user.getUID() != auction.ownerUid)) {
       return RaisedButton.icon(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.0),
           side: BorderSide(color: Theme.of(context).primaryColor),
         ),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20.0)), //this right here
-                  child: _buildBidDialog(context, widget.auction),
-                );
-              });
-        },
+        onPressed: auction.state == "CLOSED"
+            ? null
+            : () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0)), //this right here
+                        child: _buildBidDialog(context),
+                      );
+                    });
+              },
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
         icon: Icon(Icons.gavel),
@@ -656,9 +612,8 @@ class _HighestBidInfoState extends State<HighestBidInfo> {
 }
 
 class AuctionInfo extends StatelessWidget {
-  final Auction auction;
-  StreamController<Bid> streamController;
-  AuctionInfo({@required this.streamController, @required this.auction});
+  final StreamController<Bid> streamController;
+  AuctionInfo({@required this.streamController});
 
   @override
   Widget build(BuildContext context) {
@@ -685,58 +640,69 @@ class AuctionInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          HighestBidInfo(
-              streamController: streamController, auction: this.auction),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                child: Text(
-                  "Termina en:",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              DeadlineTimer(
-                auction: this.auction,
-              ),
-            ],
-          ),
+          HighestBidInfo(streamController: streamController),
+          _buildTimer(),
         ],
       ),
     );
   }
+
+  Widget _buildTimer() {
+    if (auction.state == "CLOSED") {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+          child: Text(
+            "SUBASTA CERRADA",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+            child: Text(
+              "Termina en:",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          DeadlineTimer(),
+        ],
+      );
+    }
+  }
 }
 
-Widget _buildBidDialog(context, auction) {
+Widget _buildBidDialog(context) {
   var user = Provider.of<User>(context);
   if (!user.isSignedIn()) {
     return UnauthenticatedBox();
   } else {
-    return BidDialog(auction: auction);
+    return BidDialog();
   }
 }
 
 class BidDialog extends StatefulWidget {
-  Auction auction;
-
-  BidDialog({@required this.auction});
+  BidDialog();
   @override
-  _BidDialogState createState() => _BidDialogState(auction: this.auction);
+  _BidDialogState createState() => _BidDialogState();
 }
 
 class _BidDialogState extends State<BidDialog> {
-  final Auction auction;
-
   double bidAmount;
   int _state = 0;
   final _formKey = GlobalKey<FormState>();
-
-  _BidDialogState({@required this.auction});
 
   @override
   Widget build(BuildContext context) {
@@ -791,9 +757,8 @@ class _BidDialogState extends State<BidDialog> {
                       });
                       ServerApi.instance()
                           .postBid(
-                              auctionId: this.auction.auctionId,
-                              amount: bidAmount)
-                          .then((value) => {Navigator.pop(context)});
+                              auctionId: auction.auctionId, amount: bidAmount)
+                          .then((value) => Navigator.pop(context));
                     }
                   },
                 ),
@@ -818,13 +783,12 @@ class _BidDialogState extends State<BidDialog> {
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
     }
+    return null;
   }
 }
 
 class DeadlineTimer extends StatelessWidget {
-  final Auction auction;
-
-  DeadlineTimer({@required this.auction});
+  DeadlineTimer();
 
   @override
   Widget build(BuildContext context) {
@@ -835,7 +799,7 @@ class DeadlineTimer extends StatelessWidget {
           ),
           (i) => i),
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-        Duration leftingTime = this.auction.deadLine.difference(DateTime.now());
+        Duration leftingTime = auction.deadLine.difference(DateTime.now());
         int days = leftingTime.inDays;
         int seconds = leftingTime.inSeconds.remainder(60);
         int hours = leftingTime.inHours.remainder(24);

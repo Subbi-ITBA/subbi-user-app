@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:subbi/screens/loading_screen.dart';
 import 'package:subbi/screens/main_screen.dart';
 import 'package:subbi/screens/tabs/home_screen.dart';
-import 'package:subbi/screens/tabs/profile_screen.dart';
+
 import 'package:subbi/screens/login/signin_screen.dart';
 import 'package:subbi/screens/login/signup_screen.dart';
 import 'package:subbi/screens/tabs/add_auction_screen.dart';
