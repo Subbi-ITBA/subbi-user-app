@@ -175,6 +175,6 @@ class _HighestBidTextState extends State<HighestBidText> {
   Widget build(BuildContext context) {
     return Text(currHighestBid == -1
         ? "Sin pujas"
-        : "Puja actual: " + currHighestBid.toString());
+        : "Puja actual: \$" + currHighestBid.toString());
   }
 }
