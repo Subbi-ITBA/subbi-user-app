@@ -6,11 +6,20 @@ import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 import 'package:subbi/widgets/profile_info.dart';
 
 class MercadoPagoDialog {
+  static bool corriendo = false;
+  // static const String MP_PUBLIC_KEY =
+  //     "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
   static const String MP_PUBLIC_KEY =
-      "TEST-b501df4e-24d0-4f27-8864-21a4e789bb22";
+      "TEST-ae79dc4b-a423-48a1-911c-1e1859dba1b6";
 
   static void showWinnerDialog(
       BuildContext context, double highestBid, Auction auction, String prefID) {
+    print("highesbid: " +
+        highestBid.toString() +
+        " auction: " +
+        auction.toString() +
+        " prefid: " +
+        prefID);
     showDialog(
         context: context,
         builder: (context) {
@@ -71,6 +80,7 @@ class MercadoPagoDialog {
                     RaisedButton(
                       onPressed: () {
                         mp(context, prefID);
+                        Navigator.pop(context);
                       },
                       child: Text(
                         'Pagar con MercadoPago',

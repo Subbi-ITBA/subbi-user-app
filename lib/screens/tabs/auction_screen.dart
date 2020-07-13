@@ -53,8 +53,7 @@ class AuctionScreen extends StatelessWidget {
               Icons.notifications,
               color: Colors.white,
             ),
-            onPressed: () => MercadoPagoDialog.showWinnerDialog(
-                context, highestBid.amount, auction, "2"),
+            onPressed: () => {},
           ),
         ],
       ),
@@ -647,46 +646,10 @@ class AuctionInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           HighestBidInfo(streamController: streamController),
-          _buildTimer(),
+          DeadlineTimer()
         ],
       ),
     );
-  }
-
-  Widget _buildTimer() {
-    if (auction.state == "CLOSED") {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-          child: Text(
-            "SUBASTA CERRADA",
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      );
-    } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-            child: Text(
-              "Termina en:",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          DeadlineTimer(),
-        ],
-      );
-    }
   }
 }
 
@@ -797,8 +760,6 @@ class _BidDialogState extends State<BidDialog> {
 }
 
 class DeadlineTimer extends StatelessWidget {
-  DeadlineTimer();
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -818,161 +779,192 @@ class DeadlineTimer extends StatelessWidget {
         String hoursString = hours < 10 ? "0$hours" : "$hours";
         String secondsString = seconds < 10 ? "0$seconds" : "$seconds";
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Theme.of(context).accentColor,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text(
-                      daysSring,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+        bool closed = leftingTime.inSeconds <= 0;
+        return closed
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                  child: Text(
+                    "SUBASTA CERRADA",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
-                Text(
-                  "Días",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(7, 0, 6, 15),
-              child: Text(
-                ":",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.deepPurple,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Column(
-              children: <Widget>[
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Theme.of(context).accentColor,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                     child: Text(
-                      hoursString,
+                      "Termina en:",
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ),
-                Text(
-                  "Horas",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(6, 0, 1, 15),
-              child: Text(
-                ":",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.deepPurple,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Column(
-              children: <Widget>[
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Theme.of(context).accentColor,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text(
-                      minutesString,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text(
+                                daysSring,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Días",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ),
-                Text(
-                  "Minutos",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontSize: 12,
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(4, 0, 0, 15),
-              child: Text(
-                ":",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.deepPurple,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Column(
-              children: <Widget>[
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Theme.of(context).accentColor,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text(
-                      secondsString,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 0, 6, 15),
+                        child: Text(
+                          ":",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
+                      Column(
+                        children: <Widget>[
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text(
+                                hoursString,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Horas",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(6, 0, 1, 15),
+                        child: Text(
+                          ":",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: <Widget>[
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text(
+                                minutesString,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Minutos",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 12,
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(4, 0, 0, 15),
+                        child: Text(
+                          ":",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: <Widget>[
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text(
+                                secondsString,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Segundos",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "Segundos",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
+                ],
+              );
       },
     );
   }

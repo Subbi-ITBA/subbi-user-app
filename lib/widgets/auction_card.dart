@@ -154,23 +154,23 @@ class _HighestBidTextState extends State<HighestBidText> {
         }
       },
     );
-    ServerApi.instance().onSocketEvent(
-      'auctionClosed',
-      (data) {
-        if (data['auc_id'] == widget.auction.auctionId) {
-          var user = Provider.of<User>(context);
-          if (data['winner_id'] != null &&
-              user.isSignedIn() &&
-              user.getUID() == data['winner_id']) {
-            MercadoPagoDialog.showWinnerDialog(
-                context,
-                double.parse(data['highestBid']),
-                widget.auction,
-                data['preference_id']);
-          }
-        }
-      },
-    );
+    // ServerApi.instance().onSocketEvent(
+    //   'auctionClosed',
+    //   (data) {
+    //     if (data['auc_id'] == widget.auction.auctionId) {
+    //       var user = Provider.of<User>(context);
+    //       if (data['winner_id'] != null &&
+    //           user.isSignedIn() &&
+    //           user.getUID() == data['winner_id']) {
+    //         MercadoPagoDialog.showWinnerDialog(
+    //             context,
+    //             double.parse(data['highestBid']),
+    //             widget.auction,
+    //             data['preference_id']);
+    //       }
+    //     }
+    //   },
+    // );
   }
 
   @override
