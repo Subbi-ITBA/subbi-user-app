@@ -329,7 +329,7 @@ class _State extends State<AddAuctionScreen> {
 
                       showDialog(
                           context: context,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext buildContext) {
                             return AlertDialog(
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -363,6 +363,7 @@ class _State extends State<AddAuctionScreen> {
                               actions: <Widget>[
                                 RaisedButton(
                                   onPressed: () {
+                                    Navigator.of(buildContext).pop();
                                     DefaultTabController.of(context)
                                         .animateTo(MainScreen.HOME_TAB);
                                   },
