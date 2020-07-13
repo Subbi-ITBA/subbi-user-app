@@ -42,7 +42,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ChatMessage(
                 text: data["msg"],
                 createdAt: DateTime.parse(data["date"]).toLocal(),
-                user: ChatUser(),
+                user: ChatUser(
+                  name: widget.withProfile.name,
+                ),
               ),
             );
           },
